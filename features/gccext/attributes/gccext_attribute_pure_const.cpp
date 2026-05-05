@@ -1,0 +1,26 @@
+// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
+// description: [[gnu::pure]] = no side effects (may read globals); [[gnu::const]] = depends only on args. Both let the compiler eliminate redundant calls.
+// reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
+
+#include <cassert>
+
+[[gnu::const]]
+int square(int x) { return x * x; }
+
+[[gnu::pure]]
+int strlen_like(const char* s) {
+    int n = 0;
+    while (*s++) ++n;
+    return n;
+}
+
+int main() {
+    assert(square(5) == 25);
+
+    // The compiler can hoist/dedupe pure-and-const calls.
+    int a = square(7) + square(7);   // may compute square(7) once
+    assert(a == 98);
+
+    assert(strlen_like("hello") == 5);
+    return 0;
+}

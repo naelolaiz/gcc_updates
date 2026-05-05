@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Regenerate per-leaf features/<bucket>/README.md indexes from `// gcc-test:`
+# metadata, but only when the staged changeset touches features/. The script
+# runs scripts/discover.py --emit-docs (pure stdlib Python, no compiler) and
+# auto-stages any updated README.md files so the commit is self-contained.
+#
+# Install: `git config core.hooksPath .githooks` (one-time, opt-in).
+
+set -euo pipefail
+
+# Skip silently if no staged file lives under features/.
+if ! git diff --cached --name-only -z | tr '\0' '\n' | grep -q '^features/'; then
+    exit 0
+fi
+
+# Resolve repo root regardless of where the hook was invoked from.
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "[pre-commit] python3 not found; cannot regenerate per-leaf READMEs." >&2
+    exit 1
+fi
+
+python3 scripts/discover.py --emit-docs >/dev/null
+
+# If any per-leaf README.md changed, stage it.
+changed=()
+while IFS= read -r -d '' path; do
+    changed+=("$path")
+done < <(git diff --name-only -z -- 'features/**/README.md')
+
+if [ "${#changed[@]}" -gt 0 ]; then
+    git add -- "${changed[@]}"
+    echo "[pre-commit] regenerated ${#changed[@]} per-leaf README.md file(s) and staged them."
+fi
