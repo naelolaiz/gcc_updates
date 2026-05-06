@@ -12,3 +12,4 @@ implemented via the same machinery as `__builtin_expect`, etc.
 | [`openmp/`](openmp/) | `#pragma omp parallel for` with reduction (`-fopenmp`). |
 | [`pragmas/`](pragmas/) | `#pragma GCC diagnostic push/pop/ignored`. |
 | [`sanitize/`](sanitize/) | Interacting with `-fsanitize=…` builds: opt-out attributes, libstdc++ debug mode. |
+| [`analyzer/`](analyzer/) | Compile-time bug-finding via `-fanalyzer` (distinct from runtime sanitizers): use-after-`delete`, path-sensitive null-deref, conditional double-`delete`. Requires GCC 16+ for C++. |

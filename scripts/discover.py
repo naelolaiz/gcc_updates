@@ -41,6 +41,7 @@ KNOWN_KEYS = REQUIRED_KEYS | {
     "expect-exit",
     "max-gcc",
     "requires-sanitizer",
+    "requires-analyzer",
 }
 KNOWN_STDS = {"c++11", "c++14", "c++17", "c++20", "c++23", "c++26"}
 
@@ -66,6 +67,7 @@ class Example:
     expect_exit: int
     description: str
     requires_sanitizer: list[str]   # if non-empty, file only runs under matching --sanitize
+    requires_analyzer: bool         # if true, file only runs under --analyzer (compile-only)
 
     @property
     def stem(self) -> str:
@@ -123,6 +125,10 @@ def parse_metadata(path: Path) -> Example:
     if "requires-sanitizer" in pairs:
         requires_sanitizer = [s for s in pairs["requires-sanitizer"].split(",") if s]
 
+    requires_analyzer = pairs.get("requires-analyzer", "false") == "true"
+    if "requires-analyzer" in pairs and pairs["requires-analyzer"] not in {"true", "false"}:
+        raise ValueError(f"{path}: requires-analyzer must be true|false")
+
     return Example(
         path=path,
         std=pairs["std"],
@@ -135,6 +141,7 @@ def parse_metadata(path: Path) -> Example:
         expect_exit=int(pairs.get("expect-exit", "0")),
         description=description,
         requires_sanitizer=requires_sanitizer,
+        requires_analyzer=requires_analyzer,
     )
 
 
@@ -175,13 +182,15 @@ def sanitizer_flags(sanitize: str | None) -> list[str]:
     ]
 
 
-def build_cmd_for(ex: Example, sanitize: str | None = None) -> list[str]:
+def build_cmd_for(ex: Example, sanitize: str | None = None,
+                  analyzer: bool = False) -> list[str]:
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
     out_bin = BUILD_DIR / ex.stem
     return [
         "g++",
         f"-std={ex.std}",
         *DEFAULT_FLAGS,
+        *(["-fanalyzer"] if analyzer else []),
         *sanitizer_flags(sanitize),
         *ex.extra_flags,
         str(ex.path),
@@ -191,8 +200,9 @@ def build_cmd_for(ex: Example, sanitize: str | None = None) -> list[str]:
 
 
 def compile_one(ex: Example, gcc_version: int, verbose: bool = False,
-                sanitize: str | None = None) -> tuple[bool, str]:
-    cmd = build_cmd_for(ex, sanitize=sanitize)
+                sanitize: str | None = None,
+                analyzer: bool = False) -> tuple[bool, str]:
+    cmd = build_cmd_for(ex, sanitize=sanitize, analyzer=analyzer)
     out_bin = cmd[-1]
     if verbose:
         print(f"  $ {' '.join(cmd)}")
@@ -236,26 +246,37 @@ def filter_examples(
     gcc_version: int,
     topic_filter: str | None,
     active_sanitizers: list[str] | None = None,
-) -> tuple[list[Example], list[Example]]:
+    analyzer_active: bool = False,
+) -> tuple[list[Example], list[tuple[Example, str]]]:
     eligible: list[Example] = []
-    skipped: list[Example] = []
+    skipped: list[tuple[Example, str]] = []
     active = set(active_sanitizers or [])
     for ex in examples:
         if topic_filter and topic_filter not in ex.topic and topic_filter not in ex.stem:
             continue
         if gcc_version < ex.min_gcc:
-            skipped.append(ex)
+            skipped.append((ex, f"needs gcc {ex.min_gcc}+"))
             continue
         if ex.max_gcc is not None and gcc_version > ex.max_gcc:
-            skipped.append(ex)
+            skipped.append((ex, f"limited to gcc {ex.max_gcc}"))
             continue
         # Files that *require* a sanitizer only run when one of the requested
         # sanitizers is active. They DELIBERATELY trip a check, so running them
         # in the default matrix would either UB-crash or silently "pass".
         if ex.requires_sanitizer:
             if not active or not (set(ex.requires_sanitizer) & active):
-                skipped.append(ex)
+                skipped.append((ex, f"requires --sanitize={','.join(ex.requires_sanitizer)}"))
                 continue
+        # Analyzer demos: requires-analyzer=true files only run under --analyzer.
+        # Conversely, --analyzer mode runs *only* analyzer demos -- the job is
+        # compile-only and the rest of the workspace is exercised by the matrix.
+        if ex.requires_analyzer:
+            if not analyzer_active:
+                skipped.append((ex, "requires --analyzer"))
+                continue
+        elif analyzer_active:
+            skipped.append((ex, "not an analyzer demo"))
+            continue
         eligible.append(ex)
     return eligible, skipped
 
@@ -322,10 +343,11 @@ def emit_docs(examples: list[Example]) -> None:
               f"({len(items)} entries, {len(by_topic)} topics)")
 
 
-def report(eligible: list[Example], skipped: list[Example]) -> None:
+def report(eligible: list[Example],
+           skipped: list[tuple[Example, str]]) -> None:
     print(f"discovered: {len(eligible) + len(skipped)} examples")
     print(f"  eligible: {len(eligible)}")
-    print(f"  skipped : {len(skipped)} (min-gcc / max-gcc filters)")
+    print(f"  skipped : {len(skipped)}")
 
 
 def main() -> int:
@@ -345,6 +367,9 @@ def main() -> int:
     ap.add_argument("--sanitize", default=None,
                     help="Comma-separated sanitizer list, e.g. 'undefined,address'. "
                          "Adds -fsanitize=… -fno-omit-frame-pointer -g to every build.")
+    ap.add_argument("--analyzer", action="store_true",
+                    help="Enable -fanalyzer; runs only requires-analyzer=true demos, "
+                         "compile-only (binaries are not executed).")
     args = ap.parse_args()
 
     examples = discover()
@@ -360,12 +385,13 @@ def main() -> int:
                   f"topic={ex.topic}{tag}")
         san_list = [s for s in (args.sanitize or "").split(",") if s]
         report(*filter_examples(examples, args.gcc_version or 99,
-                                 args.filter, san_list))
+                                 args.filter, san_list,
+                                 analyzer_active=args.analyzer))
         return 0
 
     if args.show_cmds:
         for ex in examples:
-            cmd = build_cmd_for(ex, sanitize=args.sanitize)
+            cmd = build_cmd_for(ex, sanitize=args.sanitize, analyzer=args.analyzer)
             print(f"{ex.path.name}:")
             print(f"  {' '.join(cmd)}")
         return 0
@@ -376,10 +402,12 @@ def main() -> int:
 
     gcc_version = args.gcc_version or detect_gcc_version()
     san_note = f" with sanitizers={args.sanitize}" if args.sanitize else ""
-    print(f"using g++ major version {gcc_version}{san_note}")
+    ana_note = " with -fanalyzer (compile-only)" if args.analyzer else ""
+    print(f"using g++ major version {gcc_version}{san_note}{ana_note}")
 
     san_list = [s for s in (args.sanitize or "").split(",") if s]
-    eligible, skipped = filter_examples(examples, gcc_version, args.filter, san_list)
+    eligible, skipped = filter_examples(examples, gcc_version, args.filter,
+                                         san_list, analyzer_active=args.analyzer)
     report(eligible, skipped)
 
     if BUILD_DIR.exists():
@@ -410,7 +438,8 @@ def main() -> int:
         label = f"[{ex.std}] {ex.path.name}"
         grp_start(label)
         ok, info = compile_one(ex, gcc_version, verbose=verbose,
-                                sanitize=args.sanitize)
+                                sanitize=args.sanitize,
+                                analyzer=args.analyzer)
         if not ok:
             if ex.experimental:
                 soft_fail_count += 1
@@ -423,6 +452,14 @@ def main() -> int:
             grp_end()
             if in_gh and not ex.experimental:
                 print(result)          # also outside the group so failures are visible without expanding
+            continue
+        # Analyzer demos are compile-only -- the binary deliberately contains UB
+        # we don't want to actually execute.
+        if ex.requires_analyzer:
+            pass_count += 1
+            result = f"{ANSI_GREEN}PASS    {ANSI_RESET} {label} (analyzer compile-only)"
+            print(result)
+            grp_end()
             continue
         ok, info = run_one(ex, info, verbose=verbose)
         if ok:
@@ -445,9 +482,9 @@ def main() -> int:
                 print(result)          # outside the group too
                 fail_lines.append(f"{label}\n{info}")
 
-    for ex in skipped:
+    for ex, reason in skipped:
         skip_lines.append(f"{ANSI_DIM}SKIP    {ANSI_RESET} [{ex.std}] "
-                          f"{ex.path.name} (needs gcc {ex.min_gcc}+)")
+                          f"{ex.path.name} ({reason})")
 
     if skip_lines:
         grp_start(f"Skipped ({len(skip_lines)})")

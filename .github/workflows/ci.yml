@@ -91,3 +91,32 @@ jobs:
 
       - name: Run examples under -fsanitize=thread
         run: python3 scripts/discover.py --gcc-version=15 --sanitize=thread
+
+  analyze:
+    # Compile-time static analyzer. Distinct from runtime sanitizers: -fanalyzer
+    # walks paths in the IR and emits -Wanalyzer-* warnings. GCC 16 is the first
+    # version where it's actually usable on C++ (NRVO + initial exception support);
+    # the requires-analyzer=true demos under features/gccext/analyzer/ are
+    # compile-only and asserted to build (warnings appear in the per-example
+    # ::group:: log -- expand each to see the diagnostic).
+    name: analyze (gcc-16, -fanalyzer)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install gcc-16
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-16 g++-16
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
+          g++ --version
+
+      - name: Run analyzer demos under -fanalyzer
+        run: python3 scripts/discover.py --gcc-version=16 --analyzer
