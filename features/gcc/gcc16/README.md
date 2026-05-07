@@ -6,4 +6,4 @@ _Folder: `features/gcc/gcc16/`. 1 example(s) across 1 topic(s). Auto-generated f
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
-| [gcc16_cpp26_features_default.cpp](gcc16_cpp26_features_default.cpp) | c++26 | 16 | GCC 16 ships ~two-thirds of C++26 by default (per release notes); this is a smoke test that c++26 mode is healthy. *(experimental)* |
+| [gcc16_cpp26_features_default.cpp](gcc16_cpp26_features_default.cpp) | c++26 | 16 | GCC 16 ships ~two-thirds of C++26 by default (per release notes); this is a smoke test that c++26 mode is healthy. |

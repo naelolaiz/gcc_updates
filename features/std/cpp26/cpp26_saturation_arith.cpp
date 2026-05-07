@@ -1,4 +1,4 @@
-// gcc-test: std=c++26 min-gcc=14 topic=stl experimental=true
+// gcc-test: std=c++26 min-gcc=14 topic=stl experimental=false
 // description: <numeric> in C++26 adds saturation arithmetic (add_sat, sub_sat, mul_sat, div_sat) and saturate_cast.
 // reference: https://en.cppreference.com/w/cpp/numeric#Saturation_arithmetic
 

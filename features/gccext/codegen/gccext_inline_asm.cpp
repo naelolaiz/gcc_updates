@@ -1,4 +1,4 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-codegen experimental=true
+// gcc-test: std=c++17 min-gcc=13 topic=gcc-codegen experimental=false
 // description: Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
 

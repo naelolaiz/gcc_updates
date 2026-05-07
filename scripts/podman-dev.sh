@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Local-dev entrypoint. Builds (or reuses) a podman image with gcc-${1:-15}
-# from ppa:ubuntu-toolchain-r/test, then runs scripts/discover.py inside it
-# against a read-only mount of the working tree.
+# Local-dev entrypoint. Builds (or reuses) a podman image based on the
+# official `gcc:${1:-15}` Docker image (Debian-based), then runs
+# scripts/discover.py inside it against a read-only mount of the working tree.
 #
 # Usage:
 #   ./scripts/podman-dev.sh              # default GCC 15

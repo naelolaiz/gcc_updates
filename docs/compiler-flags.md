@@ -36,8 +36,8 @@ Where:
 
 | Token        | Source                          | Why                                                                             |
 |--------------|---------------------------------|---------------------------------------------------------------------------------|
-| `g++`        | active toolchain                | Resolved by `update-alternatives` to `g++-13/14/15/16` inside the container.    |
-| `-std=$STD`  | `// gcc-test: std=…`            | Selects C++ standard. Allowed: `c++17`, `c++20`, `c++23`, `c++26` (also c++11/c++14 reserved for the C++11 set). |
+| `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix and sanitizer jobs run in `gcc:N`, where `g++` is the default. The analyze job runs in `debian:unstable-slim` and installs `g++-16`, then points `g++` at it via `update-alternatives`. |
+| `-std=$STD`  | `// gcc-test: std=…`            | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. (`c++14` is recognised but not currently used; the cpp11 bucket is built with `c++11`.) |
 | `-Wall -Wextra -Wpedantic` | hard-coded default | Strict warnings — examples must compile clean.                                  |
 | `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes.           |
 | `-pthread`   | hard-coded default              | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
@@ -69,18 +69,32 @@ Every example starts with a line shaped like:
 | `std=`         | yes       | Passed to `-std=`. One of `c++11`,`c++14`,`c++17`,`c++20`,`c++23`,`c++26`.                            |
 | `min-gcc=`     | yes       | Skip on compilers older than this major version.                                                     |
 | `topic=`       | yes       | Free-form short label used to group examples in the docs index.                                      |
-| `experimental=`| yes       | If `true`, a failure is reported in yellow ("EXP-FAIL") but does **not** fail the matrix row.        |
-| `extra-flags=` | no        | Comma-separated. Each token is appended verbatim to `g++ …`. Use comma, not space.                   |
+| `experimental=`| yes       | If `true`, the file is allowed to fail — but only in the *expected* way. Requires `expect-error=` (a regex matched against stderr). A failure that matches the regex is reported as yellow `EXP-FAIL` and tolerated. A failure that does **not** match is a red `EXP-WRONG-ERR` and hard-fails CI. A *successful* build of an experimental file hard-fails as `EXP-PROMOTE` — flip `experimental=false` and drop the regex. |
+| `extra-flags=` | no        | Comma-separated. Each token is appended after the source file so linker libraries resolve symbols. Use comma, not space. |
 | `run-args=`    | no        | Shell-tokenised argv passed to the compiled binary at runtime.                                       |
 | `expect-exit=` | no        | Compare against this exit code (default `0`).                                                        |
 | `max-gcc=`     | no        | Skip on compilers *newer* than this. Useful for examples that demonstrate a since-removed behaviour. |
+| `requires-sanitizer=` | no | Comma-separated sanitizer names (e.g. `undefined`, `address`, `thread`, `leak`). The example only runs when `discover.py --sanitize=…` includes one of them — typical for files that *deliberately* trigger UB so the assertion is "trips the right kind of check". See [../features/gccext/sanitize/README.md](../features/gccext/sanitize/README.md). |
+| `requires-analyzer=` | no | If `true`, the example only runs in `--analyzer` mode and is **compile-only** (its binary contains UB you don't want to execute). See [../features/gccext/analyzer/README.md](../features/gccext/analyzer/README.md). |
+| `expect-error=` | required when `experimental=true` | A Python regex matched against the failing build's combined stdout+stderr. Lets the harness distinguish "feature legitimately not yet shipped" (matches → soft-pass) from "the test is broken in some unrelated way" (no match → hard fail). Quote the value if it contains spaces or pipes: `expect-error="(foo\|bar). is not a member of"`. |
+| `skip-sanitizer=` | no | Comma-separated list. Skip the file when any of these sanitizers is active. Use for examples whose data race lives **inside** an instrumented runtime (libgomp, IFUNC dispatch) rather than in the example itself — a TSan complaint there is noise, not a real signal. |
+| `min-libstdcxx=` | no | Require `_GLIBCXX_RELEASE >= N`. Independent of `min-gcc=`: g++ and libstdc++ are versioned separately, so a feature gated on the runtime library has to be checked separately. Files using a libstdc++-only symbol (e.g. `std::ranges::starts_with`, libstdc++ 16+ per cppreference) should set this to the libstdc++ release that actually ships it. |
+| `max-libstdcxx=` | no | Symmetric upper bound. Use for behaviour that was removed/changed in a later libstdc++. |
+
+The libstdc++ release is detected once at startup by asking g++ to preprocess a
+tiny translation unit that includes `<version>` and reports the `_GLIBCXX_RELEASE`
+macro (no compile, no run).
+The detected value is printed on the first line of every run:
+`using g++ major version 15, libstdc++ release 15`. If the macro is
+unavailable (very old toolchain), `min-libstdcxx=` gates are not enforced.
 
 ## Reproducing a build by hand
 
 Inside the container:
 
 ```bash
-# Drop into a shell
+# Drop into a shell (the local image scripts/podman-dev.sh builds is
+# FROM gcc:${GCC_VERSION} + libtbb-dev + python3).
 podman run --rm -it -v "$(pwd):/work:rw,Z" -w /work \
     localhost/gcc-updates:gcc15 bash
 
@@ -103,4 +117,4 @@ the host shell is off-limits for compilation.
 3. If it requires a new package in the build environment, install it in BOTH
    [containers/gcc.Containerfile](../containers/gcc.Containerfile) and
    [.github/workflows/ci.yml](../.github/workflows/ci.yml). They must stay in
-   sync — that's the whole point of the toolchain-PPA-everywhere design.
+   sync — both layer on top of the official `gcc:N` Docker image.

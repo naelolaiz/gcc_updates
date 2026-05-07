@@ -1,10 +1,23 @@
 name: ci
 
+# The default and sanitizer jobs run inside the official `gcc:N` Docker image
+# (Debian-based, ships upstream gcc-N + matching upstream libstdc++-N). Build
+# environment matches scripts/podman-dev.sh so local and CI are bit-identical.
+#
+# The analyzer job is the one exception: Docker Hub does not publish `gcc:16`
+# yet, so it uses a slim Debian image with gcc-16 packages available from apt.
+
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
+# `gcc:N` is Debian-based and ships dash as /bin/sh, which doesn't grok
+# `set -o pipefail`. Force every step through bash, which gcc:N does ship.
+defaults:
+  run:
+    shell: bash
 
 jobs:
   test:
@@ -13,24 +26,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gcc: [13, 14, 15, 16]
+        # gcc:16 not yet on Docker Hub (only 12-15 published as of this commit);
+        # add 16 back once https://hub.docker.com/_/gcc lists it.
+        gcc: [13, 14, 15]
+    container:
+      image: gcc:${{ matrix.gcc }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install gcc-${{ matrix.gcc }} from toolchain PPA
+      - name: Install libtbb + python3
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install -y "gcc-${{ matrix.gcc }}" "g++-${{ matrix.gcc }}" libtbb-dev
-          sudo update-alternatives --install /usr/bin/gcc gcc \
-            "/usr/bin/gcc-${{ matrix.gcc }}" 100
-          sudo update-alternatives --install /usr/bin/g++ g++ \
-            "/usr/bin/g++-${{ matrix.gcc }}" 100
+          apt-get update
+          apt-get install -y --no-install-recommends libtbb-dev python3
           g++ --version
+          printf '#include <version>\n' | g++ -x c++ -E -dM - | grep _GLIBCXX_RELEASE || true
 
       - name: Discover and run examples
         run: python3 scripts/discover.py --gcc-version=${{ matrix.gcc }}
@@ -41,7 +52,8 @@ jobs:
     # are enabled here and asserted to abort with their declared exit codes.
     name: sanitize (gcc-15, ubsan + asan + lsan)
     runs-on: ubuntu-latest
-    needs: test
+    container:
+      image: gcc:15
     env:
       ASAN_OPTIONS: halt_on_error=1:abort_on_error=0:detect_leaks=1:strict_string_checks=1
       UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
@@ -50,17 +62,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install gcc-15 + libtbb
+      - name: Install libtbb + python3
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install -y gcc-15 g++-15 libtbb-dev
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-15 100
-          g++ --version
+          apt-get update
+          apt-get install -y --no-install-recommends libtbb-dev python3
 
       - name: Run examples under -fsanitize=undefined,address
         run: python3 scripts/discover.py --gcc-version=15 --sanitize=undefined,address
@@ -70,53 +76,46 @@ jobs:
     # Picks up the 'requires-sanitizer=thread' demo files (data race etc.).
     name: sanitize (gcc-15, tsan)
     runs-on: ubuntu-latest
-    needs: test
+    container:
+      image: gcc:15
     env:
       TSAN_OPTIONS: halt_on_error=1:exitcode=66
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install gcc-15 + libtbb
+      - name: Install libtbb + python3
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install -y gcc-15 g++-15 libtbb-dev
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-15 100
-          g++ --version
+          apt-get update
+          apt-get install -y --no-install-recommends libtbb-dev python3
 
       - name: Run examples under -fsanitize=thread
         run: python3 scripts/discover.py --gcc-version=15 --sanitize=thread
 
   analyze:
-    # Compile-time static analyzer. Distinct from runtime sanitizers: -fanalyzer
-    # walks paths in the IR and emits -Wanalyzer-* warnings. GCC 16 is the first
-    # version where it's actually usable on C++ (NRVO + initial exception support);
-    # the requires-analyzer=true demos under features/gccext/analyzer/ are
-    # compile-only and asserted to build (warnings appear in the per-example
-    # ::group:: log -- expand each to see the diagnostic).
+    # Compile-time static analyzer. Distinct from runtime sanitizers:
+    # -fanalyzer walks paths in the IR and emits -Wanalyzer-* warnings. GCC 16
+    # is the first version where it is meaningfully usable on C++ (NRVO +
+    # initial exception support). Docker Hub does not publish `gcc:16` yet, so
+    # this job installs gcc-16 inside a slim Debian image that carries it.
     name: analyze (gcc-16, -fanalyzer)
     runs-on: ubuntu-latest
-    needs: test
+    container:
+      image: debian:unstable-slim
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install gcc-16
+      - name: Install GCC 16 + python3
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install -y gcc-16 g++-16
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git gcc-16 g++-16 python3
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
+          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
           g++ --version
+          printf '#include <version>\n' | g++ -x c++ -E -dM - | grep _GLIBCXX_RELEASE || true
+
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Run analyzer demos under -fanalyzer
         run: python3 scripts/discover.py --gcc-version=16 --analyzer

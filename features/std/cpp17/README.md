@@ -30,7 +30,7 @@ _Folder: `features/std/cpp17/`. 19 example(s) across 4 topic(s). Auto-generated 
 | [cpp17_filesystem.cpp](cpp17_filesystem.cpp) | c++17 | 13 | <filesystem> standardised path manipulation, directory iteration, and basic file ops. |
 | [cpp17_invoke_apply.cpp](cpp17_invoke_apply.cpp) | c++17 | 13 | std::invoke calls anything callable (function, member, member ptr) uniformly; std::apply unpacks a tuple as args. |
 | [cpp17_optional.cpp](cpp17_optional.cpp) | c++17 | 13 | std::optional<T> represents a value-or-nothing; use has_value(), value_or(), and emplace(). |
-| [cpp17_parallel_algos.cpp](cpp17_parallel_algos.cpp) | c++17 | 13 | <numeric> gained reduce/transform_reduce/inclusive_scan/exclusive_scan; <execution> adds parallel policies. *(experimental)* |
+| [cpp17_parallel_algos.cpp](cpp17_parallel_algos.cpp) | c++17 | 13 | <numeric> gained reduce/transform_reduce/inclusive_scan/exclusive_scan; <execution> adds parallel policies. |
 | [cpp17_string_view.cpp](cpp17_string_view.cpp) | c++17 | 13 | std::string_view is a non-owning, copy-cheap view over a contiguous sequence of chars. |
 | [cpp17_variant.cpp](cpp17_variant.cpp) | c++17 | 13 | std::variant<Ts...> is a type-safe tagged union; std::visit dispatches on the active alternative. |
 

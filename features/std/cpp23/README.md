@@ -33,11 +33,11 @@ _Folder: `features/std/cpp23/`. 37 example(s) across 5 topic(s). Auto-generated 
 | [cpp23_ranges_cartesian_product.cpp](cpp23_ranges_cartesian_product.cpp) | c++23 | 14 | views::cartesian_product yields the Cartesian product of N input ranges as tuples. |
 | [cpp23_ranges_chunk_slide.cpp](cpp23_ranges_chunk_slide.cpp) | c++23 | 14 | views::chunk splits a range into non-overlapping windows of size N; views::slide does overlapping windows. |
 | [cpp23_ranges_enumerate.cpp](cpp23_ranges_enumerate.cpp) | c++23 | 14 | views::enumerate yields (index, value) pairs -- the standard equivalent of Python's enumerate(). |
-| [cpp23_ranges_find_last.cpp](cpp23_ranges_find_last.cpp) | c++23 | 14 | ranges::find_last / find_last_if / find_last_if_not return the LAST matching position; previously you reversed first. *(experimental)* |
-| [cpp23_ranges_fold.cpp](cpp23_ranges_fold.cpp) | c++23 | 14 | ranges::fold_left / fold_right / fold_left_first replace std::accumulate; concept-checked, projection-aware. *(experimental)* |
+| [cpp23_ranges_find_last.cpp](cpp23_ranges_find_last.cpp) | c++23 | 14 | ranges::find_last / find_last_if / find_last_if_not return the LAST matching position; previously you reversed first. |
+| [cpp23_ranges_fold.cpp](cpp23_ranges_fold.cpp) | c++23 | 14 | ranges::fold_left / fold_right / fold_left_first replace std::accumulate; concept-checked, projection-aware. |
 | [cpp23_ranges_iota_algorithm.cpp](cpp23_ranges_iota_algorithm.cpp) | c++23 | 14 | std::ranges::iota (the algorithm, not the view) fills a range with sequentially increasing values; concept-checked. |
 | [cpp23_ranges_join_with.cpp](cpp23_ranges_join_with.cpp) | c++23 | 14 | views::join_with flattens a range-of-ranges with a separator (single element OR a range). |
-| [cpp23_ranges_starts_ends_contains.cpp](cpp23_ranges_starts_ends_contains.cpp) | c++23 | 14 | ranges::starts_with / ends_with / contains / contains_subrange -- algorithm form of the string-shaped predicates. *(experimental)* |
+| [cpp23_ranges_starts_ends_contains.cpp](cpp23_ranges_starts_ends_contains.cpp) | c++23 | 14 | ranges::starts_with / ends_with / contains / contains_subrange -- algorithm form of the string-shaped predicates. |
 | [cpp23_ranges_to.cpp](cpp23_ranges_to.cpp) | c++23 | 14 | std::ranges::to materialises a view (or any range) into a concrete container in one expression. |
 | [cpp23_ranges_zip.cpp](cpp23_ranges_zip.cpp) | c++23 | 14 | std::views::zip turns parallel ranges into a single range of tuples; stops at shortest input. |
 | [cpp23_views_as_const_as_rvalue.cpp](cpp23_views_as_const_as_rvalue.cpp) | c++23 | 14 | views::as_const yields const references; views::as_rvalue yields rvalue references (enables move-iteration). |
@@ -58,7 +58,7 @@ _Folder: `features/std/cpp23/`. 37 example(s) across 5 topic(s). Auto-generated 
 | [cpp23_out_ptr.cpp](cpp23_out_ptr.cpp) | c++23 | 14 | std::out_ptr / std::inout_ptr adapt smart pointers to legacy 'T**' APIs without manual reset() dancing. |
 | [cpp23_print.cpp](cpp23_print.cpp) | c++23 | 14 | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
 | [cpp23_resize_and_overwrite.cpp](cpp23_resize_and_overwrite.cpp) | c++23 | 14 | std::string::resize_and_overwrite gives you an uninitialized buffer of N bytes, then trusts your callback to size it down. |
-| [cpp23_stacktrace.cpp](cpp23_stacktrace.cpp) | c++23 | 14 | std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo. *(experimental)* |
+| [cpp23_stacktrace.cpp](cpp23_stacktrace.cpp) | c++23 | 14 | std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo. |
 | [cpp23_string_contains.cpp](cpp23_string_contains.cpp) | c++23 | 14 | std::string and std::string_view gained .contains() in C++23 (starts_with/ends_with were C++20). |
 | [cpp23_to_underlying.cpp](cpp23_to_underlying.cpp) | c++23 | 14 | std::to_underlying returns the underlying-type value of an enum -- replaces the static_cast boilerplate. |
 | [cpp23_unreachable.cpp](cpp23_unreachable.cpp) | c++23 | 14 | std::unreachable() marks code paths that cannot be reached -- the optimizer assumes UB if they ever are. |
