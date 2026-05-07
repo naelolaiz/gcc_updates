@@ -1,7 +1,10 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=true
+// gcc-test: std=c++23 min-gcc=14 min-libstdcxx=13 topic=ranges experimental=false
 // description: ranges::find_last / find_last_if / find_last_if_not return the LAST matching position; previously you reversed first.
 // reference: https://en.cppreference.com/w/cpp/algorithm/ranges/find_last
+// note: ranges::find_last* live in <algorithm>, not <ranges>. Per cppreference,
+// libstdc++ ships them since release 13.
 
+#include <algorithm>
 #include <cassert>
 #include <ranges>
 #include <vector>

@@ -1,7 +1,8 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=true extra-flags=-lstdc++exp
+// gcc-test: std=c++23 min-gcc=14 min-libstdcxx=14 topic=stl experimental=false extra-flags=-lstdc++exp
 // description: std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo.
 // reference: https://en.cppreference.com/w/cpp/utility/basic_stacktrace
-// note: GCC 14 ships the impl in libstdc++exp; -lstdc++exp is needed at link time.
+// note: per cppreference, std::stacktrace ships in libstdc++exp on libstdc++ 14+;
+// link with -lstdc++exp.
 
 #include <cassert>
 #include <stacktrace>

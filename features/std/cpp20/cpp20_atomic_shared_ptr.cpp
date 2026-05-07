@@ -35,6 +35,14 @@ int main() {
         });
     }
 
+    // Wait until every reader has loaded at least once. Without this the writer
+    // can finish all stores and signal stop before any reader is scheduled
+    // (visible under heavy sanitizer instrumentation), making the
+    // `reader_observations > 0` post-condition flaky.
+    while (reader_observations.load(std::memory_order_relaxed) < kReaders) {
+        std::this_thread::yield();
+    }
+
     for (int g = 1; g <= kWrites; ++g) {
         current.store(std::make_shared<Snapshot>(g, 100 + g),
                       std::memory_order_release);
