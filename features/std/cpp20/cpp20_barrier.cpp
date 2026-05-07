@@ -2,6 +2,7 @@
 // description: std::barrier is reusable across phases and runs an optional completion function between phases.
 // reference: https://en.cppreference.com/w/cpp/thread/barrier
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <barrier>
 #include <cassert>
@@ -9,6 +10,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 barrier");
     constexpr int kWorkers = 4;
     constexpr int kPhases = 3;
 
@@ -38,8 +40,8 @@ int main() {
     workers.clear();
 
     for (int p = 0; p < kPhases; ++p) {
-        assert(work_per_phase[p].load() == kWorkers);
+        DEMO_ASSERT(work_per_phase[p].load() == kWorkers);
     }
-    assert(completion_runs.load() == kPhases);
+    DEMO_ASSERT(completion_runs.load() == kPhases);
     return 0;
 }

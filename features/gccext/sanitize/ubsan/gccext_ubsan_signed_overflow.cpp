@@ -2,11 +2,13 @@
 // description: UBSan demo: signed integer overflow. Runs only under -fsanitize=undefined; -fno-sanitize-recover=undefined makes the handler fatal (exit 1).
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
 
+#include "support/demo.hpp"
 #include <climits>
 
 [[gnu::noinline]] int add_one_unchecked(int x) { return x + 1; }   // UB if x == INT_MAX
 
 int main() {
+    demo::title("GCC extension ubsan signed overflow");
     volatile int x = INT_MAX;       // hide from constant folding
     volatile int y;                 // volatile sink: forbids dead-call elimination
     y = add_one_unchecked(x);       // UBSan: signed-integer-overflow fires here

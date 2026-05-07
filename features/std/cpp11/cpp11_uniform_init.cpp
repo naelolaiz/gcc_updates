@@ -2,6 +2,7 @@
 // description: Brace-init {} works uniformly for aggregates, containers, and built-ins; rejects narrowing conversions.
 // reference: https://en.cppreference.com/w/cpp/language/list_initialization
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <initializer_list>
 #include <map>
@@ -16,20 +17,21 @@ int sum(std::initializer_list<int> il) {
 }
 
 int main() {
+    demo::title("C++11 uniform init");
     int a{42};
     Point p{1, 2};
     std::vector<int> v{1, 2, 3, 4};
     std::map<int, int> m{{1, 10}, {2, 20}};
 
-    assert(a == 42);
-    assert(p.x == 1 && p.y == 2);
-    assert(v.size() == 4);
-    assert(m[1] == 10);
+    DEMO_ASSERT(a == 42);
+    DEMO_ASSERT(p.x == 1 && p.y == 2);
+    DEMO_ASSERT(v.size() == 4);
+    DEMO_ASSERT(m[1] == 10);
 
     // Narrowing is rejected at compile time.
     // int narrow{3.14};   // would not compile
 
     // initializer_list lets functions take {a, b, c, ...} directly.
-    assert(sum({1, 2, 3, 4, 5}) == 15);
+    DEMO_ASSERT(sum({1, 2, 3, 4, 5}) == 15);
     return 0;
 }

@@ -2,6 +2,7 @@
 // description: std::atomic_ref overlays atomic semantics on a non-atomic object you don't own.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic_ref
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <numeric>
@@ -9,6 +10,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 atomic ref");
     // A plain int that we want to update atomically from many threads,
     // without changing its declared type (e.g. it might come from a third-party
     // struct, or from a contiguous numeric buffer used elsewhere).
@@ -29,6 +31,6 @@ int main() {
     }
     ts.clear();
 
-    assert(counter == kThreads * kIters);
+    DEMO_ASSERT(counter == kThreads * kIters);
     return 0;
 }

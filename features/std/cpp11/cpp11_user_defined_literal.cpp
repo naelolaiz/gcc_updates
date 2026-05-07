@@ -2,6 +2,7 @@
 // description: User-defined literals: 'value_suffix' calls operator"" _suffix(value). User suffixes must start with an underscore.
 // reference: https://en.cppreference.com/w/cpp/language/user_literal
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <cstddef>
 
@@ -19,6 +20,7 @@ constexpr unsigned long long operator"" _bin(const char* s, std::size_t n) {
 }
 
 int main() {
+    demo::title("C++11 user defined literal");
     static_assert(2.0_km == 2000.0L, "");
     static_assert(static_cast<long long>(1.0_mi) == 1609, "");
 
@@ -26,6 +28,6 @@ int main() {
     static_assert("11111111"_bin == 255, "");
 
     long double total_meters = 1.0_km + 1.0_mi;
-    assert(total_meters > 2600.0L && total_meters < 2620.0L);
+    DEMO_ASSERT(total_meters > 2600.0L && total_meters < 2620.0L);
     return 0;
 }

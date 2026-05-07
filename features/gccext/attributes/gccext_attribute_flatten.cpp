@@ -2,6 +2,7 @@
 // description: [[gnu::flatten]] inlines every direct call inside the marked function -- careful: bloats code.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 
+#include "support/demo.hpp"
 #include <cassert>
 
 inline int mul_by_3(int x) { return x * 3; }
@@ -14,7 +15,8 @@ int fused(int x) {
 }
 
 int main() {
-    assert(fused(2) == 6 + 10);
-    assert(fused(10) == 30 + 50);
+    demo::title("GCC extension attribute flatten");
+    DEMO_ASSERT(fused(2) == 6 + 10);
+    DEMO_ASSERT(fused(10) == 30 + 50);
     return 0;
 }

@@ -3,6 +3,7 @@
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 // note: experimental: only some target/CPU combinations are supported; binary still runs because of the 'default' fallback.
 
+#include "support/demo.hpp"
 #include <cassert>
 
 [[gnu::target_clones("default", "avx2")]]
@@ -13,8 +14,9 @@ int sum(const int* p, int n) {
 }
 
 int main() {
+    demo::title("GCC extension target clones");
     int v[16];
     for (int i = 0; i < 16; ++i) v[i] = i + 1;     // 1..16
-    assert(sum(v, 16) == 136);                      // 16*17/2
+    DEMO_ASSERT(sum(v, 16) == 136);                      // 16*17/2
     return 0;
 }

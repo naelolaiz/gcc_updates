@@ -2,6 +2,7 @@
 // description: 'if constexpr' discards the unselected branch at compile time, enabling clean template specialization.
 // reference: https://en.cppreference.com/w/cpp/language/if#Constexpr_If
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 #include <type_traits>
@@ -20,6 +21,7 @@ auto describe(T x) {
 }
 
 int main() {
+    demo::title("C++17 if constexpr");
     auto a = describe(10);            // integral path -> 20
     auto b = describe(2.0);           // floating path -> 2.5
     auto c = describe(std::string("hi"));  // string path -> "hi!"
@@ -28,8 +30,8 @@ int main() {
     static_assert(std::is_same_v<decltype(b), double>);
     static_assert(std::is_same_v<decltype(c), std::string>);
 
-    assert(a == 20);
-    assert(b == 2.5);
-    assert(c == "hi!");
+    DEMO_ASSERT(a == 20);
+    DEMO_ASSERT(b == 2.5);
+    DEMO_ASSERT(c == "hi!");
     return 0;
 }

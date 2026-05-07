@@ -2,6 +2,7 @@
 // description: Explicit object parameter ('deducing this') replaces ref-qual overload sets and enables CRTP-without-CRTP.
 // reference: https://en.cppreference.com/w/cpp/language/member_functions#Explicit_object_parameter
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 #include <type_traits>
@@ -32,15 +33,16 @@ struct Counter : Doublable {
 };
 
 int main() {
+    demo::title("C++23 deducing this");
     Box b{"hi"};
     auto& got_lvalue = b.payload();
     static_assert(std::is_same_v<decltype(got_lvalue), std::string&>);
-    assert(got_lvalue == "hi");
+    DEMO_ASSERT(got_lvalue == "hi");
 
     auto moved = Box{"yo"}.payload();   // Self = Box, returns rvalue ref
-    assert(moved == "yo");
+    DEMO_ASSERT(moved == "yo");
 
     Counter c{.n = 21};
-    assert(c.twice() == 42);
+    DEMO_ASSERT(c.twice() == 42);
     return 0;
 }

@@ -24,8 +24,9 @@ produced the result.
 Every example gets this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread $EXTRA_FLAGS \
+g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures \
     features/<bucket>/<file>.cpp \
+    $EXTRA_FLAGS \
     -o /tmp/gcc_updates_build/<file>
 ```
 
@@ -41,6 +42,7 @@ Where:
 | `-Wall -Wextra -Wpedantic` | hard-coded default | Strict warnings — examples must compile clean.                                  |
 | `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes.           |
 | `-pthread`   | hard-coded default              | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
+| `-Ifeatures` | hard-coded default              | Lets examples include the shared readable-demo helper as `support/demo.hpp`.    |
 | `$EXTRA_FLAGS` | `// gcc-test: extra-flags=A,B` | Comma-separated, file-specific flags (e.g. linker libs). Empty for most files.  |
 
 The output binary lives in `/tmp/gcc_updates_build/`, runs once, and the
@@ -84,9 +86,9 @@ Every example starts with a line shaped like:
 The libstdc++ release is detected once at startup by asking g++ to preprocess a
 tiny translation unit that includes `<version>` and reports the `_GLIBCXX_RELEASE`
 macro (no compile, no run).
-The detected value is printed on the first line of every run:
-`using g++ major version 15, libstdc++ release 15`. If the macro is
-unavailable (very old toolchain), `min-libstdcxx=` gates are not enforced.
+The detected value is printed in the run configuration block at the start of
+every run. If the macro is unavailable (very old toolchain),
+`min-libstdcxx=` gates are not enforced.
 
 ## Reproducing a build by hand
 
@@ -99,8 +101,8 @@ podman run --rm -it -v "$(pwd):/work:rw,Z" -w /work \
     localhost/gcc-updates:gcc15 bash
 
 # Inside the container, run the example's command (copy from --show-cmds output)
-g++ -std=c++23 -Wall -Wextra -Wpedantic -O2 -pthread -lstdc++exp \
-    features/std/cpp23/cpp23_stacktrace.cpp -o /tmp/stacktrace
+g++ -std=c++23 -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures \
+    features/std/cpp23/cpp23_stacktrace.cpp -lstdc++exp -o /tmp/stacktrace
 /tmp/stacktrace
 ```
 
@@ -111,9 +113,9 @@ the host shell is off-limits for compilation.
 
 1. If a new example needs a flag, add it as `extra-flags=…` in *that file's*
    metadata header.
-2. If it's needed for *every* example (rare — `-pthread` is the only such),
-   add it to `DEFAULT_FLAGS` in [scripts/discover.py](../scripts/discover.py)
-   AND list it in the "Default command" table above.
+2. If it's needed for *every* example, add it to `DEFAULT_FLAGS` in
+   [scripts/discover.py](../scripts/discover.py) AND list it in the
+   "Default command" table above.
 3. If it requires a new package in the build environment, install it in BOTH
    [containers/gcc.Containerfile](../containers/gcc.Containerfile) and
    [.github/workflows/ci.yml](../.github/workflows/ci.yml). They must stay in

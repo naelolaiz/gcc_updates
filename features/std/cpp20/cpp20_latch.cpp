@@ -2,6 +2,7 @@
 // description: std::latch is a one-shot countdown synchroniser; threads wait until it hits zero.
 // reference: https://en.cppreference.com/w/cpp/thread/latch
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <latch>
@@ -9,6 +10,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 latch");
     constexpr int kWorkers = 8;
     std::latch start_gate(1);            // released by main once all workers spun up
     std::latch finish_gate(kWorkers);    // workers count down as they finish
@@ -29,6 +31,6 @@ int main() {
     start_gate.count_down();   // == count_down(1)
 
     finish_gate.wait();
-    assert(work_done.load() == kWorkers);
+    DEMO_ASSERT(work_done.load() == kWorkers);
     return 0;
 }

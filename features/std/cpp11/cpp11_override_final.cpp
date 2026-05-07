@@ -2,6 +2,7 @@
 // description: 'override' makes the compiler verify that a method really overrides a virtual; 'final' forbids further overriding or inheritance.
 // reference: https://en.cppreference.com/w/cpp/language/override
 
+#include "support/demo.hpp"
 #include <cassert>
 
 struct Base {
@@ -20,11 +21,12 @@ struct Leaf final : Mid {
 // struct CannotInherit : Leaf {};   // would not compile -- Leaf is final
 
 int main() {
+    demo::title("C++11 override final");
     Mid m;
     Leaf l;
     Base* p = &m;
-    assert(p->answer() == 42);
+    DEMO_ASSERT(p->answer() == 42);
     p = &l;
-    assert(p->answer() == 99);
+    DEMO_ASSERT(p->answer() == 99);
     return 0;
 }

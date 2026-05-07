@@ -2,6 +2,7 @@
 // description: std::mutex + RAII locks (lock_guard, unique_lock); std::lock locks N mutexes deadlock-free.
 // reference: https://en.cppreference.com/w/cpp/thread/mutex
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <mutex>
 #include <thread>
@@ -23,19 +24,20 @@ private:
 };
 
 int main() {
+    demo::title("C++11 mutex lock");
     Counter c;
 
     std::vector<std::thread> ts;
     for (int i = 0; i < 4; ++i)
         ts.emplace_back([&c] { for (int j = 0; j < 1000; ++j) c.bump(); });
     for (auto& t : ts) t.join();
-    assert(c.snapshot() == 4000);
+    DEMO_ASSERT(c.snapshot() == 4000);
 
     // unique_lock: like lock_guard but supports deferred locking and unlocking.
     std::mutex m;
     std::unique_lock<std::mutex> lk(m, std::defer_lock);
     lk.lock();
-    assert(lk.owns_lock());
+    DEMO_ASSERT(lk.owns_lock());
     lk.unlock();
 
     // std::lock acquires multiple mutexes without risking deadlock.

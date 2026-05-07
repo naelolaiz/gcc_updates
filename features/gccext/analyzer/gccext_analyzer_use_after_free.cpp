@@ -5,11 +5,13 @@
 // This file is compiled-only under the analyzer job; the binary is never run.
 // Expect a -Wanalyzer-use-after-free diagnostic in the build log.
 
+#include "support/demo.hpp"
 #include <new>
 
 [[gnu::noinline]] int read_value(int* p) { return *p; }
 
 int main() {
+    demo::title("GCC extension analyzer use after free");
     int* p = new int(42);
     delete p;
     return read_value(p);   // analyzer: dereferences memory deleted on the line above

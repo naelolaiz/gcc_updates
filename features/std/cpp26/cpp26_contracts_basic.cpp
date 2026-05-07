@@ -2,6 +2,7 @@
 // description: C++26 contracts: pre/post/contract_assert. Implementation status varies; this file is allowed to fail on partial support.
 // reference: https://en.cppreference.com/w/cpp/language/contracts
 
+#include "support/demo.hpp"
 #include <cassert>
 
 // The exact contracts syntax has shifted across drafts. The form below targets
@@ -15,7 +16,8 @@ int divide(int a, int b)
 }
 
 int main() {
-    assert(divide(10, 2) == 5);
-    assert(divide(7, 3) == 2);
+    demo::title("C++26 contracts basic");
+    DEMO_ASSERT(divide(10, 2) == 5);
+    DEMO_ASSERT(divide(7, 3) == 2);
     return 0;
 }

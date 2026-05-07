@@ -2,6 +2,7 @@
 // description: C++20 added template parameter lists on lambdas, default-construction, and capture of *this by value.
 // reference: https://en.cppreference.com/w/cpp/language/lambda
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <type_traits>
 #include <vector>
@@ -18,25 +19,26 @@ struct Counter {
 };
 
 int main() {
+    demo::title("C++20 lambdas");
     // Templated lambda: pin the type of args without auto-deduction quirks.
     auto first_of = []<typename T>(const std::vector<T>& v) -> T {
         return v.front();
     };
-    assert(first_of(std::vector<int>{4, 5, 6}) == 4);
-    assert(first_of(std::vector<double>{1.5, 2.5}) == 1.5);
+    DEMO_ASSERT(first_of(std::vector<int>{4, 5, 6}) == 4);
+    DEMO_ASSERT(first_of(std::vector<double>{1.5, 2.5}) == 1.5);
 
     // Stateless lambdas are now default-constructible and assignable.
     auto add = [](int a, int b) { return a + b; };
     decltype(add) add2;          // default ctor - C++20 feature
     add2 = add;                  // copy assign - also C++20
-    assert(add2(3, 4) == 7);
+    DEMO_ASSERT(add2(3, 4) == 7);
 
     // *this capture survives the parent.
     Counter c{.n = 10};
     auto fn = c.bump_by_value_self();
     c.n = 9999;                  // doesn't affect the captured copy
-    assert(fn(5) == 15);
-    assert(fn(2) == 17);
+    DEMO_ASSERT(fn(5) == 15);
+    DEMO_ASSERT(fn(2) == 17);
 
     return 0;
 }

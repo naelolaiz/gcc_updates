@@ -3,6 +3,7 @@
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 // note: experimental because the runner CPU must support AVX2; if it doesn't, the program SIGILLs.
 
+#include "support/demo.hpp"
 #include <cassert>
 
 [[gnu::target("avx2")]]
@@ -19,10 +20,11 @@ int dot_default(const int* a, const int* b, int n) {
 }
 
 int main() {
+    demo::title("GCC extension attribute target");
     int a[8]{1, 2, 3, 4, 5, 6, 7, 8};
     int b[8]{8, 7, 6, 5, 4, 3, 2, 1};
     int expected = 1*8 + 2*7 + 3*6 + 4*5 + 5*4 + 6*3 + 7*2 + 8*1;
-    assert(dot_default(a, b, 8) == expected);
-    assert(dot_avx(a, b, 8) == expected);
+    DEMO_ASSERT(dot_default(a, b, 8) == expected);
+    DEMO_ASSERT(dot_avx(a, b, 8) == expected);
     return 0;
 }

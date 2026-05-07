@@ -5,9 +5,11 @@
 // Compiled under -fanalyzer only; binary is never executed.
 // Expect a -Wanalyzer-double-free diagnostic on the argc>1 branch.
 
+#include "support/demo.hpp"
 #include <new>
 
 int main(int argc, char**) {
+    demo::title("GCC extension analyzer double free");
     int* p = new int(0);
     delete p;
     if (argc > 1) {

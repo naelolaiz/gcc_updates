@@ -3,6 +3,7 @@
 // since: GCC 10 (jthread); fully usable across GCC 14/15/16.
 // reference: https://en.cppreference.com/w/cpp/thread/jthread
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <chrono>
@@ -10,6 +11,7 @@
 #include <thread>
 
 int main() {
+    demo::title("C++20 jthread");
     std::atomic<int> ticks{0};
 
     {
@@ -26,6 +28,6 @@ int main() {
         // .join() needed -- destructor calls request_stop() then join().
     }
 
-    assert(ticks.load() > 0);
+    DEMO_ASSERT(ticks.load() > 0);
     return 0;
 }

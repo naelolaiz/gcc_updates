@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <cstddef>
 #include <iostream>
 #include <string>
@@ -8,20 +9,26 @@
 namespace demo {
 
 inline void title(const std::string& text) {
-    std::cout << "demo: " << text << '\n';
+    std::cout << "demo: " << text << std::endl;
 }
 
 template <typename T>
 void value(const std::string& label, const T& value) {
-    std::cout << "  " << label << ": " << value << '\n';
+    std::cout << "  " << label << ": " << value << std::endl;
 }
 
 inline void value(const std::string& label, bool value) {
-    std::cout << "  " << label << ": " << (value ? "true" : "false") << '\n';
+    std::cout << "  " << label << ": "
+              << (value ? "true" : "false") << std::endl;
 }
 
 inline void text(const std::string& label, const std::string& value) {
-    std::cout << "  " << label << ": " << value << '\n';
+    std::cout << "  " << label << ": " << value << std::endl;
+}
+
+inline void check(const std::string& expression, bool ok) {
+    std::cout << "  check: " << expression << " => "
+              << (ok ? "PASS" : "FAIL") << std::endl;
 }
 
 template <typename A, typename B>
@@ -45,7 +52,7 @@ void range(const std::string& label, It first, It last) {
         print_item(*first);
         need_comma = true;
     }
-    std::cout << "]\n";
+    std::cout << "]" << std::endl;
 }
 
 template <typename Range>
@@ -54,3 +61,10 @@ void range(const std::string& label, const Range& values) {
 }
 
 }  // namespace demo
+
+#define DEMO_ASSERT(expr) \
+    do { \
+        const bool demo_assert_ok = static_cast<bool>(expr); \
+        ::demo::check(#expr, demo_assert_ok); \
+        assert(demo_assert_ok); \
+    } while (false)

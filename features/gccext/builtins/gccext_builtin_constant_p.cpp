@@ -2,6 +2,7 @@
 // description: __builtin_constant_p(x) is true at compile time iff x is a constant expression. Used to pick a faster path for known inputs.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
 
+#include "support/demo.hpp"
 #include <cassert>
 
 constexpr int slow_path(int x) { return x * x + 1; }
@@ -15,12 +16,13 @@ inline int specialised(int x) {
 }
 
 int main() {
+    demo::title("GCC extension builtin constant p");
     // Constant input -> compile-time evaluation.
     static_assert(__builtin_constant_p(5), "");
-    assert(specialised(5) == 26);
+    DEMO_ASSERT(specialised(5) == 26);
 
     // Runtime input -> runtime path.
     int v = 6;
-    assert(specialised(v) == 37);
+    DEMO_ASSERT(specialised(v) == 37);
     return 0;
 }

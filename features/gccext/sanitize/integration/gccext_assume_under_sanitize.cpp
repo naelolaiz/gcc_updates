@@ -2,6 +2,7 @@
 // description: [[assume(expr)]] is a hint to the optimizer; under -fsanitize=undefined GCC additionally checks the assumption at runtime.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/assume
 
+#include "support/demo.hpp"
 #include <cassert>
 
 int divide_known_safe(int a, int b) {
@@ -12,7 +13,8 @@ int divide_known_safe(int a, int b) {
 }
 
 int main() {
-    assert(divide_known_safe(10, 2) == 5);
-    assert(divide_known_safe(7, 3) == 2);
+    demo::title("GCC extension assume under sanitize");
+    DEMO_ASSERT(divide_known_safe(10, 2) == 5);
+    DEMO_ASSERT(divide_known_safe(7, 3) == 2);
     return 0;
 }

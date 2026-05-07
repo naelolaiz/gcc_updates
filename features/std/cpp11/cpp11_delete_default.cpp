@@ -2,6 +2,7 @@
 // description: '= delete' removes a special member function; '= default' asks the compiler to write the default version.
 // reference: https://en.cppreference.com/w/cpp/language/function
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <utility>
 
@@ -23,10 +24,11 @@ struct UniqueResource {
 };
 
 int main() {
+    demo::title("C++11 delete default");
     UniqueResource a(42);
     UniqueResource b = std::move(a);
-    assert(b.p && *b.p == 42);
-    assert(a.p == nullptr);
+    DEMO_ASSERT(b.p && *b.p == 42);
+    DEMO_ASSERT(a.p == nullptr);
 
     // UniqueResource c(b);   // would not compile -- copy is deleted
     return 0;

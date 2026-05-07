@@ -2,12 +2,14 @@
 // description: 'auto' deduces a variable's type from its initializer; 'decltype' deduces the type of an expression without evaluating it.
 // reference: https://en.cppreference.com/w/cpp/language/auto
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <map>
 #include <type_traits>
 #include <vector>
 
 int main() {
+    demo::title("C++11 auto");
     auto i = 42;          // int
     auto d = 3.14;        // double
     auto s = "hi";        // const char*
@@ -28,7 +30,7 @@ int main() {
     std::map<int, int> m{{1, 10}, {2, 20}};
     int sum = 0;
     for (auto p = m.begin(); p != m.end(); ++p) sum += p->second;
-    assert(sum == 30);
+    DEMO_ASSERT(sum == 30);
 
     (void)it;
     return 0;

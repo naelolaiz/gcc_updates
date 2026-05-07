@@ -3,6 +3,7 @@
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
 // note: TSan default exit code on race-on-error is 66 (set via TSAN_OPTIONS=halt_on_error=1). TSan is INCOMPATIBLE with ASan -- run in a separate sanitizer profile.
 
+#include "support/demo.hpp"
 #include <thread>
 
 int shared = 0;
@@ -12,6 +13,7 @@ int shared = 0;
 }
 
 int main() {
+    demo::title("GCC extension tsan data race");
     std::thread a(hammer);
     std::thread b(hammer);
     a.join();

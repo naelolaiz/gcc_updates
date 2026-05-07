@@ -4,6 +4,7 @@
 // note: per cppreference, std::stacktrace ships in libstdc++exp on libstdc++ 14+;
 // link with -lstdc++exp.
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <stacktrace>
 #include <string>
@@ -17,12 +18,13 @@
 }
 
 int main() {
+    demo::title("C++23 stacktrace");
     auto trace = outer();
-    assert(trace.size() >= 1);
+    DEMO_ASSERT(trace.size() >= 1);
 
     std::string text = std::to_string(trace);
     // We don't assert specific symbols (debuginfo dependent), only that the
     // trace produced *some* non-empty textual representation.
-    assert(!text.empty());
+    DEMO_ASSERT(!text.empty());
     return 0;
 }
