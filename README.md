@@ -45,7 +45,6 @@ features/                          # all examples (single .cpp each)
     gcc16/gcc16_*.cpp
 scripts/
   discover.py                 # build & run engine
-  run-tests.sh                # thin wrapper
   podman-dev.sh               # local entrypoint (uses podman)
 containers/
   gcc.Containerfile           # FROM gcc:${GCC_VERSION} + libtbb-dev + python3
