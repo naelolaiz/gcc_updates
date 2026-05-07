@@ -61,9 +61,131 @@ ANSI_YELLOW = "\033[33m"
 ANSI_DIM = "\033[2m"
 ANSI_RESET = "\033[0m"
 
-def print_captured_output(text: str) -> None:
+
+@dataclasses.dataclass
+class StepResult:
+    ok: bool
+    command: list[str]
+    elapsed: float
+    value: str = ""
+    reason: str = ""
+    stdout: str = ""
+    stderr: str = ""
+    returncode: int | None = None
+
+    def match_text(self) -> str:
+        return "\n".join(
+            part for part in (self.stderr, self.stdout, self.reason) if part
+        )
+
+
+@dataclasses.dataclass
+class FolderStats:
+    passed: int = 0
+    failed: int = 0
+    soft_failed: int = 0
+    skipped: int = 0
+    elapsed: float = 0.0
+
+    @property
+    def total(self) -> int:
+        return self.passed + self.failed + self.soft_failed
+
+    def add(self, outcome: str, elapsed: float) -> None:
+        if outcome == "pass":
+            self.passed += 1
+        elif outcome == "fail":
+            self.failed += 1
+        elif outcome == "soft-fail":
+            self.soft_failed += 1
+        else:
+            raise ValueError(f"unknown outcome {outcome!r}")
+        self.elapsed += elapsed
+
+    def summary(self) -> str:
+        return (
+            f"{self.passed} pass, {self.failed} fail, "
+            f"{self.soft_failed} experimental-fail, {self.skipped} skip "
+            f"({self.elapsed:.1f}s)"
+        )
+
+
+def format_command_lines(argv: list[str]) -> list[str]:
+    if not argv:
+        return []
+    quoted = [shlex.quote(arg) for arg in argv]
+    if len(quoted) == 1:
+        return [quoted[0]]
+    return (
+        [f"{quoted[0]} \\"]
+        + [f"  {arg} \\" for arg in quoted[1:-1]]
+        + [f"  {quoted[-1]}"]
+    )
+
+
+def print_text_block(title: str, text: str, indent: str = "  ",
+                     pipe: bool = False) -> None:
+    if not text:
+        return
+    print(f"{indent}{title}:")
+    prefix = "| " if pipe else ""
     for line in text.rstrip().splitlines():
-        print(f"    | {line}")
+        print(f"{indent}  {prefix}{line}")
+
+
+def print_captured_output(title: str, text: str) -> None:
+    print_text_block(title, text, pipe=True)
+
+
+def print_command_block(title: str, argv: list[str], indent: str = "  ") -> None:
+    """Print argv as a compact shell-style block for CI logs."""
+    lines = format_command_lines(argv)
+    if not lines:
+        return
+    print(f"{indent}{title} command:")
+    for i, line in enumerate(lines):
+        prompt = "$ " if i == 0 else "  "
+        print(f"{indent}  {prompt}{line}")
+
+
+def format_timings(compile_elapsed: float,
+                   run_elapsed: float | None = None) -> str:
+    parts = [f"compile {compile_elapsed:.2f}s"]
+    if run_elapsed is not None:
+        parts.append(f"run {run_elapsed:.2f}s")
+    return f"({', '.join(parts)})"
+
+
+def format_failure_entry(label: str, phase: str, step: StepResult,
+                         note: str | None = None) -> str:
+    lines = [
+        f"example: {label}",
+        f"phase: {phase}",
+        f"reason: {note or step.reason or 'command failed'}",
+    ]
+    if step.command:
+        lines.append("command:")
+        for i, line in enumerate(format_command_lines(step.command)):
+            prompt = "$ " if i == 0 else "  "
+            lines.append(f"  {prompt}{line}")
+    if step.stdout:
+        lines.append("stdout:")
+        lines.extend(f"  {line}" for line in step.stdout.rstrip().splitlines())
+    if step.stderr:
+        lines.append("stderr:")
+        lines.extend(f"  {line}" for line in step.stderr.rstrip().splitlines())
+    return "\n".join(lines)
+
+
+def print_failure_block(label: str, phase: str, step: StepResult,
+                        note: str | None = None) -> None:
+    print("  failure:")
+    print(f"    example: {label}")
+    print(f"    phase: {phase}")
+    print(f"    reason: {note or step.reason or 'command failed'}")
+    print_command_block("command", step.command, indent="    ")
+    print_text_block("stdout", step.stdout, indent="    ", pipe=True)
+    print_text_block("stderr", step.stderr, indent="    ", pipe=True)
 
 
 def close_active_group() -> None:
@@ -267,13 +389,14 @@ def build_cmd_for(ex: Example, sanitize: str | None = None,
                   analyzer: bool = False) -> list[str]:
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
     out_bin = BUILD_DIR / ex.stem
+    source = ex.path.relative_to(REPO_ROOT)
     return [
         "g++",
         f"-std={ex.std}",
         *DEFAULT_FLAGS,
         *(["-fanalyzer"] if analyzer else []),
         *sanitizer_flags(sanitize),
-        str(ex.path),
+        str(source),
         *ex.extra_flags,
         "-o",
         str(out_bin),
@@ -282,55 +405,102 @@ def build_cmd_for(ex: Example, sanitize: str | None = None,
 
 def compile_one(ex: Example, gcc_version: int, verbose: bool = False,
                 sanitize: str | None = None,
-                analyzer: bool = False) -> tuple[bool, str]:
+                analyzer: bool = False) -> StepResult:
     cmd = build_cmd_for(ex, sanitize=sanitize, analyzer=analyzer)
     out_bin = cmd[-1]
     if verbose:
-        print(f"  $ {' '.join(cmd)}")
+        print_command_block("compile", cmd)
+    t0 = time.time()
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              cwd=REPO_ROOT)
     except OSError as e:
-        return False, f"compile command failed to start:\n{e}"
+        return StepResult(
+            ok=False,
+            command=cmd,
+            elapsed=time.time() - t0,
+            reason=f"compile command failed to start: {e}",
+        )
+    elapsed = time.time() - t0
     # In verbose mode, surface compiler diagnostics (warnings, notes) even on
     # success -- otherwise -Wall/-Wextra output is silently discarded.
-    if verbose and proc.stderr:
-        print_captured_output(proc.stderr)
-    if proc.returncode != 0:
-        return False, f"compile failed:\n{proc.stderr}"
-    return True, out_bin
-
-
-def run_one(ex: Example, binary: str, verbose: bool = False) -> tuple[bool, str]:
     if verbose:
-        run_cmd = " ".join(shlex.quote(p) for p in [binary, *ex.run_args])
-        print(f"  $ {run_cmd}")
+        print_captured_output("stdout", proc.stdout)
+        print_captured_output("stderr", proc.stderr)
+    if proc.returncode != 0:
+        return StepResult(
+            ok=False,
+            command=cmd,
+            elapsed=elapsed,
+            reason=f"compile exited {proc.returncode}",
+            stdout=proc.stdout,
+            stderr=proc.stderr,
+            returncode=proc.returncode,
+        )
+    return StepResult(
+        ok=True,
+        command=cmd,
+        elapsed=elapsed,
+        value=out_bin,
+        stdout=proc.stdout,
+        stderr=proc.stderr,
+        returncode=proc.returncode,
+    )
+
+
+def run_one(ex: Example, binary: str, verbose: bool = False) -> StepResult:
+    cmd = [binary, *ex.run_args]
+    if verbose and ex.run_args:
+        print_command_block("run", cmd)
+    t0 = time.time()
     try:
         proc = subprocess.run(
-            [binary, *ex.run_args],
+            cmd,
             capture_output=True,
             text=True,
             timeout=30,
+            cwd=REPO_ROOT,
         )
     except subprocess.TimeoutExpired as e:
         stdout = e.stdout or ""
         stderr = e.stderr or ""
-        return (
-            False,
-            f"timeout after 30s expected exit={ex.expect_exit}\n"
-            f"stdout:\n{stdout}\nstderr:\n{stderr}",
+        return StepResult(
+            ok=False,
+            command=cmd,
+            elapsed=time.time() - t0,
+            reason=f"timeout after 30s expected exit={ex.expect_exit}",
+            stdout=stdout,
+            stderr=stderr,
         )
     except OSError as e:
-        return False, f"run command failed to start:\n{e}"
-    if verbose and (proc.stdout or proc.stderr):
-        print_captured_output(proc.stdout)
-        print_captured_output(proc.stderr)
-    if proc.returncode != ex.expect_exit:
-        return (
-            False,
-            f"exit={proc.returncode} expected={ex.expect_exit}\n"
-            f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}",
+        return StepResult(
+            ok=False,
+            command=cmd,
+            elapsed=time.time() - t0,
+            reason=f"run command failed to start: {e}",
         )
-    return True, ""
+    elapsed = time.time() - t0
+    if verbose:
+        print_captured_output("stdout", proc.stdout)
+        print_captured_output("stderr", proc.stderr)
+    if proc.returncode != ex.expect_exit:
+        return StepResult(
+            ok=False,
+            command=cmd,
+            elapsed=elapsed,
+            reason=f"exit={proc.returncode} expected={ex.expect_exit}",
+            stdout=proc.stdout,
+            stderr=proc.stderr,
+            returncode=proc.returncode,
+        )
+    return StepResult(
+        ok=True,
+        command=cmd,
+        elapsed=elapsed,
+        stdout=proc.stdout,
+        stderr=proc.stderr,
+        returncode=proc.returncode,
+    )
 
 
 def filter_examples(
@@ -496,6 +666,31 @@ def report(eligible: list[Example],
         print(f"  filtered: {silent}")
 
 
+def print_run_config(gcc_version: int,
+                     libstdcxx_release: int | None,
+                     sanitize: str | None,
+                     analyzer: bool,
+                     total: int,
+                     eligible: int,
+                     skipped: int) -> None:
+    mode = "default"
+    if sanitize:
+        mode = f"sanitize={sanitize}"
+    if analyzer:
+        mode = "analyzer" if mode == "default" else f"{mode}, analyzer"
+    filtered = total - eligible - skipped
+    print("run:")
+    print(f"  g++ major        {gcc_version}")
+    libstdcxx = libstdcxx_release if libstdcxx_release is not None else "unknown"
+    print(f"  libstdc++        {libstdcxx}")
+    print(f"  mode             {mode}")
+    print(f"  discovered       {total}")
+    print(f"  eligible         {eligible}")
+    print(f"  skipped          {skipped}")
+    if filtered:
+        print(f"  filtered         {filtered}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--gcc-version", type=int, default=None,
@@ -509,7 +704,7 @@ def main() -> int:
     ap.add_argument("--show-cmds", action="store_true",
                     help="Print the exact g++ build command for each example, then exit")
     ap.add_argument("--verbose", action="store_true",
-                    help="Print the full g++ command before each compile")
+                    help="Print command blocks and captured output")
     ap.add_argument("--sanitize", default=None,
                     help="Comma-separated sanitizer list, e.g. 'undefined,address'. "
                          "Adds -fsanitize=… -fno-omit-frame-pointer -g to every build.")
@@ -541,7 +736,7 @@ def main() -> int:
         for ex in examples:
             cmd = build_cmd_for(ex, sanitize=args.sanitize, analyzer=args.analyzer)
             print(f"{ex.path.name}:")
-            print(f"  {' '.join(cmd)}")
+            print_command_block("compile", cmd)
         return 0
 
     if shutil.which("g++") is None:
@@ -550,19 +745,12 @@ def main() -> int:
 
     gcc_version = args.gcc_version or detect_gcc_version()
     libstdcxx_release = detect_libstdcxx_release()
-    san_note = f" with sanitizers={args.sanitize}" if args.sanitize else ""
-    ana_note = " with -fanalyzer (compile-only)" if args.analyzer else ""
-    libstdcxx_note = (f", libstdc++ release {libstdcxx_release}"
-                      if libstdcxx_release is not None
-                      else ", libstdc++ release unknown")
-    print(f"using g++ major version {gcc_version}{libstdcxx_note}"
-          f"{san_note}{ana_note}")
-
     san_list = [s for s in (args.sanitize or "").split(",") if s]
     eligible, skipped = filter_examples(examples, gcc_version, args.filter,
                                          san_list, analyzer_active=args.analyzer,
                                          libstdcxx_release=libstdcxx_release)
-    report(eligible, skipped, len(examples))
+    print_run_config(gcc_version, libstdcxx_release, args.sanitize,
+                     args.analyzer, len(examples), len(eligible), len(skipped))
 
     if BUILD_DIR.exists():
         shutil.rmtree(BUILD_DIR)
@@ -572,6 +760,7 @@ def main() -> int:
     soft_fail_count = 0
     fail_lines: list[str] = []
     skip_lines: list[str] = []   # buffered; emitted at the end inside ::group::
+    folder_stats: dict[str, FolderStats] = {}
     t0 = time.time()
 
     in_gh = os.environ.get("GITHUB_ACTIONS") == "true"
@@ -592,16 +781,28 @@ def main() -> int:
         if in_gh:
             print("::endgroup::", flush=True)
 
+    def folder_for(ex: Example) -> str:
+        return str(ex.path.parent.relative_to(REPO_ROOT))
+
+    for ex, _reason in skipped:
+        folder_stats.setdefault(folder_for(ex), FolderStats()).skipped += 1
+
     current_group: str | None = None
+
+    def print_folder_summary(title: str) -> None:
+        stats = folder_stats.get(title)
+        if stats and (stats.total or stats.skipped):
+            print(f"folder summary: {stats.summary()}")
 
     def switch_example_group(ex: Example) -> None:
         nonlocal current_group
         if not in_gh:
             return
-        title = str(ex.path.parent.relative_to(REPO_ROOT))
+        title = folder_for(ex)
         if title == current_group:
             return
         if current_group is not None:
+            print_folder_summary(current_group)
             grp_end()
         grp_start(title)
         current_group = title
@@ -609,6 +810,7 @@ def main() -> int:
     def close_example_group() -> None:
         nonlocal current_group
         if in_gh and current_group is not None:
+            print_folder_summary(current_group)
             grp_end()
             current_group = None
 
@@ -637,31 +839,42 @@ def main() -> int:
 
     for ex in eligible:
         label = f"[{ex.std}] {ex.path.name}"
+        folder = folder_for(ex)
+        stats = folder_stats.setdefault(folder, FolderStats())
         switch_example_group(ex)
-        ok, info = compile_one(ex, gcc_version, verbose=verbose,
-                                sanitize=args.sanitize,
-                                analyzer=args.analyzer)
-        if not ok:
-            status, soft, note = classify_failure(ex, info)
+        if verbose:
+            print()
+            print(label)
+        compile_result = compile_one(ex, gcc_version, verbose=verbose,
+                                     sanitize=args.sanitize,
+                                     analyzer=args.analyzer)
+        if not compile_result.ok:
+            status, soft, note = classify_failure(ex, compile_result.match_text())
             if soft:
                 soft_fail_count += 1
+                stats.add("soft-fail", compile_result.elapsed)
                 suffix = f": {note}" if note else ""
-                result = f"{status} {label}{suffix}"
+                result = (f"{status} {label}{suffix} "
+                          f"{format_timings(compile_result.elapsed)}")
             else:
                 fail_count += 1
-                result = f"{status} {label}"
-                detail = f"{label}"
-                if note:
-                    detail += f"\n  reason: {note}"
-                detail += f"\n{info}"
-                fail_lines.append(detail)
-            print(result)
+                stats.add("fail", compile_result.elapsed)
+                result = f"{status} {label} {format_timings(compile_result.elapsed)}"
+                print(result)
+                print_failure_block(label, "compile", compile_result, note)
+                fail_lines.append(format_failure_entry(
+                    label, "compile", compile_result, note))
+            if soft:
+                print(result)
             continue
         # Analyzer demos are compile-only -- the binary deliberately contains UB
         # we don't want to actually execute.
         if ex.requires_analyzer:
             pass_count += 1
-            result = f"{ANSI_GREEN}PASS    {ANSI_RESET} {label} (analyzer compile-only)"
+            stats.add("pass", compile_result.elapsed)
+            result = (f"{ANSI_GREEN}PASS    {ANSI_RESET} {label} "
+                      f"(analyzer compile-only) "
+                      f"{format_timings(compile_result.elapsed)}")
             if ex.experimental:
                 # An experimental analyzer demo that *compiles* successfully
                 # has effectively shipped — the diagnostic is what we wanted.
@@ -669,8 +882,9 @@ def main() -> int:
                 result += f"  {ANSI_YELLOW}[experimental compiled cleanly — drop experimental=true]{ANSI_RESET}"
             print(result)
             continue
-        ok, info = run_one(ex, info, verbose=verbose)
-        if ok:
+        run_result = run_one(ex, compile_result.value, verbose=verbose)
+        elapsed = compile_result.elapsed + run_result.elapsed
+        if run_result.ok:
             pass_count += 1
             if ex.experimental:
                 # The whole point of experimental=true + expect-error is to
@@ -680,32 +894,35 @@ def main() -> int:
                 fail_count += 1
                 result = (f"{ANSI_RED}EXP-PROMOTE{ANSI_RESET} {label}: "
                           f"experimental file passed; flip experimental=false "
-                          f"and remove expect-error in the metadata header.")
+                          f"and remove expect-error in the metadata header "
+                          f"{format_timings(compile_result.elapsed, run_result.elapsed)}.")
                 fail_lines.append(result)
                 print(result)
+                stats.add("fail", elapsed)
                 # Don't double-count: experimental→passed is not a "pass".
                 pass_count -= 1
             else:
-                result = f"{ANSI_GREEN}PASS    {ANSI_RESET} {label}"
+                stats.add("pass", elapsed)
+                result = (f"{ANSI_GREEN}PASS    {ANSI_RESET} {label} "
+                          f"{format_timings(compile_result.elapsed, run_result.elapsed)}")
                 print(result)
         else:
-            status, soft, note = classify_failure(ex, info)
+            status, soft, note = classify_failure(ex, run_result.match_text())
             if soft:
                 soft_fail_count += 1
+                stats.add("soft-fail", elapsed)
                 suffix = f": {note}" if note else ""
-                print(f"{status} {label}{suffix}")
+                print(f"{status} {label}{suffix} "
+                      f"{format_timings(compile_result.elapsed, run_result.elapsed)}")
             else:
                 fail_count += 1
-                result = f"{status} {label}"
+                stats.add("fail", elapsed)
+                result = (f"{status} {label} "
+                          f"{format_timings(compile_result.elapsed, run_result.elapsed)}")
                 print(result)
-                if note:
-                    print(f"  reason: {note}")
-                print_captured_output(info)
-                detail = f"{label}"
-                if note:
-                    detail += f"\n  reason: {note}"
-                detail += f"\n{info}"
-                fail_lines.append(detail)
+                print_failure_block(label, "run", run_result, note)
+                fail_lines.append(format_failure_entry(
+                    label, "run", run_result, note))
 
     close_example_group()
 
@@ -730,7 +947,7 @@ def main() -> int:
     if fail_lines:
         print("\n--- failures ---")
         for line in fail_lines:
-            print_captured_output(line)
+            print_text_block("failure", line)
 
     # Job Summary: a compact markdown table that GitHub renders on the run
     # page itself, complementing the per-example ::group:: blocks in the
@@ -780,7 +997,7 @@ if __name__ == "__main__":
         close_active_group()
         if os.environ.get("GITHUB_ACTIONS") == "true":
             print("internal failure:")
-            print_captured_output("".join(traceback.format_exc()))
+            print_captured_output("traceback", traceback.format_exc())
         else:
             traceback.print_exc()
         sys.exit(1)
