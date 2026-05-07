@@ -15,7 +15,14 @@ latent UB / leak / data race in an example is caught the same day it lands.
 If any example aborts with a sanitizer report, that run fails. Examples are
 expected to be sanitizer-clean; if a deliberate UB demo is needed, opt out
 with `[[gnu::no_sanitize("...")]]` (see
-[../features/gccext/sanitize/gccext_no_sanitize_attribute.cpp](../features/gccext/sanitize/gccext_no_sanitize_attribute.cpp)).
+[../features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp](../features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp)).
+
+Files that *deliberately* trip a sanitizer (e.g. a heap-use-after-free demo)
+live under [../features/gccext/sanitize/{asan,ubsan,tsan,leak}/](../features/gccext/sanitize/)
+and set `requires-sanitizer=…` in their metadata so `discover.py` runs them
+**only** in the matching sanitize row; their `expect-exit=` is the
+sanitizer's documented abort code, so the harness asserts the *correct*
+failure rather than any failure.
 
 ## What `--sanitize=` adds to the build
 
@@ -60,13 +67,18 @@ Multiple checks can be listed: `[[gnu::no_sanitize("address", "undefined")]]`.
 
 - **`-D_GLIBCXX_DEBUG`** — libstdc++'s debug mode. Flags iterator misuse,
   out-of-range access, container/iterator mismatches at runtime. Demo:
-  [../features/gccext/sanitize/gccext_glibcxx_debug.cpp](../features/gccext/sanitize/gccext_glibcxx_debug.cpp).
+  [../features/gccext/sanitize/integration/gccext_glibcxx_debug.cpp](../features/gccext/sanitize/integration/gccext_glibcxx_debug.cpp).
 - **`[[assume(expr)]]`** — under `-fsanitize=undefined`, the assumption is
   *checked* at runtime; otherwise it's a pure optimisation hint. Demo:
-  [../features/gccext/sanitize/gccext_assume_under_sanitize.cpp](../features/gccext/sanitize/gccext_assume_under_sanitize.cpp).
-- **`-fanalyzer`** — GCC's static analyzer. Doesn't run; it's a compile-time
-  check that emits warnings. Run it on any single example by adding
-  `-fanalyzer` to the command from `--show-cmds`.
+  [../features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp](../features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp).
+- **`-fanalyzer`** — GCC's static analyzer. Compile-time only; emits
+  `-Wanalyzer-*` diagnostics (path-sensitive) instead of trapping at runtime,
+  so it catches paths an actual test input may never reach. The
+  [../features/gccext/analyzer/](../features/gccext/analyzer/) bucket has
+  three demos (use-after-`delete`, conditional double-`delete`,
+  path-sensitive null deref); CI's `analyze` job runs them on GCC 16
+  via `discover.py --analyzer` (compile-only). For ad-hoc runs, add
+  `-fanalyzer` to any line from `--show-cmds`.
 
 ## Runtime knobs
 

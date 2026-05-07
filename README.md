@@ -7,8 +7,12 @@ GCC release ships.
 Every example under [features/](features/) is a single-file program with a
 metadata header. A small Python engine ([scripts/discover.py](scripts/discover.py))
 discovers each example, builds it with the right `-std=` flag against the
-installed `g++`, runs it, and checks the exit code. CI runs that engine four
-times — once each on GCC 13, 14, 15 and 16 — so any breakage shows up per-row.
+installed `g++`, runs it, and checks the exit code. CI runs that engine three
+times on the GCC matrix (13, 14, 15), then three more times on GCC 15/16
+under UBSan+ASan, TSan, and `-fanalyzer` — so correctness, runtime UB, data
+races, and compile-time path analysis are all covered per push. (The `gcc:16`
+Docker image isn't published yet; the matrix re-adds it once it lands. The
+analyzer job already exercises GCC 16 via `debian:unstable-slim` + apt.)
 
 ## Layout
 
@@ -26,6 +30,13 @@ features/                          # all examples (single .cpp each)
     codegen/gccext_*.cpp           # auto-vectorise demos, inline asm
     openmp/gccext_*.cpp            # OpenMP pragmas
     pragmas/gccext_*.cpp           # #pragma GCC diagnostic, etc.
+    sanitize/                      # interaction with -fsanitize=…
+      integration/gccext_*.cpp     # sanitizer-clean demos (no_sanitize, _GLIBCXX_DEBUG, [[assume]])
+      asan/gccext_asan_*.cpp       # deliberate ASan trips (UAF, heap/stack OOB, double-free)
+      ubsan/gccext_ubsan_*.cpp     # deliberate UBSan trips (signed overflow, null deref, shift UB)
+      tsan/gccext_tsan_*.cpp       # deliberate data race
+      leak/gccext_lsan_*.cpp       # deliberate leak
+    analyzer/gccext_analyzer_*.cpp # compile-time -fanalyzer demos (UAF/null-deref/double-delete)
   gcc/                             # release-notes smoke tests, one per version
     gcc13/gcc13_*.cpp
     gcc14/gcc14_*.cpp
@@ -36,14 +47,16 @@ scripts/
   run-tests.sh                # thin wrapper
   podman-dev.sh               # local entrypoint (uses podman)
 containers/
-  gcc.Containerfile           # ubuntu:24.04 + gcc-N from toolchain PPA
+  gcc.Containerfile           # FROM gcc:${GCC_VERSION} + libtbb-dev + python3
 docs/
-  cpp11.md / cpp17.md / cpp20.md / cpp23.md / cpp26.md   # auto-generated indexes
-  gccext.md                          # auto-generated index of GCC extensions
-  compiler-flags.md                  # default and per-file flag reference
-  gcc-changelogs.md                # curated per-release notes
+  compiler-flags.md           # default and per-file flag reference
+  sanitizers.md               # what `--sanitize=…` adds, per-function opt-out, runtime knobs
+  gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
+features/<bucket>/README.md   # auto-generated leaf indexes (one per cppNN/gccNN/gccext-topic)
 .github/workflows/
-  ci.yml                      # matrix on gcc 13, 14, 15, 16 + sanitizer row
+  ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
+.githooks/
+  pre-commit                  # opt-in: regenerates leaf READMEs when features/ is touched
 ```
 
 ## How each file gets compiled
@@ -51,7 +64,7 @@ docs/
 Every example is built with this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread $EXTRA_FLAGS file.cpp -o /tmp/.../bin
+g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread file.cpp $EXTRA_FLAGS -o /tmp/.../bin
 ```
 
 `$STD` is read from the file's `// gcc-test:` header. `$EXTRA_FLAGS` is the
@@ -99,8 +112,8 @@ to "test" the feature.
 
 This repo never invokes the host's `g++` directly. Local runs go through
 [scripts/podman-dev.sh](scripts/podman-dev.sh), which builds a small image from
-[containers/gcc.Containerfile](containers/gcc.Containerfile) (ubuntu:24.04 + the
-ubuntu-toolchain-r/test PPA) and runs the engine inside it:
+[containers/gcc.Containerfile](containers/gcc.Containerfile) (the official
+`gcc:N` Docker image + `libtbb-dev` + `python3`) and runs the engine inside it:
 
 ```bash
 ./scripts/podman-dev.sh 13            # build + run all GCC-13-eligible examples
@@ -115,14 +128,79 @@ The image is built once per GCC version and cached.
 
 ## Running in CI
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) runs four matrix rows
-(`gcc: [13, 14, 15, 16]`) on `ubuntu-latest`. Each row installs that GCC version
-from the toolchain PPA and runs the engine. Per-example PASS/SKIP lines fold
-into GitHub `::group::` sections so the run page surfaces FAIL lines and the
-summary without scrolling.
+[.github/workflows/ci.yml](.github/workflows/ci.yml) defines four jobs. Each
+default and sanitizer job runs inside the official `gcc:N` Docker image
+(Debian-based, upstream gcc-N + matching upstream libstdc++-N). The same image
+is what `scripts/podman-dev.sh` builds locally, so behaviour is bit-identical
+between local and CI for those jobs. The analyzer job uses
+`debian:unstable-slim` until Docker Hub publishes `gcc:16`.
 
-A second job (`sanitize`) re-runs every example under `-fsanitize=undefined,address`
-on GCC 15 — see [docs/sanitizers.md](docs/sanitizers.md).
+| Job | What it runs | Picks up |
+|-----|--------------|----------|
+| `gcc-{13,14,15}` | `discover.py --gcc-version=N` (one row per version, in `gcc:N`) | every example whose `min-gcc` ≤ N and `max-gcc` ≥ N |
+| `sanitize (gcc-15, ubsan + asan + lsan)` | `--sanitize=undefined,address` in `gcc:15` | every example **plus** `requires-sanitizer={undefined,address,leak}` demos |
+| `sanitize (gcc-15, tsan)` | `--sanitize=thread` in `gcc:15` (separate; can't share with ASan) | every example plus `requires-sanitizer=thread` demos |
+| `analyze (gcc-16, -fanalyzer)` | `--analyzer` in `debian:unstable-slim` with `g++-16` installed from apt | `requires-analyzer=true` compile-only demos |
+
+Each example is printed as a foldable GitHub log group containing the exact
+`g++` command, runtime command, captured diagnostics/output, and final status.
+The job summary also writes a compact markdown table to `$GITHUB_STEP_SUMMARY`.
+
+See [docs/sanitizers.md](docs/sanitizers.md) for what each sanitizer adds to
+the build and how the deliberate-trip demos assert their abort code.
+
+### libstdc++ vs g++ — separate version axes
+
+`g++` and libstdc++ are independently versioned: they ship together in
+each upstream gcc release, but the runtime libstdc++ a binary links
+against can be older or newer than the one that compiled it. The
+official `gcc:N` Docker images keep both at version N, which is why CI
+uses them. To express a libstdc++ requirement on individual files:
+
+- The harness probes `_GLIBCXX_RELEASE` at startup and prints it.
+- `// gcc-test:` headers can declare `min-libstdcxx=N`; jobs whose
+  libstdc++ is older skip the file silently.
+
+Some C++23 library features ship at different libstdc++ releases than
+their language counterparts. Notably, per cppreference:
+
+| Feature | First libstdc++ release |
+|---------|-------------------------|
+| `std::ranges::fold_*`, `find_last*`, `contains`/`contains_subrange` | 13 |
+| `std::stacktrace` (linked via `-lstdc++exp`) | 14 |
+| `std::ranges::starts_with` / `ends_with` | 16 |
+
+These are also in `<algorithm>` (not `<ranges>`); forgetting that
+include is the most common reason a `ranges::xxx` algorithm appears
+"missing".
+
+#### Runtime ABI: forward-compatible, not backward-compatible
+
+A separate concern from compile-time availability: each libstdc++
+release adds versioned ELF symbols (`GLIBCXX_3.4.30`, `3.4.31`, …); the
+loader records the highest tag a binary actually uses and rejects it on
+a system whose libstdc++ doesn't have at least that tag.
+
+| Build environment | Run on libstdc++ ≥ build | Run on libstdc++ < build |
+|-------------------|--------------------------|--------------------------|
+| libstdc++ N | ✅ works (forward-compat) | ❌ `version 'GLIBCXX_3.4.MM' not found (required by ./bin)` |
+
+A binary built inside `gcc:15` may refuse to start on a system shipping
+older libstdc++. To ship something portable:
+
+```bash
+# Bundle libstdc++ into the binary. Bigger executable; no host upgrades.
+g++ -std=c++23 -O2 -static-libstdc++ -static-libgcc your_file.cpp -o your_bin
+
+# Or: ship libstdc++.so.6 alongside the binary and point the loader at it.
+g++ -std=c++23 -O2 -Wl,-rpath,'$ORIGIN' your_file.cpp -o your_bin
+cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./   # next to your_bin
+
+# Or: build inside a sysroot of the oldest deployment target.
+```
+
+CI itself never ships binaries outside the container that built them,
+so this concern is purely informational.
 
 ### Optional: install the pre-commit hook
 
@@ -152,8 +230,9 @@ contributor's commit refreshes them — CI no longer gates on this.
 4. Run `./scripts/podman-dev.sh <ver>` to verify locally.
 5. Commit. If you've enabled the pre-commit hook (above), the per-leaf
    `features/<bucket>/README.md` index is regenerated and staged automatically.
-   Otherwise run `./scripts/podman-dev.sh <ver> --emit-docs` and commit the
-   regenerated index alongside the example.
+   Otherwise run `python3 scripts/discover.py --emit-docs` (pure stdlib —
+   no compiler, no container needed) and commit the regenerated index
+   alongside the example.
 
 ## Suggested reference path
 
@@ -264,8 +343,21 @@ implemented via the same machinery as `__builtin_expect`, etc.
   `gccext_autovectorize` (auto-vectorisable SAXPY at `-O3`).
 - **Parallelism:** `gccext_openmp_parallel_for`.
 - **Tooling:** `gccext_diagnostic_pragma`, `gccext_inline_asm`.
+- **Sanitizer interaction (clean):** `gccext_no_sanitize_attribute`,
+  `gccext_glibcxx_debug`, `gccext_assume_under_sanitize` — how to opt-in,
+  opt-out, and reason about runtime checks. Live under
+  [features/gccext/sanitize/integration/](features/gccext/sanitize/integration/).
+- **Sanitizer trips (deliberate UB):** `gccext_asan_*`, `gccext_ubsan_*`,
+  `gccext_tsan_*`, `gccext_lsan_*` — each one is gated on a matching
+  `--sanitize=…` and asserts the *correct* abort code instead of just any
+  failure. Run with `./scripts/podman-dev.sh 15 --sanitize=undefined,address`
+  (or `=thread`).
+- **Static analyzer (compile-only):** `gccext_analyzer_double_free`,
+  `gccext_analyzer_null_deref`, `gccext_analyzer_use_after_free` — show paths
+  that runtime sanitizers can miss. Need GCC 16 for usable C++ analyzer
+  support; CI runs them via `--analyzer`.
 
-Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/README.md), [builtins/](features/gccext/builtins/README.md), [codegen/](features/gccext/codegen/README.md), [openmp/](features/gccext/openmp/README.md), [pragmas/](features/gccext/pragmas/README.md), [sanitize/](features/gccext/sanitize/README.md).
+Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/README.md), [builtins/](features/gccext/builtins/README.md), [codegen/](features/gccext/codegen/README.md), [openmp/](features/gccext/openmp/README.md), [pragmas/](features/gccext/pragmas/README.md), [sanitize/](features/gccext/sanitize/README.md), [analyzer/](features/gccext/analyzer/README.md).
 
 ### 6. Edge — experimental C++26 + per-release smoke tests
 
@@ -285,7 +377,7 @@ Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [fea
 - **Two-level subfolders under `features/` + metadata header** keeps the tree
   navigable as it grows. Filename prefix (`cpp23_…`) doubles as the bucket
   key so the engine and emit-docs both work off the same fact.
-- **One toolchain source (toolchain-r PPA)** for both local podman and CI means
-  there is exactly one place a version pin can drift.
+- **One toolchain source (official `gcc:N` Docker image)** for both local
+  podman and CI means there is exactly one place a version pin can drift.
 - **Experimental flag** lets C++26 / cutting-edge GCC features live in the same
   matrix without making every PR red whenever a feature breaks.

@@ -1,4 +1,4 @@
-# GCC extensions: attributes, builtins, OpenMP, vectorization, target multi-versioning
+# GCC extensions: LeakSanitizer trip demos
 
 _Folder: `features/gccext/sanitize/leak/`. 1 example(s) across 1 topic(s). Auto-generated from each file's `// gcc-test:` header — do not edit by hand. Run `python3 scripts/discover.py --emit-docs` to refresh._
 

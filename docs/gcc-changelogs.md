@@ -212,7 +212,15 @@ Source: <https://gcc.gnu.org/gcc-16/changes.html>
 
 For non-version-specific GCC features that are *always* there (attributes,
 builtins, OpenMP, vector_size types, target multi-versioning, etc.), browse
-the [gccext index](gccext.md).
+the [gccext index](../features/gccext/README.md). The per-topic indexes
+([attributes/](../features/gccext/attributes/README.md),
+[builtins/](../features/gccext/builtins/README.md),
+[codegen/](../features/gccext/codegen/README.md),
+[openmp/](../features/gccext/openmp/README.md),
+[pragmas/](../features/gccext/pragmas/README.md),
+[sanitize/](../features/gccext/sanitize/README.md),
+[analyzer/](../features/gccext/analyzer/README.md))
+are auto-generated from each file's `// gcc-test:` header.
 
 ## What's intentionally *not* benchmarked here
 
@@ -228,9 +236,16 @@ A few classes of compiler features can't be exercised through this repo's
   or `objdump -d`.
 - **LTO / PGO** improve speed without changing observable behaviour. Add
   `-flto` to a build command to test it; correctness assertions still hold.
-- **`-fanalyzer` (the static analyzer)** emits warnings, not exit codes.
-  Run it as a separate compile pass on any example to see what it flags.
+- **`-fanalyzer` (the static analyzer)** emits warnings, not exit codes —
+  the harness can't `assert(...)` against a warning. The analyzer demos in
+  [../features/gccext/analyzer/](../features/gccext/analyzer/) work around
+  this by being **compile-only**: CI's `analyze` job builds them with
+  `-fanalyzer` on GCC 16, and the step log carries the diagnostic. Run any
+  example with `-fanalyzer` locally by adding the flag to a line from
+  `--show-cmds`.
 - **Sanitizers** (`-fsanitize=address,undefined,thread`) abort at runtime
-  on errors but don't change the *successful* path. A sanitizer CI row would
-  re-run every example with the flags and fail on any new abort — listed as
-  a future enhancement in [../README.md](../README.md).
+  on errors but don't change the *successful* path. The deliberate-trip demos
+  under [../features/gccext/sanitize/](../features/gccext/sanitize/) get around
+  this by setting `expect-exit=` to the sanitizer's documented abort code,
+  so we assert "*the right kind* of failure". CI runs three sanitizer jobs
+  (UBSan+ASan+LSan, TSan, plus the `analyze` job above).
