@@ -53,7 +53,7 @@ KNOWN_KEYS = REQUIRED_KEYS | {
 }
 KNOWN_STDS = {"c++11", "c++14", "c++17", "c++20", "c++23", "c++26"}
 
-DEFAULT_FLAGS = ["-Wall", "-Wextra", "-Wpedantic", "-O2", "-pthread"]
+DEFAULT_FLAGS = ["-Wall", "-Wextra", "-Wpedantic", "-O2", "-pthread", "-Ifeatures"]
 
 ANSI_GREEN = "\033[32m"
 ANSI_RED = "\033[31m"
@@ -481,7 +481,7 @@ def run_one(ex: Example, binary: str, verbose: bool = False) -> StepResult:
         )
     elapsed = time.time() - t0
     if verbose:
-        print_captured_output("stdout", proc.stdout)
+        print_captured_output("output", proc.stdout)
         print_captured_output("stderr", proc.stderr)
     if proc.returncode != ex.expect_exit:
         return StepResult(
