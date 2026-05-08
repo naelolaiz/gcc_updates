@@ -1,0 +1,36 @@
+# features/gccext/codegen/CMakeLists.txt.in
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/codegen/gccext_autovectorize.cpp")
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/codegen/gccext_inline_asm.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+# gccext_autovectorize: built at -O3 with -fopt-info-vec=/dev/null so the
+# auto-vectorizer log is suppressed but the vectorisation still happens.
+add_executable(gccext_autovectorize
+    "@CMAKE_SOURCE_DIR@/features/gccext/codegen/gccext_autovectorize.cpp")
+target_compile_options(gccext_autovectorize PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@ -O3 -fopt-info-vec=/dev/null)
+target_link_options(gccext_autovectorize PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_autovectorize PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gccext_autovectorize)
+set_tests_properties(gccext_autovectorize PROPERTIES LABELS gcc-codegen)
+
+# gccext_inline_asm: bare.
+add_executable(gccext_inline_asm
+    "@CMAKE_SOURCE_DIR@/features/gccext/codegen/gccext_inline_asm.cpp")
+target_compile_options(gccext_inline_asm PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gccext_inline_asm PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_inline_asm PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gccext_inline_asm)
+set_tests_properties(gccext_inline_asm PROPERTIES LABELS gcc-codegen)

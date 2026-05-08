@@ -7,8 +7,10 @@ name: ci
 # The analyzer job is the one exception: Docker Hub does not publish `gcc:16`
 # yet, so it uses a slim Debian image with gcc-16 packages available from apt.
 #
-# Build is driven by CMake + CTest. See cmake/GccFeature.cmake for the
-# gcc_feature_test() function and registration validation.
+# Build is driven by CMake + CTest. Each features/<area>/CMakeLists.txt.in is
+# a plain-CMake template; the root CMakeLists.txt configure_file()s each one
+# into build/ and includes the resolved copy. See cmake/GccFeature.cmake for
+# the substitution variables and the slim test-running helpers.
 
 on:
   push:
@@ -59,6 +61,14 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
+      - name: Upload resolved leaf CMakeLists (build-dir copies)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolved-cmakelists-gcc-${{ matrix.gcc }}
+          path: build/features/**/CMakeLists.txt
+          if-no-files-found: ignore
+
   sanitize-ubsan-asan:
     # Re-build every example with -fsanitize=undefined,address.
     # The REQUIRES_SANITIZER undefined/address/leak demos
@@ -93,6 +103,14 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
+      - name: Upload resolved leaf CMakeLists (build-dir copies)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolved-cmakelists-sanitize-asan-ubsan
+          path: build/features/**/CMakeLists.txt
+          if-no-files-found: ignore
+
   sanitize-tsan:
     # ThreadSanitizer cannot share a build with ASan -- separate job.
     # Picks up the REQUIRES_SANITIZER thread demos (data race etc.).
@@ -123,6 +141,14 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --verbose
+
+      - name: Upload resolved leaf CMakeLists (build-dir copies)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolved-cmakelists-sanitize-tsan
+          path: build/features/**/CMakeLists.txt
+          if-no-files-found: ignore
 
   analyze:
     # Compile-time static analyzer. Distinct from runtime sanitizers:
@@ -160,3 +186,11 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --verbose
+
+      - name: Upload resolved leaf CMakeLists (build-dir copies)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolved-cmakelists-analyzer
+          path: build/features/**/CMakeLists.txt
+          if-no-files-found: ignore

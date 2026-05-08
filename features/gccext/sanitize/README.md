@@ -10,10 +10,11 @@ Two kinds of files live here:
 | [`leak/`](leak/)               | Programs that intentionally leak memory; LeakSanitizer reports them at exit. | no — only under `sanitize=address` (leak detection is on by default) or `sanitize=leak` |
 | [`tsan/`](tsan/)               | Programs with a deliberate data race; ThreadSanitizer reports it. | no — only under `sanitize=thread`. **Cannot share a build with ASan** — runs in its own CI job. |
 
-The demo files use `REQUIRES_SANITIZER` in their `gcc_feature_test()` calls, so
-CMake skips them in regular runs and only registers them in matching sanitizer
-runs. They use `WILL_FAIL` plus `EXPECT_OUTPUT`, so the test asserts the
-expected sanitizer report text rather than accepting any failure.
+Each sanitizer leaf's `CMakeLists.txt.in` checks `GCC_FEATURE_ACTIVE_SANITIZERS`
+at the top and `return()`s when the relevant sanitizer is not active, so the
+demos compile only in matching CI jobs. They register their tests via
+`gcc_feature_will_fail_test(<name> "<regex>")`, which asserts the expected
+sanitizer report text rather than accepting any failure.
 
 ## Running them
 

@@ -1,0 +1,31 @@
+# features/gcc/gcc15/CMakeLists.txt.in
+#
+# Source-side template; the build-dir copy at @CMAKE_BINARY_DIR@/.../CMakeLists.txt
+# is what CMake actually consumes. Each at-VAR-at placeholder is substituted at
+# configure time so the build-dir copy reads as plain CMake with the real gcc
+# flags inline -- no helper parsing required to see what is compiled.
+#
+# Teaching point for this leaf: GCC 15 promoted std::print/std::println from
+# the experimental libstdc++exp into the main libstdc++. That is why no
+# target_link_libraries() call appears here -- compare features/std/cpp23
+# cpp23_print, which on GCC 14 still needs target_link_libraries(... stdc++exp).
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gcc/gcc15/gcc15_default_print.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 15)
+    return()
+endif()
+
+add_executable(gcc15_default_print
+    "@CMAKE_SOURCE_DIR@/features/gcc/gcc15/gcc15_default_print.cpp")
+target_compile_options(gcc15_default_print PRIVATE
+    -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gcc15_default_print PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gcc15_default_print PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gcc15_default_print)
+set_tests_properties(gcc15_default_print PROPERTIES LABELS gcc-release)

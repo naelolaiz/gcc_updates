@@ -1,0 +1,152 @@
+# features/std/cpp23/CMakeLists.txt.in
+#
+# All examples are -std=c++23. The bare set (most cpp23 examples) is
+# uniformly compiled. Outliers with extra link flags or libstdc++-runtime
+# requirements are written out below.
+
+set(_bare_examples
+    # name                              topic           min-gcc
+    cpp23_assume                        language        14
+    cpp23_auto_decay_copy               language        14
+    cpp23_byteswap                      stl             14
+    cpp23_deducing_this                 templates       14
+    cpp23_expected                      stl             14
+    cpp23_flat_map                      stl             15
+    cpp23_flat_set                      stl             15
+    cpp23_generator                     coroutines      14
+    cpp23_if_consteval                  language        14
+    cpp23_mdspan                        stl             16
+    cpp23_move_only_function            stl             14
+    cpp23_multidim_subscript            templates       14
+    cpp23_optional_monadic              stl             14
+    cpp23_out_ptr                       stl             14
+    cpp23_ranges_adjacent               ranges          14
+    cpp23_ranges_cartesian_product      ranges          14
+    cpp23_ranges_chunk_slide            ranges          14
+    cpp23_ranges_enumerate              ranges          14
+    cpp23_ranges_iota_algorithm         ranges          14
+    cpp23_ranges_join_with              ranges          14
+    cpp23_ranges_to                     ranges          14
+    cpp23_ranges_zip                    ranges          14
+    cpp23_recursive_lambda              templates       14
+    cpp23_resize_and_overwrite          stl             14
+    cpp23_size_t_literal                language        14
+    cpp23_static_operator               templates       14
+    cpp23_string_contains               stl             14
+    cpp23_to_underlying                 stl             14
+    cpp23_unreachable                   stl             14
+    cpp23_views_as_const_as_rvalue      ranges          14
+    cpp23_views_repeat                  ranges          14
+    cpp23_views_stride                  ranges          14
+)
+
+# Outliers (registered + built individually below):
+#   cpp23_print:                        EXTRA_LIBS stdc++exp
+#   cpp23_stacktrace:                   EXTRA_LIBS stdc++exp + MIN_LIBSTDCXX 14
+#   cpp23_ranges_find_last:             MIN_LIBSTDCXX 13
+#   cpp23_ranges_fold:                  MIN_LIBSTDCXX 13
+#   cpp23_ranges_starts_ends_contains:  MIN_LIBSTDCXX 16
+set(_outlier_examples
+    cpp23_print
+    cpp23_stacktrace
+    cpp23_ranges_find_last
+    cpp23_ranges_fold
+    cpp23_ranges_starts_ends_contains
+)
+
+list(LENGTH _bare_examples _n_total)
+math(EXPR _last_idx "${_n_total} - 1")
+foreach(_i RANGE 0 ${_last_idx} 3)
+    list(GET _bare_examples ${_i} _name)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/std/cpp23/${_name}.cpp")
+endforeach()
+foreach(_n IN LISTS _outlier_examples)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/std/cpp23/${_n}.cpp")
+endforeach()
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+
+# ---- bare examples ----
+foreach(_i RANGE 0 ${_last_idx} 3)
+    list(GET _bare_examples ${_i} _name)
+    math(EXPR _ti "${_i} + 1")
+    list(GET _bare_examples ${_ti} _topic)
+    math(EXPR _mi "${_i} + 2")
+    list(GET _bare_examples ${_mi} _min_gcc)
+    if(@GCC_MAJOR@ LESS ${_min_gcc})
+        continue()
+    endif()
+    add_executable(${_name} "@CMAKE_SOURCE_DIR@/features/std/cpp23/${_name}.cpp")
+    target_compile_options(${_name} PRIVATE
+        -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_name} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_name} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(${_name})
+    set_tests_properties(${_name} PROPERTIES LABELS ${_topic})
+endforeach()
+
+# ---- cpp23_print: pre-GCC-15, std::print/std::println live in libstdc++exp.
+#                   GCC 15+ promoted them into the main libstdc++
+#                   (see features/gcc/gcc15/CMakeLists.txt.in).
+if(@GCC_MAJOR@ GREATER_EQUAL 14)
+    add_executable(cpp23_print
+        "@CMAKE_SOURCE_DIR@/features/std/cpp23/cpp23_print.cpp")
+    target_compile_options(cpp23_print PRIVATE
+        -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(cpp23_print PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(cpp23_print PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    target_link_libraries(cpp23_print PRIVATE stdc++exp)
+    gcc_feature_normal_test(cpp23_print)
+    set_tests_properties(cpp23_print PROPERTIES LABELS stl)
+endif()
+
+# ---- cpp23_stacktrace: std::stacktrace symbols live in libstdc++exp; the
+#                        runtime gate skips the example when libstdc++ is < 14.
+if(@GCC_MAJOR@ GREATER_EQUAL 14 AND @LIBSTDCXX_RELEASE@ GREATER_EQUAL 14)
+    add_executable(cpp23_stacktrace
+        "@CMAKE_SOURCE_DIR@/features/std/cpp23/cpp23_stacktrace.cpp")
+    target_compile_options(cpp23_stacktrace PRIVATE
+        -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(cpp23_stacktrace PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(cpp23_stacktrace PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    target_link_libraries(cpp23_stacktrace PRIVATE stdc++exp)
+    gcc_feature_normal_test(cpp23_stacktrace)
+    set_tests_properties(cpp23_stacktrace PROPERTIES LABELS stl)
+endif()
+
+# ---- cpp23_ranges_find_last / cpp23_ranges_fold: need libstdc++ >= 13. ----
+foreach(_n cpp23_ranges_find_last cpp23_ranges_fold)
+    if(@GCC_MAJOR@ GREATER_EQUAL 14 AND @LIBSTDCXX_RELEASE@ GREATER_EQUAL 13)
+        add_executable(${_n} "@CMAKE_SOURCE_DIR@/features/std/cpp23/${_n}.cpp")
+        target_compile_options(${_n} PRIVATE
+            -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+        target_link_options(${_n} PRIVATE
+            @GCC_FEATURE_SAN_LINK_TEXT@)
+        target_include_directories(${_n} PRIVATE
+            "@CMAKE_SOURCE_DIR@/features")
+        gcc_feature_normal_test(${_n})
+        set_tests_properties(${_n} PROPERTIES LABELS ranges)
+    endif()
+endforeach()
+
+# ---- cpp23_ranges_starts_ends_contains: needs libstdc++ >= 16. ----
+if(@GCC_MAJOR@ GREATER_EQUAL 14 AND @LIBSTDCXX_RELEASE@ GREATER_EQUAL 16)
+    add_executable(cpp23_ranges_starts_ends_contains
+        "@CMAKE_SOURCE_DIR@/features/std/cpp23/cpp23_ranges_starts_ends_contains.cpp")
+    target_compile_options(cpp23_ranges_starts_ends_contains PRIVATE
+        -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(cpp23_ranges_starts_ends_contains PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(cpp23_ranges_starts_ends_contains PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(cpp23_ranges_starts_ends_contains)
+    set_tests_properties(cpp23_ranges_starts_ends_contains PROPERTIES LABELS ranges)
+endif()

@@ -5,30 +5,36 @@ enable_testing()
 
 include(cmake/GccFeature.cmake)
 
+# Each leaf is a CMakeLists.txt.in template. gcc_feature_add_leaf() configures
+# it into ${CMAKE_BINARY_DIR}/<rel>/CMakeLists.txt -- the resolved file is
+# plain CMake with every gcc flag inline -- and then includes that copy.
+# CI uploads build/features/**/CMakeLists.txt as an artifact so a reader can
+# inspect the exact build configuration without parsing helpers.
+
 # C++ language extras (gcc-features)
-add_subdirectory(features/gcc/gcc13)
-add_subdirectory(features/gcc/gcc14)
-add_subdirectory(features/gcc/gcc15)
-add_subdirectory(features/gcc/gcc16)
+gcc_feature_add_leaf(features/gcc/gcc13)
+gcc_feature_add_leaf(features/gcc/gcc14)
+gcc_feature_add_leaf(features/gcc/gcc15)
+gcc_feature_add_leaf(features/gcc/gcc16)
 
 # GCC-specific extensions
-add_subdirectory(features/gccext/analyzer)
-add_subdirectory(features/gccext/attributes)
-add_subdirectory(features/gccext/builtins)
-add_subdirectory(features/gccext/codegen)
-add_subdirectory(features/gccext/openmp)
-add_subdirectory(features/gccext/pragmas)
-add_subdirectory(features/gccext/sanitize/asan)
-add_subdirectory(features/gccext/sanitize/integration)
-add_subdirectory(features/gccext/sanitize/leak)
-add_subdirectory(features/gccext/sanitize/tsan)
-add_subdirectory(features/gccext/sanitize/ubsan)
+gcc_feature_add_leaf(features/gccext/analyzer)
+gcc_feature_add_leaf(features/gccext/attributes)
+gcc_feature_add_leaf(features/gccext/builtins)
+gcc_feature_add_leaf(features/gccext/codegen)
+gcc_feature_add_leaf(features/gccext/openmp)
+gcc_feature_add_leaf(features/gccext/pragmas)
+gcc_feature_add_leaf(features/gccext/sanitize/asan)
+gcc_feature_add_leaf(features/gccext/sanitize/integration)
+gcc_feature_add_leaf(features/gccext/sanitize/leak)
+gcc_feature_add_leaf(features/gccext/sanitize/tsan)
+gcc_feature_add_leaf(features/gccext/sanitize/ubsan)
 
 # Standard C++ revisions
-add_subdirectory(features/std/cpp11)
-add_subdirectory(features/std/cpp17)
-add_subdirectory(features/std/cpp20)
-add_subdirectory(features/std/cpp23)
-add_subdirectory(features/std/cpp26)
+gcc_feature_add_leaf(features/std/cpp11)
+gcc_feature_add_leaf(features/std/cpp17)
+gcc_feature_add_leaf(features/std/cpp20)
+gcc_feature_add_leaf(features/std/cpp23)
+gcc_feature_add_leaf(features/std/cpp26)
 
 gcc_feature_validate_registered_sources()

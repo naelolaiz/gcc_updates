@@ -1,17 +1,28 @@
 # Compiler flags reference
 
 This file documents *exactly* how every example in [features/](../features/)
-is built. The build is driven by CMake; the function macro is defined in
-[../cmake/GccFeature.cmake](../cmake/GccFeature.cmake), and each example is
-registered via one `gcc_feature_test()` call in its folder's `CMakeLists.txt`.
+is built. The build is driven by CMake; each example is declared in plain
+CMake from its folder's `CMakeLists.txt.in` template, which the root
+[../CMakeLists.txt](../CMakeLists.txt) configures into the build directory.
+The build-dir copy at `build/features/<bucket>/CMakeLists.txt` is the
+authoritative, fully-resolved description of what gcc is invoked with.
 
-## Quick lookup: print the command for any example
+## Quick lookup: the resolved CMakeLists per leaf
 
 ```bash
-# Configure once, then dump the compile command for any target.
+# Configure once, then read the leaf's resolved CMakeLists. Every gcc flag
+# that affects the example is inline in this file -- no helper to follow.
 cmake -S . -B build
+cat build/features/std/cpp23/CMakeLists.txt   # for any cpp23_* example
+
+# Or get the literal compile + link command from the build system:
 cmake --build build --target cpp23_print --verbose 2>&1 | grep g++
 ```
+
+CI uploads the resolved tree as a workflow artifact named
+`resolved-cmakelists-<mode>` (one per default / sanitize-asan-ubsan /
+sanitize-tsan / analyzer job), so you can download it without rebuilding
+locally.
 
 ## Default command
 
@@ -20,7 +31,7 @@ Every example gets this baseline:
 ```
 g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures \
     features/<bucket>/<file>.cpp \
-    $EXTRA_COMPILE_FLAGS \
+    [per-example extras] \
     -o build/features/<bucket>/<file>
 ```
 
@@ -30,63 +41,81 @@ subfolder the example lives in.
 | Token        | Source                          | Why                                                                             |
 |--------------|---------------------------------|---------------------------------------------------------------------------------|
 | `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix and sanitizer jobs run in `gcc:N`, where `g++` is the default. The analyze job runs in `debian:unstable-slim` and installs `g++-16`, then points `g++` at it via `update-alternatives`. |
-| `-std=$STD`  | `STD` arg of `gcc_feature_test()` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. |
-| `-Wall -Wextra -Wpedantic` | hard-coded default | Strict warnings — examples must compile clean.                                  |
-| `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes. **Sanitizer mode lowers this to `-O1`** to keep deliberate UB observable. |
-| `-pthread`   | hard-coded default              | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
-| `-Ifeatures` | hard-coded default              | Lets examples include the shared readable-demo helper as `support/demo.hpp`.    |
-| `$EXTRA_COMPILE_FLAGS` | `EXTRA_COMPILE_FLAGS …` arg | File-specific flags (e.g. `-fopenmp`, `-D_GLIBCXX_DEBUG`, `-O3`). |
+| `-std=$STD`  | leaf's `target_compile_options` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. |
+| `-Wall -Wextra -Wpedantic` | `GCC_FEATURE_DEFAULT_COMPILE_FLAGS` | Strict warnings — examples must compile clean.                                  |
+| `-O2`        | `GCC_FEATURE_DEFAULT_COMPILE_FLAGS` | Realistic optimisation level. **Sanitizer mode swaps it for `-O1 -fno-omit-frame-pointer -g`** to keep deliberate UB observable. |
+| `-pthread`   | `GCC_FEATURE_DEFAULT_COMPILE_FLAGS` | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
+| `-Ifeatures` | leaf's `target_include_directories` | Lets examples include the shared readable-demo helper as `support/demo.hpp`.    |
+| per-example extras | leaf's `target_compile_options` (post-defaults) | `-fopenmp`, `-D_GLIBCXX_DEBUG`, `-O3`, `-fcontracts`, etc. — written inline in the leaf. |
 
-The output binary lives in `build/features/<bucket>/<file>` (CMake's standard
-out-of-source build layout). `EXTRA_LIBS` gets added via
-`target_link_libraries(... PRIVATE …)` after the source file, e.g. `stdc++exp`
-for `std::stacktrace` or `tbb` for parallel STL.
+The mode-specific flag lists are computed once in
+[../cmake/GccFeature.cmake](../cmake/GccFeature.cmake) and substituted into
+each leaf's `CMakeLists.txt.in` via configure_file's `@VAR@` mechanism:
 
-## Per-test arguments you'll see in this repo
+| Variable                              | Holds                                                       |
+|---------------------------------------|-------------------------------------------------------------|
+| `GCC_FEATURE_DEFAULT_COMPILE_TEXT`    | `-Wall -Wextra -Wpedantic -O2 -pthread …` (with mode tweaks) |
+| `GCC_FEATURE_SAN_COMPILE_TEXT`        | `-fsanitize=address -fsanitize=undefined …` when sanitize mode active, else empty |
+| `GCC_FEATURE_SAN_LINK_TEXT`           | same `-fsanitize=…` for the link line                       |
+| `GCC_FEATURE_ANALYZER_COMPILE_TEXT`   | `-fanalyzer` when analyzer mode active, else empty          |
 
-| Argument            | Used by which examples                                | What it does |
-|---------------------|-------------------------------------------------------|--------------|
-| `EXTRA_LIBS stdc++exp` | `std/cpp23/cpp23_print.cpp`, `std/cpp23/cpp23_stacktrace.cpp` | Links libstdc++exp (the *experimental* libstdc++ archive). Required on **GCC 14** for `std::print`/`std::println`/`std::stacktrace`. **GCC 15+** ships them in the main libstdc++ — see [gcc/gcc15/gcc15_default_print.cpp](../features/gcc/gcc15/gcc15_default_print.cpp). |
-| `EXTRA_LIBS tbb`    | `std/cpp17/cpp17_parallel_algos.cpp`                  | Links Intel TBB. Parallel STL execution policies (`std::execution::par`, `par_unseq`) are implemented on top of TBB on libstdc++. |
-| `EXTRA_COMPILE_FLAGS -fopenmp` | `gccext/openmp/gccext_openmp_parallel_for.cpp` | Enables OpenMP pragmas. The function automatically forwards `-fopenmp` to the link step too so libgomp is linked. |
-| `EXTRA_COMPILE_FLAGS -fcontracts` | `std/cpp26/cpp26_contracts_basic.cpp` | Enables C++26 contracts (currently fails to compile — `EXPERIMENTAL` + `EXPECT_ERROR` makes that the expected outcome). |
-| `EXTRA_COMPILE_FLAGS -freflection` | `std/cpp26/cpp26_reflection_basic.cpp` | Enables C++26 static-reflection front-end (GCC 16+). |
-| `EXTRA_COMPILE_FLAGS -D_GLIBCXX_DEBUG` | `gccext/sanitize/integration/gccext_glibcxx_debug.cpp` | Turns on libstdc++ debug-mode containers + iterator checks. |
-| `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec=…` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and asks GCC to report which loops vectorised. |
+After `configure_file()` runs at root configure time, the leaf's resolved
+copy in the build dir contains the literal flag text inline — no `${VAR}`
+references left to chase.
 
-## How to read a `gcc_feature_test()` call
+## Per-example extras you'll see in the leaves
 
-A typical entry in `features/std/cpp23/CMakeLists.txt`:
+| Pattern                                                              | Used by                                                          | Why |
+|----------------------------------------------------------------------|------------------------------------------------------------------|-----|
+| `target_link_libraries(<n> PRIVATE stdc++exp)`                       | `std/cpp23/cpp23_print`, `std/cpp23/cpp23_stacktrace`            | Links libstdc++exp (the experimental archive). Required on **GCC 14** for `std::print`/`println`/`stacktrace`. **GCC 15+** ships print/println in the main libstdc++ — see [features/gcc/gcc15/CMakeLists.txt.in](../features/gcc/gcc15/CMakeLists.txt.in). |
+| `target_link_libraries(<n> PRIVATE tbb)`                             | `std/cpp17/cpp17_parallel_algos`                                 | Links Intel TBB. Parallel STL execution policies (`std::execution::par`) are implemented on top of TBB on libstdc++. |
+| `target_compile_options(... -fopenmp)` + `target_link_options(... -fopenmp)` | `gccext/openmp/gccext_openmp_parallel_for`               | `-fopenmp` must be on BOTH compile and link (link-side flag is what pulls in libgomp). |
+| `target_compile_options(... -fcontracts)`                            | `std/cpp26/cpp26_contracts_basic`                                | Enables C++26 contracts (currently fails to compile by design — `gcc_feature_expect_compile_error` makes that the expected outcome). |
+| `target_compile_options(... -freflection)`                           | `std/cpp26/cpp26_reflection_basic`                               | Enables C++26 static-reflection front-end (GCC 16+). |
+| `target_compile_options(... -D_GLIBCXX_DEBUG)`                       | `gccext/sanitize/integration/gccext_glibcxx_debug`               | Turns on libstdc++ debug-mode containers + iterator checks. |
+| `target_compile_options(... -O3 -fopt-info-vec=…)`                   | `gccext/codegen/gccext_autovectorize`                            | Bumps optimisation and asks GCC to report which loops vectorised. |
+
+## Version gates and sanitizer/analyzer mode gates
+
+Each leaf writes its gates as plain CMake `if()` blocks. Examples:
 
 ```cmake
-gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
-                 EXTRA_LIBS stdc++exp  MIN_LIBSTDCXX 14)
+# Skip on GCC older than 15.
+if(@GCC_MAJOR@ LESS 15)
+    return()
+endif()
+
+# Skip when libstdc++ runtime is older than 13.
+if(@LIBSTDCXX_RELEASE@ LESS 13)
+    return()
+endif()
+
+# Sanitizer-required example: only build when address sanitizer is active.
+if(NOT "address" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    return()
+endif()
+
+# Skip the example when TSan is active (e.g. IFUNC + TSan races).
+if("thread" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    return()
+endif()
 ```
 
-| Argument            | Required? | Meaning |
-|---------------------|-----------|---------|
-| `<name>`            | yes       | Matches `<name>.cpp` in the same folder. |
-| `STD <std>`         | yes       | Passed to `-std=`. One of `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. |
-| `MIN_GCC <n>`       | yes       | Tests on older GCC are not registered in that configure mode. |
-| `TOPIC <name>`      | yes       | Becomes the CTest label — filter with `ctest -L <topic>`. |
-| `MAX_GCC <n>`       | no        | Symmetric upper bound; useful for since-removed behaviour. |
-| `MIN_LIBSTDCXX <n>` | no        | Require `_GLIBCXX_RELEASE >= n`. Independent of `MIN_GCC`. |
-| `MAX_LIBSTDCXX <n>` | no        | Symmetric upper bound. |
-| `EXTRA_LIBS <lib…>` | no        | Linker libraries (without `-l`). Added via `target_link_libraries`. |
-| `EXTRA_COMPILE_FLAGS <flag…>` | no | Per-test compile flags (e.g. `-fopenmp`, `-D_GLIBCXX_DEBUG`). |
-| `REQUIRES_SANITIZER <san…>` | no | Test enabled only when `-DGCC_FEATURE_SANITIZE=` includes one of the listed sanitizers. |
-| `SKIP_SANITIZER <san…>` | no | Test disabled when active sanitizer matches (e.g. TSan + OpenMP is unsupported). |
-| `REQUIRES_ANALYZER` | no        | Test only enabled with `-DGCC_FEATURE_ANALYZER=ON`. Compile-only with `-fanalyzer` — binary not run. |
-| `WILL_FAIL`         | no        | Runtime test is expected to fail; requires `EXPECT_OUTPUT` so unrelated failures do not pass. |
-| `EXPECT_OUTPUT <re>` | required with `WILL_FAIL` | Output regex that must match the expected sanitizer report text. |
-| `EXPERIMENTAL`      | no        | Feature not yet supported by current GCC; combined with `EXPECT_ERROR`, the expected outcome is a compile failure. |
-| `EXPECT_ERROR <re>` | required with `EXPERIMENTAL` | Output regex that must match the expected compiler diagnostic. Compilation success or an unrelated diagnostic fails the test. |
+The libstdc++ release is detected at configure time (preprocess `<version>`,
+read `_GLIBCXX_RELEASE`); detection failure defaults `LIBSTDCXX_RELEASE` to
+999 so MIN_LIBSTDCXX gates do not skip on unknown toolchains.
 
-The libstdc++ release is detected at configure time by asking `g++` to
-preprocess a tiny translation unit that includes `<version>` and reports
-`_GLIBCXX_RELEASE`. The detected value is printed by `cmake -S . -B build`
-and cached in `LIBSTDCXX_RELEASE`. If the macro is unavailable (very old
-toolchain), `MIN_LIBSTDCXX` gates are not enforced.
+## Test-running helpers
+
+The leaves call one of three helpers (defined in `cmake/GccFeature.cmake`)
+to register the test. Each is a few lines long; the helper file is the
+single place to look:
+
+| Helper                                                  | When                                                                |
+|---------------------------------------------------------|---------------------------------------------------------------------|
+| `gcc_feature_normal_test(<name>)`                       | Default: run the binary, treat exit 0 as success. In analyzer mode the test is a no-op (the warning fires at compile time). |
+| `gcc_feature_will_fail_test(<name> "<regex>")`          | Sanitizer demos: run the binary, expect non-zero exit, assert the diagnostic regex appears in stderr. |
+| `gcc_feature_expect_compile_error(<name> <src> STD <std> EXTRA_FLAGS <flags...> REGEX "<regex>")` | EXPERIMENTAL features (e.g. C++26 contracts): no executable; instead invoke gcc directly and expect the listed diagnostic. |
 
 ## Reproducing a build by hand
 
@@ -103,9 +132,10 @@ the host shell is off-limits for compilation.
 
 ## Adding a new flag
 
-1. If a new example needs a flag, add it as `EXTRA_COMPILE_FLAGS …` (or
-   `EXTRA_LIBS …` for `-l<lib>`) on its `gcc_feature_test()` call.
-2. If it's needed for *every* example, add it to `_gcc_feature_default_flags`
+1. If a new example needs a flag, add it inline to that example's
+   `target_compile_options(...)` (or `target_link_libraries(...)`) call in
+   the folder's `CMakeLists.txt.in`.
+2. If it's needed for *every* example, add it to `GCC_FEATURE_DEFAULT_COMPILE_FLAGS`
    in [../cmake/GccFeature.cmake](../cmake/GccFeature.cmake) AND list it
    in the "Default command" table above.
 3. If it requires a new package in the build environment, install it in BOTH

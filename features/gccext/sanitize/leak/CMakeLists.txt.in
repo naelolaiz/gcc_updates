@@ -1,0 +1,32 @@
+# features/gccext/sanitize/leak/CMakeLists.txt.in
+#
+# Single LSan demo: heap allocation deliberately leaked. LSan ships as part
+# of ASan, so this builds with either -DGCC_FEATURE_SANITIZE=leak or
+# -DGCC_FEATURE_SANITIZE=address.
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/leak/gccext_lsan_simple_leak.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+set(_lsan_compatible FALSE)
+if("leak" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS OR "address" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    set(_lsan_compatible TRUE)
+endif()
+if(NOT _lsan_compatible)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+add_executable(gccext_lsan_simple_leak
+    "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/leak/gccext_lsan_simple_leak.cpp")
+target_compile_options(gccext_lsan_simple_leak PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gccext_lsan_simple_leak PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_lsan_simple_leak PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_will_fail_test(gccext_lsan_simple_leak "LeakSanitizer|detected memory leaks")
+set_tests_properties(gccext_lsan_simple_leak PROPERTIES LABELS gcc-sanitize)

@@ -1,0 +1,56 @@
+# features/gccext/sanitize/ubsan/CMakeLists.txt.in
+#
+# UBSan demos. Each binary triggers a defined UBSan check and the test
+# asserts the matching diagnostic. Built only when the undefined sanitizer
+# is active (-DGCC_FEATURE_SANITIZE=undefined).
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_null_deref.cpp")
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_shift.cpp")
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_signed_overflow.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(NOT "undefined" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+# gccext_ubsan_null_deref
+add_executable(gccext_ubsan_null_deref
+    "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_null_deref.cpp")
+target_compile_options(gccext_ubsan_null_deref PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gccext_ubsan_null_deref PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_ubsan_null_deref PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_will_fail_test(gccext_ubsan_null_deref "runtime error: load of null pointer")
+set_tests_properties(gccext_ubsan_null_deref PROPERTIES LABELS gcc-sanitize)
+
+# gccext_ubsan_shift
+add_executable(gccext_ubsan_shift
+    "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_shift.cpp")
+target_compile_options(gccext_ubsan_shift PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gccext_ubsan_shift PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_ubsan_shift PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_will_fail_test(gccext_ubsan_shift "runtime error: shift exponent")
+set_tests_properties(gccext_ubsan_shift PROPERTIES LABELS gcc-sanitize)
+
+# gccext_ubsan_signed_overflow: -fno-sanitize-recover=undefined makes the
+# UBSan handler fatal so the test sees a non-zero exit code.
+add_executable(gccext_ubsan_signed_overflow
+    "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/ubsan/gccext_ubsan_signed_overflow.cpp")
+target_compile_options(gccext_ubsan_signed_overflow PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@ -fno-sanitize-recover=undefined)
+target_link_options(gccext_ubsan_signed_overflow PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_ubsan_signed_overflow PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_will_fail_test(gccext_ubsan_signed_overflow "runtime error: signed integer overflow")
+set_tests_properties(gccext_ubsan_signed_overflow PROPERTIES LABELS gcc-sanitize)

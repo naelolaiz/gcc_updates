@@ -1,8 +1,8 @@
 # `features/` — example tree
 
 Every `.cpp` here is a single-file program. Build metadata lives in the
-folder's `CMakeLists.txt` as one `gcc_feature_test()` call per source file.
-The tree is split three ways:
+folder's `CMakeLists.txt.in` (plain-CMake template that the root configures
+into the build dir at configure time). The tree is split three ways:
 
 | Subfolder | Contents | Typical reader |
 |-----------|----------|----------------|

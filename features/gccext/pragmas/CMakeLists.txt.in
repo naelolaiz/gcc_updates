@@ -1,0 +1,21 @@
+# features/gccext/pragmas/CMakeLists.txt.in
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/pragmas/gccext_diagnostic_pragma.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+add_executable(gccext_diagnostic_pragma
+    "@CMAKE_SOURCE_DIR@/features/gccext/pragmas/gccext_diagnostic_pragma.cpp")
+target_compile_options(gccext_diagnostic_pragma PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gccext_diagnostic_pragma PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gccext_diagnostic_pragma PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gccext_diagnostic_pragma)
+set_tests_properties(gccext_diagnostic_pragma PROPERTIES LABELS gcc-pragmas)

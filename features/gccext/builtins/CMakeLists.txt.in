@@ -1,0 +1,31 @@
+# features/gccext/builtins/CMakeLists.txt.in
+
+set(_examples
+    gccext_builtin_assume_aligned
+    gccext_builtin_constant_p
+    gccext_builtin_expect
+    gccext_vector_extensions
+)
+foreach(_n IN LISTS _examples)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/builtins/${_n}.cpp")
+endforeach()
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+# All builtins examples follow the same shape (c++17, gcc-builtins topic, no extras).
+foreach(_n IN LISTS _examples)
+    add_executable(${_n} "@CMAKE_SOURCE_DIR@/features/gccext/builtins/${_n}.cpp")
+    target_compile_options(${_n} PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_n} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_n} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(${_n})
+    set_tests_properties(${_n} PROPERTIES LABELS gcc-builtins)
+endforeach()

@@ -1,0 +1,25 @@
+# features/gcc/gcc16/CMakeLists.txt.in
+#
+# Teaching point: GCC 16 enables ~two-thirds of C++26 by default. Contrast
+# cpp26_contracts_basic / cpp26_reflection_basic, which still need explicit
+# -fcontracts / -freflection opt-in flags (see features/std/cpp26/CMakeLists.txt.in).
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gcc/gcc16/gcc16_cpp26_features_default.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 16)
+    return()
+endif()
+
+add_executable(gcc16_cpp26_features_default
+    "@CMAKE_SOURCE_DIR@/features/gcc/gcc16/gcc16_cpp26_features_default.cpp")
+target_compile_options(gcc16_cpp26_features_default PRIVATE
+    -std=c++26 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gcc16_cpp26_features_default PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gcc16_cpp26_features_default PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gcc16_cpp26_features_default)
+set_tests_properties(gcc16_cpp26_features_default PROPERTIES LABELS gcc-release)

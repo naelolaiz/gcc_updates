@@ -1,0 +1,24 @@
+# features/gcc/gcc13/CMakeLists.txt.in
+#
+# Teaching point: GCC 13 was the first release where libstdc++ shipped a
+# usable <format> by default -- nothing extra to link or compile with.
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gcc/gcc13/gcc13_libstdcxx_format.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+add_executable(gcc13_libstdcxx_format
+    "@CMAKE_SOURCE_DIR@/features/gcc/gcc13/gcc13_libstdcxx_format.cpp")
+target_compile_options(gcc13_libstdcxx_format PRIVATE
+    -std=c++20 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gcc13_libstdcxx_format PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gcc13_libstdcxx_format PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gcc13_libstdcxx_format)
+set_tests_properties(gcc13_libstdcxx_format PROPERTIES LABELS gcc-release)
