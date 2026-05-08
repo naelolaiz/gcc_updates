@@ -55,11 +55,58 @@ KNOWN_STDS = {"c++11", "c++14", "c++17", "c++20", "c++23", "c++26"}
 
 DEFAULT_FLAGS = ["-Wall", "-Wextra", "-Wpedantic", "-O2", "-pthread", "-Ifeatures"]
 
-ANSI_GREEN = "\033[32m"
-ANSI_RED = "\033[31m"
-ANSI_YELLOW = "\033[33m"
-ANSI_DIM = "\033[2m"
-ANSI_RESET = "\033[0m"
+
+def _detect_use_color() -> bool:
+    # Honor the no-color.org convention first; any non-empty value disables.
+    if os.environ.get("NO_COLOR", "") != "":
+        return False
+    if os.environ.get("FORCE_COLOR", "") != "":
+        return True
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        return True
+    try:
+        return sys.stdout.isatty()
+    except (AttributeError, ValueError):
+        return False
+
+
+USE_COLOR = _detect_use_color()
+
+
+def _c(code: str) -> str:
+    return code if USE_COLOR else ""
+
+
+ANSI_RESET     = _c("\033[0m")
+ANSI_BOLD      = _c("\033[1m")
+ANSI_DIM       = _c("\033[2m")
+ANSI_RED       = _c("\033[31m")
+ANSI_GREEN     = _c("\033[32m")
+ANSI_YELLOW    = _c("\033[33m")
+ANSI_CYAN      = _c("\033[36m")
+# Bright variants (\033[9?m) render as a visibly stronger colour in GitHub
+# Actions' log viewer than the bold-on-standard form (\033[1;3?m), where the
+# bold attribute is rendered very subtly.
+ANSI_BOLD_CYAN  = _c("\033[1;96m")
+ANSI_BOLD_RED   = _c("\033[1;91m")
+ANSI_BOLD_WHITE = _c("\033[1;97m")
+
+# Unicode leaders mark structure independently of font-weight rendering. ▶ for
+# top-level section markers (run:, summary:, per-example header, failure:,
+# --- skipped ---, --- failures ---) and ▸ for sub-sections inside them
+# (compile command:, stdout:, stderr:, output:, folder summary:, skip-reason
+# headers). Items inside a list use no leader -- indentation + colour suffice.
+SYM_TOP = "▶"
+SYM_SUB = "▸"
+
+# Strip any CSI escape sequence, not just SGR (`m`-terminated) ones: GCC's
+# coloured diagnostics also emit \x1b[K (Erase-in-Line) in addition to \x1b[m,
+# and would defeat the regex if those were left in place.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
+
+
+def strip_ansi(text: str) -> str:
+    return _ANSI_RE.sub("", text)
 
 
 @dataclasses.dataclass
@@ -74,9 +121,15 @@ class StepResult:
     returncode: int | None = None
 
     def match_text(self) -> str:
-        return "\n".join(
+        # Strip ANSI before exposing to expect_error regex matching: with
+        # -fdiagnostics-color=always GCC interleaves SGR codes inside its
+        # diagnostic strings (e.g. between "before " and "'pre'"), which would
+        # otherwise stop user-supplied regexes like `expected initializer
+        # before .pre.` from matching.
+        joined = "\n".join(
             part for part in (self.stderr, self.stdout, self.reason) if part
         )
+        return _ANSI_RE.sub("", joined)
 
 
 @dataclasses.dataclass
@@ -127,8 +180,8 @@ def print_text_block(title: str, text: str, indent: str = "  ",
                      pipe: bool = False) -> None:
     if not text:
         return
-    print(f"{indent}{title}:")
-    prefix = "| " if pipe else ""
+    print(f"{indent}{ANSI_BOLD_CYAN}{SYM_SUB} {title}:{ANSI_RESET}")
+    prefix = f"{ANSI_DIM}|{ANSI_RESET} " if pipe else ""
     for line in text.rstrip().splitlines():
         print(f"{indent}  {prefix}{line}")
 
@@ -142,9 +195,9 @@ def print_command_block(title: str, argv: list[str], indent: str = "  ") -> None
     lines = format_command_lines(argv)
     if not lines:
         return
-    print(f"{indent}{title} command:")
+    print(f"{indent}{ANSI_BOLD_CYAN}{SYM_SUB} {title} command:{ANSI_RESET}")
     for i, line in enumerate(lines):
-        prompt = "$ " if i == 0 else "  "
+        prompt = f"{ANSI_BOLD}$ {ANSI_RESET}" if i == 0 else "  "
         print(f"{indent}  {prompt}{line}")
 
 
@@ -153,7 +206,7 @@ def format_timings(compile_elapsed: float,
     parts = [f"compile {compile_elapsed:.2f}s"]
     if run_elapsed is not None:
         parts.append(f"run {run_elapsed:.2f}s")
-    return f"({', '.join(parts)})"
+    return f"{ANSI_DIM}({', '.join(parts)}){ANSI_RESET}"
 
 
 def format_failure_entry(label: str, phase: str, step: StepResult,
@@ -164,7 +217,7 @@ def format_failure_entry(label: str, phase: str, step: StepResult,
         f"reason: {note or step.reason or 'command failed'}",
     ]
     if step.command:
-        lines.append("command:")
+        lines.append(f"{phase} command:")
         for i, line in enumerate(format_command_lines(step.command)):
             prompt = "$ " if i == 0 else "  "
             lines.append(f"  {prompt}{line}")
@@ -179,11 +232,13 @@ def format_failure_entry(label: str, phase: str, step: StepResult,
 
 def print_failure_block(label: str, phase: str, step: StepResult,
                         note: str | None = None) -> None:
-    print("  failure:")
-    print(f"    example: {label}")
-    print(f"    phase: {phase}")
-    print(f"    reason: {note or step.reason or 'command failed'}")
-    print_command_block("command", step.command, indent="    ")
+    def field(name: str, value: str) -> str:
+        return f"    {ANSI_RED}{name}:{ANSI_RESET} {value}"
+    print(f"  {ANSI_BOLD_RED}{SYM_TOP} failure:{ANSI_RESET}")
+    print(field("example", label))
+    print(field("phase", phase))
+    print(field("reason", note or step.reason or 'command failed'))
+    print_command_block(phase, step.command, indent="    ")
     print_text_block("stdout", step.stdout, indent="    ", pipe=True)
     print_text_block("stderr", step.stderr, indent="    ", pipe=True)
 
@@ -385,6 +440,23 @@ def sanitizer_flags(sanitize: str | None) -> list[str]:
     ]
 
 
+def diagnostic_color_flags() -> list[str]:
+    # GCC auto-disables coloured diagnostics when stderr is not a tty (which
+    # is always the case here -- discover.py captures stderr). Forcing it on
+    # when the parent decided colour is appropriate keeps -Wall/-Wextra notes
+    # readable in CI logs.
+    return ["-fdiagnostics-color=always"] if USE_COLOR else []
+
+
+def make_run_env() -> dict[str, str]:
+    # Propagate the colour decision to test binaries: features/support/demo.hpp
+    # honours FORCE_COLOR (and NO_COLOR) the same way the script does.
+    env = os.environ.copy()
+    if USE_COLOR:
+        env["FORCE_COLOR"] = "1"
+    return env
+
+
 def build_cmd_for(ex: Example, sanitize: str | None = None,
                   analyzer: bool = False) -> list[str]:
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
@@ -394,6 +466,7 @@ def build_cmd_for(ex: Example, sanitize: str | None = None,
         "g++",
         f"-std={ex.std}",
         *DEFAULT_FLAGS,
+        *diagnostic_color_flags(),
         *(["-fanalyzer"] if analyzer else []),
         *sanitizer_flags(sanitize),
         str(source),
@@ -460,6 +533,7 @@ def run_one(ex: Example, binary: str, verbose: bool = False) -> StepResult:
             text=True,
             timeout=30,
             cwd=REPO_ROOT,
+            env=make_run_env(),
         )
     except subprocess.TimeoutExpired as e:
         stdout = e.stdout or ""
@@ -679,16 +753,20 @@ def print_run_config(gcc_version: int,
     if analyzer:
         mode = "analyzer" if mode == "default" else f"{mode}, analyzer"
     filtered = total - eligible - skipped
-    print("run:")
-    print(f"  g++ major        {gcc_version}")
+
+    def field(name: str, value: object) -> str:
+        return f"  {ANSI_CYAN}{name:<16}{ANSI_RESET} {value}"
+
+    print(f"{ANSI_BOLD_CYAN}{SYM_TOP} run:{ANSI_RESET}")
+    print(field("g++ major", gcc_version))
     libstdcxx = libstdcxx_release if libstdcxx_release is not None else "unknown"
-    print(f"  libstdc++        {libstdcxx}")
-    print(f"  mode             {mode}")
-    print(f"  discovered       {total}")
-    print(f"  eligible         {eligible}")
-    print(f"  skipped          {skipped}")
+    print(field("libstdc++", libstdcxx))
+    print(field("mode", mode))
+    print(field("discovered", total))
+    print(field("eligible", eligible))
+    print(field("skipped", skipped))
     if filtered:
-        print(f"  filtered         {filtered}")
+        print(field("filtered", filtered))
 
 
 def main() -> int:
@@ -759,7 +837,6 @@ def main() -> int:
     fail_count = 0
     soft_fail_count = 0
     fail_lines: list[str] = []
-    skip_lines: list[str] = []   # buffered; emitted at the end inside ::group::
     folder_stats: dict[str, FolderStats] = {}
     t0 = time.time()
 
@@ -792,7 +869,8 @@ def main() -> int:
     def print_folder_summary(title: str) -> None:
         stats = folder_stats.get(title)
         if stats and (stats.total or stats.skipped):
-            print(f"folder summary: {stats.summary()}")
+            print(f"{ANSI_BOLD_CYAN}{SYM_TOP} folder summary:"
+                  f"{ANSI_RESET} {stats.summary()}")
 
     def switch_example_group(ex: Example) -> None:
         nonlocal current_group
@@ -822,20 +900,45 @@ def main() -> int:
 
         - non-experimental: hard FAIL.
         - experimental + expect_error matches stderr: EXP-FAIL (soft pass).
+          The matched span is highlighted in the returned note so it's obvious
+          *what* the regex caught.
         - experimental + expect_error does NOT match: hard FAIL with EXP-WRONG-ERR
           flag — the file failed for an unexpected reason; the experimental
           escape hatch must not hide that.
         """
         if not ex.experimental:
             return f"{ANSI_RED}FAIL    {ANSI_RESET}", False, None
-        if ex.expect_error and ex.expect_error.search(info):
-            first = info.splitlines()[0] if info else ""
-            return f"{ANSI_YELLOW}EXP-FAIL{ANSI_RESET}", True, first
+        if ex.expect_error:
+            m = ex.expect_error.search(info)
+            if m:
+                lines = info.splitlines()
+                # Locate which line of `info` the match landed on so the user
+                # can tell when it matched on a deeper line of stderr (the note
+                # only shows the first stderr line).
+                line_idx = info.count("\n", 0, m.start())
+                first = lines[0] if lines else ""
+                if line_idx == 0 and first:
+                    # Highlight the matched span inline.
+                    note = (first[:m.start()]
+                            + f"{ANSI_YELLOW}{ANSI_BOLD}"
+                            + first[m.start():m.end()]
+                            + f"{ANSI_RESET}"
+                            + first[m.end():])
+                else:
+                    note = (f"{first}{ANSI_DIM} "
+                            f"(matched on line {line_idx + 1}: "
+                            f"{m.group(0)!r}){ANSI_RESET}")
+                return f"{ANSI_YELLOW}EXP-FAIL{ANSI_RESET}", True, note
         # Experimental file failed but stderr does NOT match expect-error.
         return (f"{ANSI_RED}EXP-WRONG-ERR{ANSI_RESET}", False,
                 f"experimental file failed but stderr did not match "
                 f"expect-error={ex.expect_error.pattern!r}" if ex.expect_error
                 else "experimental=true but expect-error is unset")
+
+    # Dim rule between examples in non-CI verbose mode. CI already gets
+    # ::group:: boundaries per folder, so a rule there would be redundant.
+    rule = f"{ANSI_DIM}{'─' * 60}{ANSI_RESET}" if (verbose and not in_gh) else ""
+    first_example = True
 
     for ex in eligible:
         label = f"[{ex.std}] {ex.path.name}"
@@ -844,7 +947,10 @@ def main() -> int:
         switch_example_group(ex)
         if verbose:
             print()
-            print(label)
+            if rule and not first_example:
+                print(rule)
+            print(f"{ANSI_BOLD_WHITE}{SYM_TOP} {label}{ANSI_RESET}")
+        first_example = False
         compile_result = compile_one(ex, gcc_version, verbose=verbose,
                                      sanitize=args.sanitize,
                                      analyzer=args.analyzer)
@@ -926,26 +1032,39 @@ def main() -> int:
 
     close_example_group()
 
+    # Group skipped entries by reason so a long sequence of identical
+    # "needs gcc 16+" lines collapses into a single block.
+    skipped_by_reason: dict[str, list[Example]] = {}
     for ex, reason in skipped:
-        skip_lines.append(f"{ANSI_DIM}SKIP    {ANSI_RESET} [{ex.std}] "
-                          f"{ex.path.name} ({reason})")
+        skipped_by_reason.setdefault(reason, []).append(ex)
 
-    if skip_lines:
-        grp_start(f"Skipped ({len(skip_lines)})")
+    if skipped:
+        grp_start(f"Skipped ({len(skipped)})")
         if not in_gh:
-            print(f"\n--- skipped ({len(skip_lines)}) ---")
-        for line in skip_lines:
-            print(line)
+            print(f"\n{ANSI_BOLD_CYAN}{SYM_TOP} --- skipped "
+                  f"({len(skipped)}) ---{ANSI_RESET}")
+        # Sort reasons by count desc, then alphabetically for stable output.
+        ordered = sorted(skipped_by_reason.items(),
+                         key=lambda kv: (-len(kv[1]), kv[0]))
+        for reason, ex_list in ordered:
+            ex_list.sort(key=lambda e: e.path.name)
+            # Reason header is the parent of the file lines, so it must
+            # outweigh them visually -- bright bold cyan + leader.
+            print(f"{ANSI_BOLD_CYAN}{SYM_SUB} {reason}{ANSI_RESET} "
+                  f"({len(ex_list)}):")
+            for ex in ex_list:
+                print(f"  {ANSI_DIM}[{ex.std}]{ANSI_RESET} {ex.path.name}")
         grp_end()
 
     elapsed = time.time() - t0
     print()
-    print(f"summary: {pass_count} pass, {fail_count} fail, "
+    print(f"{ANSI_BOLD_CYAN}{SYM_TOP} summary:{ANSI_RESET} "
+          f"{pass_count} pass, {fail_count} fail, "
           f"{soft_fail_count} experimental-fail, {len(skipped)} skip "
           f"({elapsed:.1f}s)")
 
     if fail_lines:
-        print("\n--- failures ---")
+        print(f"\n{ANSI_BOLD_RED}{SYM_TOP} --- failures ---{ANSI_RESET}")
         for line in fail_lines:
             print_text_block("failure", line)
 
@@ -973,8 +1092,12 @@ def main() -> int:
                 lines.append("**Failures:**")
                 lines.append("")
                 lines.append("```")
+                # Strip ANSI: GitHub's markdown renderer shows escape codes
+                # verbatim inside fenced blocks, so any colour from the live
+                # log (compiler diagnostics, EXP-PROMOTE, etc.) would render
+                # as literal garbage here.
                 for entry in fail_lines:
-                    lines.append(entry)
+                    lines.append(strip_ansi(entry))
                 lines.append("```")
             with open(summary_path, "a", encoding="utf-8") as f:
                 f.write("\n".join(lines) + "\n")
