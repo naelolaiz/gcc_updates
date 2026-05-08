@@ -1,0 +1,44 @@
+# features/gccext/sanitize/asan/CMakeLists.txt.in
+#
+# Each demo is a deliberate memory bug; the test asserts the binary fails at
+# runtime with the matching ASan diagnostic. Built only with the address
+# sanitizer active (-DGCC_FEATURE_SANITIZE=address).
+
+set(_asan_demos
+    # name                              expected ASan diagnostic
+    gccext_asan_double_free             "double-free"
+    gccext_asan_heap_buffer_overflow    "heap-buffer-overflow"
+    gccext_asan_heap_use_after_free     "heap-use-after-free"
+    gccext_asan_stack_buffer_overflow   "stack-buffer-overflow"
+)
+list(LENGTH _asan_demos _n_total)
+math(EXPR _last_idx "${_n_total} - 1")
+foreach(_i RANGE 0 ${_last_idx} 2)
+    list(GET _asan_demos ${_i} _name)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/asan/${_name}.cpp")
+endforeach()
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(NOT "address" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+foreach(_i RANGE 0 ${_last_idx} 2)
+    list(GET _asan_demos ${_i} _name)
+    math(EXPR _ri "${_i} + 1")
+    list(GET _asan_demos ${_ri} _regex)
+    add_executable(${_name} "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/asan/${_name}.cpp")
+    target_compile_options(${_name} PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_name} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_name} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_will_fail_test(${_name} "${_regex}")
+    set_tests_properties(${_name} PROPERTIES LABELS gcc-sanitize)
+endforeach()

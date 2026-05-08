@@ -1,0 +1,25 @@
+# features/gcc/gcc14/CMakeLists.txt.in
+#
+# Teaching point: GCC 14 was the first release shipping std::ranges::to in the
+# main libstdc++ -- no -lstdc++exp dance like the cpp23/gcc14-only std::print
+# example (see features/std/cpp23/CMakeLists.txt.in :: cpp23_print).
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 14)
+    return()
+endif()
+
+add_executable(gcc14_libstdcxx_ranges_to
+    "@CMAKE_SOURCE_DIR@/features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp")
+target_compile_options(gcc14_libstdcxx_ranges_to PRIVATE
+    -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(gcc14_libstdcxx_ranges_to PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(gcc14_libstdcxx_ranges_to PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+gcc_feature_normal_test(gcc14_libstdcxx_ranges_to)
+set_tests_properties(gcc14_libstdcxx_ranges_to PROPERTIES LABELS gcc-release)

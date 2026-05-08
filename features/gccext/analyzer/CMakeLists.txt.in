@@ -1,0 +1,36 @@
+# features/gccext/analyzer/CMakeLists.txt.in
+#
+# These three demos exist to be analyzed at compile time, not run. They need
+# GCC 16+ for the analyzer to recognise these patterns on C++ (NRVO + initial
+# exception support). Build only when the project is configured in analyzer
+# mode (-DGCC_FEATURE_ANALYZER=ON), which adds -fanalyzer to the compile flags;
+# the binaries deliberately contain UB and are NOT executed -- the test
+# command is a no-op (gcc_feature_normal_test handles this in analyzer mode).
+
+set(_examples
+    gccext_analyzer_double_free
+    gccext_analyzer_null_deref
+    gccext_analyzer_use_after_free
+)
+foreach(_n IN LISTS _examples)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/analyzer/${_n}.cpp")
+endforeach()
+
+if(NOT GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 16)
+    return()
+endif()
+
+foreach(_n IN LISTS _examples)
+    add_executable(${_n} "@CMAKE_SOURCE_DIR@/features/gccext/analyzer/${_n}.cpp")
+    target_compile_options(${_n} PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_n} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_n} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(${_n})
+    set_tests_properties(${_n} PROPERTIES LABELS gcc-analyzer)
+endforeach()

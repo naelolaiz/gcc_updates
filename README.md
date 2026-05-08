@@ -4,15 +4,23 @@ A structured, CI-tested workspace serving as a reference for the C++11 / C++17 /
 C++20 / C++23 / (experimental) C++26 standard library and tracking what each new
 GCC release ships.
 
-Every example under [features/](features/) is a single-file program registered
-as one `gcc_feature_test()` call in its folder's `CMakeLists.txt`. CMake +
-CTest drive the build and run; the function macro lives in
-[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the matrix three
-times on GCC 13/14/15 plus three more on GCC 15/16 under UBSan+ASan, TSan,
-and `-fanalyzer` — so correctness, runtime UB, data races, and compile-time
-path analysis are all covered per push. (The `gcc:16` Docker image isn't
-published yet; the matrix re-adds it once it lands. The analyzer job already
-exercises GCC 16 via `debian:unstable-slim` + apt.)
+Every example under [features/](features/) is a single-file program declared
+in plain CMake from its folder's `CMakeLists.txt.in` template. The root
+[CMakeLists.txt](CMakeLists.txt) `configure_file()`s each leaf into the build
+directory, substituting per-mode flags inline; the resolved copy in
+`build/features/<...>/CMakeLists.txt` is what CMake actually consumes — and
+is the file to read when you want to see the exact gcc invocation. The shared
+machinery (probes, default flag lists, three slim test-running helpers) lives
+in [cmake/GccFeature.cmake](cmake/GccFeature.cmake).
+
+CI runs the matrix three times on GCC 13/14/15 plus three more on GCC 15/16
+under UBSan+ASan, TSan, and `-fanalyzer` — so correctness, runtime UB, data
+races, and compile-time path analysis are all covered per push. Each job
+uploads its `build/features/**/CMakeLists.txt` tree as a workflow artifact
+named `resolved-cmakelists-<mode>`, so you can download and inspect the
+exact CMake the build configured. (The `gcc:16` Docker image isn't published
+yet; the matrix re-adds it once it lands. The analyzer job already exercises
+GCC 16 via `debian:unstable-slim` + apt.)
 
 ## Layout
 
@@ -43,11 +51,11 @@ features/                          # all examples (single .cpp each)
     gcc14/gcc14_*.cpp
     gcc15/gcc15_*.cpp
     gcc16/gcc16_*.cpp
-CMakeLists.txt                 # top-level: discovers all features/<bucket>/ subdirs
+CMakeLists.txt                 # top-level: configure_file() + include() each leaf
 cmake/
-  GccFeature.cmake             # gcc_feature_test() function and registration validation
+  GccFeature.cmake             # probes, default flag lists, test-running helpers
   expect_failure.cmake         # command runner for expected failures with diagnostic regexes
-features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per .cpp in the bucket
+features/<bucket>/CMakeLists.txt.in  # plain-CMake template; build-dir copy holds resolved flags
 features/<bucket>/README.md     # per-bucket index (manual, hand-edited)
 scripts/
   podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
@@ -69,19 +77,22 @@ Every example is built with this baseline:
 g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/<bucket>/bin
 ```
 
-`$STD` is the `STD` argument of the example's `gcc_feature_test()` call.
-`$EXTRA` is its `EXTRA_LIBS` / `EXTRA_COMPILE_FLAGS` (e.g. `stdc++exp` for
-`std::stacktrace`, `tbb` for parallel algorithms). Sanitizer mode swaps
-`-O2` for `-O1` and adds `-fsanitize=…`; analyzer mode adds `-fanalyzer`.
+`$STD` and any per-example extras (e.g. `target_link_libraries(... stdc++exp)`
+for `std::stacktrace`, `target_link_libraries(... tbb)` for parallel algorithms,
+`-fcontracts`/`-freflection` for cpp26 demos) are written inline in the leaf's
+`CMakeLists.txt.in`. Sanitizer mode swaps `-O2` for `-O1 -fno-omit-frame-pointer
+-g` and adds `-fsanitize=…`; analyzer mode adds `-fanalyzer`. Those mode-specific
+flag lists live in `cmake/GccFeature.cmake` as `GCC_FEATURE_*_TEXT` variables;
+each leaf references them and configure_file substitutes their resolved value
+into the build-dir copy at configure time.
 
 [docs/compiler-flags.md](docs/compiler-flags.md) is the complete reference —
-every default flag, every per-test `EXTRA_*`, and how to reproduce any
-build by hand inside a container.
+every default flag, every per-test extra, and how to reproduce any build
+by hand inside a container.
 
 ## Anatomy of one example
 
-Each `.cpp` is plain code with a `description` and `reference` comment block;
-the build metadata lives in the folder's `CMakeLists.txt`:
+Each `.cpp` is plain code with a `description` and `reference` comment block:
 
 ```cpp
 // description: std::ranges::to converts a range to a container in one expression.
@@ -101,17 +112,16 @@ int main() {
 }
 ```
 
-Build metadata in `features/std/cpp23/CMakeLists.txt`:
+The build recipe sits in the folder's `CMakeLists.txt.in`. For a bare example
+that's a `add_executable` + `target_compile_options` + `target_include_directories`
++ `gcc_feature_normal_test` block. Per-example variations (`target_link_libraries(...
+stdc++exp)`, `target_link_options(... -fopenmp)`, `gcc_feature_will_fail_test(...
+"<sanitizer-diagnostic>")`, `gcc_feature_expect_compile_error(...)` for
+EXPERIMENTAL features) are written out as plain CMake — no `cmake_parse_arguments`
+mini-DSL to look up. The build-dir copy of the `.in` (`build/features/.../CMakeLists.txt`)
+holds the same recipe with every `${GCC_FEATURE_*}` placeholder resolved to its
+literal flag list, so reading that file is enough to know what gcc command runs.
 
-```cmake
-gcc_feature_test(cpp23_ranges_to  STD c++23  MIN_GCC 14  TOPIC ranges)
-```
-
-Required keyword args: `STD`, `MIN_GCC`, `TOPIC`. Optional: `MAX_GCC`,
-`MIN_LIBSTDCXX`, `MAX_LIBSTDCXX`, `EXTRA_LIBS`, `EXTRA_COMPILE_FLAGS`,
-`REQUIRES_SANITIZER`, `SKIP_SANITIZER`, `REQUIRES_ANALYZER`, `WILL_FAIL`,
-`EXPECT_OUTPUT`, `EXPERIMENTAL`, `EXPECT_ERROR`. See
-[cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 Programs return `0` on success; runtime checks use `DEMO_ASSERT(...)`.
 
 ## Running locally (podman)
@@ -175,9 +185,11 @@ official `gcc:N` Docker images keep both at version N, which is why CI
 uses them. To express a libstdc++ requirement on individual files:
 
 - `cmake/GccFeature.cmake` probes `_GLIBCXX_RELEASE` at configure time and
-  caches it in `LIBSTDCXX_RELEASE`.
-- `gcc_feature_test()` accepts `MIN_LIBSTDCXX` / `MAX_LIBSTDCXX`; tests
-  outside that window are not registered in that configure mode.
+  caches it in `LIBSTDCXX_RELEASE` (defaulting to `999` when the probe fails,
+  so MIN_LIBSTDCXX gates default to "do not skip" on unknown libstdc++).
+- Leaves that need a particular libstdc++ release write the gate inline,
+  e.g. `if(@LIBSTDCXX_RELEASE@ GREATER_EQUAL 13) ... endif()` — the
+  substituted form in the build-dir copy reads as plain numbers.
 
 Some C++23 library features ship at different libstdc++ releases than
 their language counterparts. Notably, per cppreference:
@@ -229,9 +241,13 @@ so this concern is purely informational.
 2. Add a `// description:` and `// reference:` comment block at the top of
    the `.cpp` file (no machine-readable header needed any more).
 3. Write `int main()` that asserts what should hold, returns 0 on success.
-4. Add a `gcc_feature_test(<name> STD c++NN MIN_GCC N TOPIC <topic>)` line
-   to that folder's `CMakeLists.txt`. See
-   [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
+4. Add an example block to that folder's `CMakeLists.txt.in`. For a bare
+   example, copy an existing block and update the name, std, MIN_GCC gate,
+   and topic label. The leaf must also call
+   `gcc_feature_register("@CMAKE_SOURCE_DIR@/<rel-path>/<name>.cpp")` once
+   so the orphan-source check at root knows about it. For non-bare cases
+   (extra libs / will-fail tests / experimental compile-error tests) follow
+   one of the existing leaves as a model.
 5. Run `./scripts/podman-dev.sh <ver>` to verify locally.
 6. Update the bucket's `features/<bucket>/README.md` index by hand if you
    want it to list your new example. (Auto-generation from CMake target
@@ -378,11 +394,13 @@ Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [fea
 
 ## Why this layout
 
-- **Two-level subfolders under `features/` + per-folder `CMakeLists.txt`**
+- **Two-level subfolders under `features/` + per-folder `CMakeLists.txt.in`**
   keeps the tree navigable as it grows. Filename prefix (`cpp23_…`) is the
-  bucket key; the matching `gcc_feature_test()` call in the folder's
-  `CMakeLists.txt` carries the build metadata.
+  bucket key; the build recipe in the folder's `CMakeLists.txt.in` is plain
+  CMake (no mini-DSL), and the build-dir copy after `configure_file()` shows
+  every gcc flag inline.
 - **One toolchain source (official `gcc:N` Docker image)** for both local
   podman and CI means there is exactly one place a version pin can drift.
-- **`EXPERIMENTAL` keyword** lets C++26 / cutting-edge GCC features live in
-  the same matrix without making every PR red whenever a feature breaks.
+- **`gcc_feature_expect_compile_error()` test helper** lets C++26 / cutting-edge
+  GCC features live in the same matrix without making every PR red whenever a
+  feature breaks: the test asserts that compilation fails with a known diagnostic.

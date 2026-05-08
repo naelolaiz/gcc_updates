@@ -1,0 +1,56 @@
+# features/gccext/sanitize/integration/CMakeLists.txt.in
+#
+# Demos for sanitizer-adjacent libstdc++ / language features. They build
+# unconditionally (no REQUIRES_SANITIZER); some are most interesting when
+# combined with -DGCC_FEATURE_SANITIZE=... but they still pass without it.
+
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp")
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_glibcxx_debug.cpp")
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+
+# gccext_assume_under_sanitize: -std=c++23, gcc 14+.
+if(@GCC_MAJOR@ GREATER_EQUAL 14)
+    add_executable(gccext_assume_under_sanitize
+        "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp")
+    target_compile_options(gccext_assume_under_sanitize PRIVATE
+        -std=c++23 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(gccext_assume_under_sanitize PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(gccext_assume_under_sanitize PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(gccext_assume_under_sanitize)
+    set_tests_properties(gccext_assume_under_sanitize PROPERTIES LABELS gcc-sanitize)
+endif()
+
+# gccext_glibcxx_debug: -D_GLIBCXX_DEBUG turns on libstdc++'s debug mode --
+# iterator misuse, out-of-range access, mismatched containers all assert at runtime.
+if(@GCC_MAJOR@ GREATER_EQUAL 13)
+    add_executable(gccext_glibcxx_debug
+        "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_glibcxx_debug.cpp")
+    target_compile_options(gccext_glibcxx_debug PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@ -D_GLIBCXX_DEBUG)
+    target_link_options(gccext_glibcxx_debug PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(gccext_glibcxx_debug PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(gccext_glibcxx_debug)
+    set_tests_properties(gccext_glibcxx_debug PROPERTIES LABELS gcc-sanitize)
+endif()
+
+# gccext_no_sanitize_attribute: bare; demonstrates [[gnu::no_sanitize(...)]].
+if(@GCC_MAJOR@ GREATER_EQUAL 13)
+    add_executable(gccext_no_sanitize_attribute
+        "@CMAKE_SOURCE_DIR@/features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp")
+    target_compile_options(gccext_no_sanitize_attribute PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(gccext_no_sanitize_attribute PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(gccext_no_sanitize_attribute PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(gccext_no_sanitize_attribute)
+    set_tests_properties(gccext_no_sanitize_attribute PROPERTIES LABELS gcc-sanitize)
+endif()

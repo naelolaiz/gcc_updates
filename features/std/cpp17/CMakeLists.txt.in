@@ -1,0 +1,71 @@
+# features/std/cpp17/CMakeLists.txt.in
+#
+# All examples are -std=c++17, MIN_GCC 13. The bare set is compiled uniformly
+# in a loop; cpp17_parallel_algos is the one outlier (needs target_link_libraries(... tbb)
+# because libstdc++'s parallel <execution> policies dispatch through Intel TBB).
+
+set(_bare_examples
+    # name                          topic
+    cpp17_any                       stl
+    cpp17_attributes                language
+    cpp17_byte                      stl
+    cpp17_clamp                     stl
+    cpp17_constexpr_lambda          language
+    cpp17_ctad_basic                templates
+    cpp17_filesystem                stl
+    cpp17_fold_expressions          templates
+    cpp17_if_constexpr              templates
+    cpp17_init_statement            language
+    cpp17_inline_variables          language
+    cpp17_invoke_apply              stl
+    cpp17_nested_namespace          language
+    cpp17_optional                  stl
+    cpp17_shared_mutex              threading
+    cpp17_string_view               stl
+    cpp17_structured_bindings       language
+    cpp17_variant                   stl
+)
+list(LENGTH _bare_examples _n_total)
+math(EXPR _last_idx "${_n_total} - 1")
+foreach(_i RANGE 0 ${_last_idx} 2)
+    list(GET _bare_examples ${_i} _name)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/std/cpp17/${_name}.cpp")
+endforeach()
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/std/cpp17/cpp17_parallel_algos.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+foreach(_i RANGE 0 ${_last_idx} 2)
+    list(GET _bare_examples ${_i} _name)
+    math(EXPR _ti "${_i} + 1")
+    list(GET _bare_examples ${_ti} _topic)
+    add_executable(${_name} "@CMAKE_SOURCE_DIR@/features/std/cpp17/${_name}.cpp")
+    target_compile_options(${_name} PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_name} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_name} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(${_name})
+    set_tests_properties(${_name} PROPERTIES LABELS ${_topic})
+endforeach()
+
+# cpp17_parallel_algos: links libtbb. libstdc++ parallel <execution> policies
+# dispatch through Intel TBB; without -ltbb the link fails with undefined
+# references to TBB symbols.
+add_executable(cpp17_parallel_algos
+    "@CMAKE_SOURCE_DIR@/features/std/cpp17/cpp17_parallel_algos.cpp")
+target_compile_options(cpp17_parallel_algos PRIVATE
+    -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+target_link_options(cpp17_parallel_algos PRIVATE
+    @GCC_FEATURE_SAN_LINK_TEXT@)
+target_include_directories(cpp17_parallel_algos PRIVATE
+    "@CMAKE_SOURCE_DIR@/features")
+target_link_libraries(cpp17_parallel_algos PRIVATE tbb)
+gcc_feature_normal_test(cpp17_parallel_algos)
+set_tests_properties(cpp17_parallel_algos PROPERTIES LABELS stl)

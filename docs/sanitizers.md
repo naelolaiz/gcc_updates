@@ -18,11 +18,12 @@ with `[[gnu::no_sanitize("...")]]` (see
 [../features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp](../features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp)).
 
 Files that *deliberately* trip a sanitizer (e.g. a heap-use-after-free demo)
-live under [../features/gccext/sanitize/{asan,ubsan,tsan,leak}/](../features/gccext/sanitize/)
-and use `REQUIRES_SANITIZER` in their `gcc_feature_test()` call so CTest
-enables them **only** under the matching sanitizer. They use `WILL_FAIL` plus
-`EXPECT_OUTPUT` so an unrelated crash or loader error does not pass as the
-expected sanitizer report.
+live under [../features/gccext/sanitize/{asan,ubsan,tsan,leak}/](../features/gccext/sanitize/).
+Each sanitizer leaf's `CMakeLists.txt.in` skips the whole leaf unless the
+matching sanitizer is in `GCC_FEATURE_ACTIVE_SANITIZERS`, then registers each
+demo via `gcc_feature_will_fail_test(<name> "<regex>")` — that helper expects
+the binary to fail at runtime AND match the regex, so an unrelated crash or
+loader error does not pass as the expected sanitizer report.
 
 ## What `-DGCC_FEATURE_SANITIZE=…` adds to the build
 

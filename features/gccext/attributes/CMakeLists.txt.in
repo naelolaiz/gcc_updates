@@ -1,0 +1,63 @@
+# features/gccext/attributes/CMakeLists.txt.in
+#
+# All examples are -std=c++17 (one is -std=c++20), MIN_GCC 13. The bare set
+# is uniform; gccext_target_clones is the outlier (skipped under TSan because
+# its IFUNC resolver interacts badly with TSan startup).
+
+set(_bare_examples
+    # name                          std         topic
+    gccext_attribute_cleanup        c++17       gcc-attributes
+    gccext_attribute_flatten        c++17       gcc-attributes
+    gccext_attribute_hot_cold       c++17       gcc-attributes
+    gccext_attribute_packed         c++17       gcc-attributes
+    gccext_attribute_pure_const     c++17       gcc-attributes
+    gccext_attribute_target         c++17       gcc-attributes
+    gccext_likely_unlikely          c++20       gcc-attributes
+)
+list(LENGTH _bare_examples _n_total)
+math(EXPR _last_idx "${_n_total} - 1")
+foreach(_i RANGE 0 ${_last_idx} 3)
+    list(GET _bare_examples ${_i} _name)
+    gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/attributes/${_name}.cpp")
+endforeach()
+gcc_feature_register("@CMAKE_SOURCE_DIR@/features/gccext/attributes/gccext_target_clones.cpp")
+
+if(GCC_FEATURE_ANALYZER)
+    return()
+endif()
+if(@GCC_MAJOR@ LESS 13)
+    return()
+endif()
+
+foreach(_i RANGE 0 ${_last_idx} 3)
+    list(GET _bare_examples ${_i} _name)
+    math(EXPR _si "${_i} + 1")
+    list(GET _bare_examples ${_si} _std)
+    math(EXPR _ti "${_i} + 2")
+    list(GET _bare_examples ${_ti} _topic)
+    add_executable(${_name} "@CMAKE_SOURCE_DIR@/features/gccext/attributes/${_name}.cpp")
+    target_compile_options(${_name} PRIVATE
+        -std=${_std} @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(${_name} PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(${_name} PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(${_name})
+    set_tests_properties(${_name} PROPERTIES LABELS ${_topic})
+endforeach()
+
+# gccext_target_clones: target_clones uses an IFUNC resolver, which is known
+# to interact badly with TSan startup. Skip the example on the TSan job
+# instead of producing spurious failures.
+if(NOT "thread" IN_LIST GCC_FEATURE_ACTIVE_SANITIZERS)
+    add_executable(gccext_target_clones
+        "@CMAKE_SOURCE_DIR@/features/gccext/attributes/gccext_target_clones.cpp")
+    target_compile_options(gccext_target_clones PRIVATE
+        -std=c++17 @GCC_FEATURE_DEFAULT_COMPILE_TEXT@ @GCC_FEATURE_SAN_COMPILE_TEXT@ @GCC_FEATURE_ANALYZER_COMPILE_TEXT@)
+    target_link_options(gccext_target_clones PRIVATE
+        @GCC_FEATURE_SAN_LINK_TEXT@)
+    target_include_directories(gccext_target_clones PRIVATE
+        "@CMAKE_SOURCE_DIR@/features")
+    gcc_feature_normal_test(gccext_target_clones)
+    set_tests_properties(gccext_target_clones PROPERTIES LABELS gcc-attributes)
+endif()
