@@ -12,7 +12,7 @@ gcc_feature_test(cpp23_expected                     STD c++23  MIN_GCC 14  TOPIC
 gcc_feature_test(cpp23_flat_map                     STD c++23  MIN_GCC 15  TOPIC stl)
 gcc_feature_test(cpp23_flat_set                     STD c++23  MIN_GCC 15  TOPIC stl)
 gcc_feature_test(cpp23_format_ranges                STD c++23  MIN_GCC 14  TOPIC stl
-                 MIN_LIBSTDCXX 14)
+                 MIN_LIBSTDCXX 15)
 gcc_feature_test(cpp23_forward_like                 STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_generator                    STD c++23  MIN_GCC 14  TOPIC coroutines)
 gcc_feature_test(cpp23_if_consteval                 STD c++23  MIN_GCC 14  TOPIC language)
