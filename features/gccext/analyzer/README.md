@@ -1,6 +1,6 @@
 # GCC extensions: -fanalyzer compile-time demos
 
-_Folder: `features/gccext/analyzer/`. 3 example(s) across 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/gccext/analyzer/`. 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## gcc-analyzer
 

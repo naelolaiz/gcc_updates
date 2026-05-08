@@ -11,6 +11,9 @@ gcc_feature_test(cpp23_deducing_this                STD c++23  MIN_GCC 14  TOPIC
 gcc_feature_test(cpp23_expected                     STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_flat_map                     STD c++23  MIN_GCC 15  TOPIC stl)
 gcc_feature_test(cpp23_flat_set                     STD c++23  MIN_GCC 15  TOPIC stl)
+gcc_feature_test(cpp23_format_ranges                STD c++23  MIN_GCC 14  TOPIC stl
+                 MIN_LIBSTDCXX 14)
+gcc_feature_test(cpp23_forward_like                 STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_generator                    STD c++23  MIN_GCC 14  TOPIC coroutines)
 gcc_feature_test(cpp23_if_consteval                 STD c++23  MIN_GCC 14  TOPIC language)
 gcc_feature_test(cpp23_mdspan                       STD c++23  MIN_GCC 16  TOPIC stl)
@@ -37,8 +40,11 @@ gcc_feature_test(cpp23_ranges_zip                   STD c++23  MIN_GCC 14  TOPIC
 gcc_feature_test(cpp23_recursive_lambda             STD c++23  MIN_GCC 14  TOPIC templates)
 gcc_feature_test(cpp23_resize_and_overwrite         STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_size_t_literal               STD c++23  MIN_GCC 14  TOPIC language)
+gcc_feature_test(cpp23_spanstream                   STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_stacktrace                   STD c++23  MIN_GCC 14  TOPIC stl
                  EXTRA_LIBS stdc++exp  MIN_LIBSTDCXX 14)
+gcc_feature_test(cpp23_start_lifetime_as            STD c++23  MIN_GCC 16  TOPIC stl
+                 MIN_LIBSTDCXX 16)
 gcc_feature_test(cpp23_static_operator              STD c++23  MIN_GCC 14  TOPIC templates)
 gcc_feature_test(cpp23_string_contains              STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_to_underlying                STD c++23  MIN_GCC 14  TOPIC stl)

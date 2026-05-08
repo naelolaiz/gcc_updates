@@ -259,7 +259,11 @@ that came after assumes you have these in muscle memory.
   `cpp11_alias_template`, `cpp11_type_traits`, `cpp11_ratio`.
 - **STL value types:** `cpp11_array`, `cpp11_tuple`, `cpp11_unordered_map`,
   `cpp11_initializer_list`, `cpp11_smart_ptrs`, `cpp11_chrono`, `cpp11_random`,
-  `cpp11_regex`.
+  `cpp11_regex`, `cpp11_forward_list`.
+- **STL infrastructure:** `cpp11_emplace`, `cpp11_hash`,
+  `cpp11_reference_wrapper`, `cpp11_iterator_helpers`,
+  `cpp11_algorithms_new`, `cpp11_iota`, `cpp11_system_error`,
+  `cpp11_exception_ptr`.
 - **Callables:** `cpp11_function`, `cpp11_bind`.
 - **Concurrency:** `cpp11_thread`, `cpp11_mutex_lock`,
   `cpp11_condition_variable`, `cpp11_async_future`, `cpp11_atomic`.
@@ -278,14 +282,18 @@ Full index: [features/std/cpp14/README.md](features/std/cpp14/README.md).
 ### 2. Quality-of-life (C++17)
 
 - **STL value types:** `cpp17_optional`, `cpp17_variant`, `cpp17_any`,
-  `cpp17_string_view`, `cpp17_byte`, `cpp17_filesystem`.
-- **Algorithms:** `cpp17_clamp`, `cpp17_invoke_apply`, `cpp17_parallel_algos`.
+  `cpp17_string_view`, `cpp17_byte`, `cpp17_filesystem`,
+  `cpp17_shared_ptr_array`.
+- **Algorithms / numerics:** `cpp17_clamp`, `cpp17_invoke_apply`,
+  `cpp17_parallel_algos`, `cpp17_gcd_lcm_sample`, `cpp17_not_fn_as_const`.
+- **STL infrastructure:** `cpp17_charconv`, `cpp17_memory_resource`,
+  `cpp17_node_handles`, `cpp17_launder`.
 - **Templates / metaprogramming:** `cpp17_if_constexpr`, `cpp17_fold_expressions`,
   `cpp17_ctad_basic`, `cpp17_type_trait_helpers`.
 - **Language:** `cpp17_structured_bindings`, `cpp17_init_statement`,
   `cpp17_inline_variables`, `cpp17_nested_namespace`,
   `cpp17_constexpr_lambda`, `cpp17_attributes`.
-- **Concurrency:** `cpp17_shared_mutex`.
+- **Concurrency:** `cpp17_shared_mutex`, `cpp17_scoped_lock`.
 
 Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 
@@ -334,7 +342,9 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   `cpp23_views_stride`, `cpp23_views_as_const_as_rvalue`.
 - **Library:** `cpp23_optional_monadic`, `cpp23_byteswap`,
   `cpp23_to_underlying`, `cpp23_unreachable`, `cpp23_move_only_function`,
-  `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`.
+  `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`,
+  `cpp23_spanstream`, `cpp23_format_ranges`, `cpp23_forward_like`,
+  `cpp23_start_lifetime_as`.
 
 Full index: [features/std/cpp23/README.md](features/std/cpp23/README.md).
 
