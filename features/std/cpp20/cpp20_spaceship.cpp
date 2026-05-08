@@ -2,6 +2,7 @@
 // description: operator<=> ("spaceship") generates the full set of relational operators from one declaration.
 // reference: https://en.cppreference.com/w/cpp/language/default_comparisons
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <compare>
 
@@ -15,19 +16,20 @@ struct Version {
 };
 
 int main() {
+    demo::title("C++20 spaceship");
     Version a{1, 2, 3};
     Version b{1, 2, 4};
     Version c{1, 2, 3};
 
-    assert(a < b);
-    assert(b > a);
-    assert(a == c);
-    assert(a != b);
-    assert(a <= c);
-    assert(b >= a);
+    DEMO_ASSERT(a < b);
+    DEMO_ASSERT(b > a);
+    DEMO_ASSERT(a == c);
+    DEMO_ASSERT(a != b);
+    DEMO_ASSERT(a <= c);
+    DEMO_ASSERT(b >= a);
 
     // Three-way result: strong_ordering.
     auto cmp = a <=> b;
-    assert(cmp == std::strong_ordering::less);
+    DEMO_ASSERT(cmp == std::strong_ordering::less);
     return 0;
 }

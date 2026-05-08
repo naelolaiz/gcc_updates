@@ -6,24 +6,26 @@
 // exercises all four, gate the whole thing on libstdc++ 16+. Symbols live in
 // <algorithm>, not <ranges>.
 
+#include "support/demo.hpp"
 #include <algorithm>
 #include <cassert>
 #include <ranges>
 #include <vector>
 
 int main() {
+    demo::title("C++23 ranges starts ends contains");
     std::vector<int> v{1, 2, 3, 4, 5};
 
-    assert(std::ranges::starts_with(v, std::vector<int>{1, 2}));
-    assert(!std::ranges::starts_with(v, std::vector<int>{2, 3}));
+    DEMO_ASSERT(std::ranges::starts_with(v, std::vector<int>{1, 2}));
+    DEMO_ASSERT(!std::ranges::starts_with(v, std::vector<int>{2, 3}));
 
-    assert(std::ranges::ends_with(v, std::vector<int>{4, 5}));
-    assert(!std::ranges::ends_with(v, std::vector<int>{1, 2}));
+    DEMO_ASSERT(std::ranges::ends_with(v, std::vector<int>{4, 5}));
+    DEMO_ASSERT(!std::ranges::ends_with(v, std::vector<int>{1, 2}));
 
-    assert(std::ranges::contains(v, 3));
-    assert(!std::ranges::contains(v, 99));
+    DEMO_ASSERT(std::ranges::contains(v, 3));
+    DEMO_ASSERT(!std::ranges::contains(v, 99));
 
-    assert(std::ranges::contains_subrange(v, std::vector<int>{2, 3, 4}));
-    assert(!std::ranges::contains_subrange(v, std::vector<int>{3, 5}));
+    DEMO_ASSERT(std::ranges::contains_subrange(v, std::vector<int>{2, 3, 4}));
+    DEMO_ASSERT(!std::ranges::contains_subrange(v, std::vector<int>{3, 5}));
     return 0;
 }

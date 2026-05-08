@@ -2,6 +2,7 @@
 // description: std::atomic<std::shared_ptr<T>> -- lock-free-style atomic load/store/exchange of shared ownership.
 // reference: https://en.cppreference.com/w/cpp/memory/shared_ptr/atomic2
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <memory>
@@ -14,6 +15,7 @@ struct Snapshot {
 };
 
 int main() {
+    demo::title("C++20 atomic shared ptr");
     std::atomic<std::shared_ptr<Snapshot>> current{
         std::make_shared<Snapshot>(0, 100)};
 
@@ -51,7 +53,7 @@ int main() {
     readers.clear();
 
     auto final_snap = current.load();
-    assert(final_snap->generation == kWrites);
-    assert(reader_observations.load() > 0);
+    DEMO_ASSERT(final_snap->generation == kWrites);
+    DEMO_ASSERT(reader_observations.load() > 0);
     return 0;
 }

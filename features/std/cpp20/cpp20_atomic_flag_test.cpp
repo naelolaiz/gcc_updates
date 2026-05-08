@@ -2,18 +2,20 @@
 // description: C++20 added test()/wait()/notify_one to std::atomic_flag, finally making it useful beyond test_and_set.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic_flag
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <thread>
 
 int main() {
+    demo::title("C++20 atomic flag test");
     std::atomic_flag flag = ATOMIC_FLAG_INIT;
 
     // test() (new in C++20) returns the current state without modifying it.
-    assert(flag.test() == false);
+    DEMO_ASSERT(flag.test() == false);
 
     flag.test_and_set();
-    assert(flag.test() == true);
+    DEMO_ASSERT(flag.test() == true);
 
     // Use it as a one-shot signal: waiter blocks until producer clears it.
     std::atomic<int> got{-1};
@@ -27,6 +29,6 @@ int main() {
     flag.notify_one();
 
     waiter.join();
-    assert(got.load() == 7);
+    DEMO_ASSERT(got.load() == 7);
     return 0;
 }

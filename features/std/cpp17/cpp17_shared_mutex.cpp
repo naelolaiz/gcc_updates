@@ -2,6 +2,7 @@
 // description: std::shared_mutex (C++17) + std::shared_lock = many readers OR one writer; std::unique_lock for the writer.
 // reference: https://en.cppreference.com/w/cpp/thread/shared_mutex
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <mutex>
@@ -25,6 +26,7 @@ private:
 };
 
 int main() {
+    demo::title("C++17 shared mutex");
     CountingMap cm;
     cm.set(100);
 
@@ -39,9 +41,9 @@ int main() {
         });
     }
     for (auto& t : readers) t.join();
-    assert(ok_reads.load() == 800);
+    DEMO_ASSERT(ok_reads.load() == 800);
 
     cm.set(7);
-    assert(cm.get() == 7);
+    DEMO_ASSERT(cm.get() == 7);
     return 0;
 }

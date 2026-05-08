@@ -2,12 +2,14 @@
 // description: std::atomic<T> for lock-free (where supported) shared state; memory_order tunes synchronisation strength.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <thread>
 #include <vector>
 
 int main() {
+    demo::title("C++11 atomic");
     std::atomic<int>  counter{0};
     std::atomic<bool> ready{false};
 
@@ -16,7 +18,7 @@ int main() {
             std::this_thread::yield();
         }
         // Once ready is true, counter's effects (released by setter) are visible.
-        assert(counter.load(std::memory_order_relaxed) >= 0);
+        DEMO_ASSERT(counter.load(std::memory_order_relaxed) >= 0);
     });
 
     constexpr int kThreads = 8;
@@ -32,7 +34,7 @@ int main() {
     ready.store(true, std::memory_order_release);
     waiter.join();
 
-    assert(counter.load() == kThreads * kIters);
+    DEMO_ASSERT(counter.load() == kThreads * kIters);
 
     // compare_exchange_weak loop: classic CAS pattern.
     std::atomic<int> v{0};
@@ -40,6 +42,6 @@ int main() {
     while (!v.compare_exchange_weak(expected, 42, std::memory_order_acq_rel)) {
         // expected updated by CAS to current value; loop until success.
     }
-    assert(v.load() == 42);
+    DEMO_ASSERT(v.load() == 42);
     return 0;
 }

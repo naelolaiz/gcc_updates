@@ -2,6 +2,7 @@
 // description: std::osyncstream interleaves output safely from multiple threads -- each scope's text is emitted as one block.
 // reference: https://en.cppreference.com/w/cpp/io/basic_osyncstream
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <sstream>
 #include <syncstream>
@@ -9,6 +10,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 syncstream");
     std::ostringstream sink;
 
     {
@@ -30,7 +32,7 @@ int main() {
     for (int i = 0; i < 8; ++i) {
         std::string needle = "thread-" + std::to_string(i) +
                              ":start;thread-" + std::to_string(i) + ":end;";
-        assert(s.find(needle) != std::string::npos);
+        DEMO_ASSERT(s.find(needle) != std::string::npos);
     }
     return 0;
 }

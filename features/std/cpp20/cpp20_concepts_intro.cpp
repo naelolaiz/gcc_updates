@@ -2,6 +2,7 @@
 // description: Defining and using concepts to constrain templates -- replaces SFINAE for most cases.
 // reference: https://en.cppreference.com/w/cpp/language/constraints
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <concepts>
 #include <string>
@@ -25,6 +26,7 @@ constexpr T thrice(T x) { return x + x + x; }
 constexpr auto plus_one(Numeric auto x) { return x + 1; }
 
 int main() {
+    demo::title("C++20 concepts intro");
     static_assert(twice(3) == 6);
     static_assert(twice(2.5) == 5.0);
     static_assert(thrice(4) == 12);
@@ -36,6 +38,6 @@ int main() {
 
     // Runtime sanity check too, in case any of the above constexpr were
     // mis-evaluated by an unexpected non-constexpr fallback.
-    assert(twice(10) == 20);
+    DEMO_ASSERT(twice(10) == 20);
     return 0;
 }

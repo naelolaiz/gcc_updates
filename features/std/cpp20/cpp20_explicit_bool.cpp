@@ -2,6 +2,7 @@
 // description: explicit(bool) makes a constructor's explicitness depend on a constexpr predicate.
 // reference: https://en.cppreference.com/w/cpp/language/explicit
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 #include <type_traits>
@@ -16,12 +17,13 @@ struct Wrapper {
 };
 
 int main() {
+    demo::title("C++20 explicit bool");
     Wrapper<int> a = 42;             // implicit -- int is convertible to int
-    assert(a.value == 42);
+    DEMO_ASSERT(a.value == 42);
 
     // Wrapper<std::string> b = "hello";   // would NOT compile: explicit
     Wrapper<std::string> c{std::string("hello")};
-    assert(c.value == "hello");
+    DEMO_ASSERT(c.value == "hello");
 
     static_assert(std::is_convertible_v<int, Wrapper<int>>);
     static_assert(!std::is_convertible_v<std::string, Wrapper<std::string>>);

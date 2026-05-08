@@ -2,18 +2,20 @@
 // description: views::join_with flattens a range-of-ranges with a separator (single element OR a range).
 // reference: https://en.cppreference.com/w/cpp/ranges/join_with_view
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <ranges>
 #include <string>
 #include <vector>
 
 int main() {
+    demo::title("C++23 ranges join with");
     std::vector<std::string> parts{"foo", "bar", "baz"};
     std::string joined;
     for (char c : parts | std::views::join_with(',')) {
         joined.push_back(c);
     }
-    assert(joined == "foo,bar,baz");
+    DEMO_ASSERT(joined == "foo,bar,baz");
 
     // Multi-char separator.
     std::vector<std::string> parts2{"alpha", "beta"};
@@ -22,6 +24,6 @@ int main() {
     for (char c : parts2 | std::views::join_with(sep)) {
         joined2.push_back(c);
     }
-    assert(joined2 == "alpha :: beta");
+    DEMO_ASSERT(joined2 == "alpha :: beta");
     return 0;
 }

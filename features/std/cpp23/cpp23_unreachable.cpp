@@ -2,6 +2,7 @@
 // description: std::unreachable() marks code paths that cannot be reached -- the optimizer assumes UB if they ever are.
 // reference: https://en.cppreference.com/w/cpp/utility/unreachable
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <utility>
 
@@ -19,8 +20,9 @@ int mode_to_flags(Mode m) {
 }
 
 int main() {
-    assert(mode_to_flags(Mode::Read)   == 1);
-    assert(mode_to_flags(Mode::Write)  == 2);
-    assert(mode_to_flags(Mode::Append) == 4);
+    demo::title("C++23 unreachable");
+    DEMO_ASSERT(mode_to_flags(Mode::Read)   == 1);
+    DEMO_ASSERT(mode_to_flags(Mode::Write)  == 2);
+    DEMO_ASSERT(mode_to_flags(Mode::Append) == 4);
     return 0;
 }

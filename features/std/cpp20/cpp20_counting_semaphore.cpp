@@ -2,6 +2,7 @@
 // description: std::counting_semaphore caps concurrent access to a fixed number of "permits".
 // reference: https://en.cppreference.com/w/cpp/thread/counting_semaphore
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <semaphore>
@@ -9,6 +10,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 counting semaphore");
     constexpr int kPermits = 3;
     constexpr int kWorkers = 12;
 
@@ -39,8 +41,8 @@ int main() {
     }
     workers.clear();
 
-    assert(finished.load() == kWorkers);
-    assert(peak.load() <= kPermits);   // semaphore upheld its cap
-    assert(peak.load() >= 1);
+    DEMO_ASSERT(finished.load() == kWorkers);
+    DEMO_ASSERT(peak.load() <= kPermits);   // semaphore upheld its cap
+    DEMO_ASSERT(peak.load() >= 1);
     return 0;
 }

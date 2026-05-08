@@ -2,6 +2,7 @@
 // description: std::variant<Ts...> is a type-safe tagged union; std::visit dispatches on the active alternative.
 // reference: https://en.cppreference.com/w/cpp/utility/variant
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 #include <variant>
@@ -12,21 +13,22 @@ template <typename... Fs> struct overloaded : Fs... { using Fs::operator()...; }
 template <typename... Fs> overloaded(Fs...) -> overloaded<Fs...>;
 
 int main() {
+    demo::title("C++17 variant");
     std::variant<int, std::string, double> v = 42;
-    assert(v.index() == 0);
-    assert(std::get<int>(v) == 42);
-    assert(std::holds_alternative<int>(v));
+    DEMO_ASSERT(v.index() == 0);
+    DEMO_ASSERT(std::get<int>(v) == 42);
+    DEMO_ASSERT(std::holds_alternative<int>(v));
 
     v = std::string("hello");
-    assert(v.index() == 1);
-    assert(std::get<std::string>(v) == "hello");
+    DEMO_ASSERT(v.index() == 1);
+    DEMO_ASSERT(std::get<std::string>(v) == "hello");
 
     v = 3.14;
-    assert(std::holds_alternative<double>(v));
+    DEMO_ASSERT(std::holds_alternative<double>(v));
 
     // get_if returns a pointer or nullptr.
     if (auto* p = std::get_if<double>(&v)) {
-        assert(*p == 3.14);
+        DEMO_ASSERT(*p == 3.14);
     }
 
     // visit + overloaded for type-driven dispatch.
@@ -35,6 +37,6 @@ int main() {
         [](const std::string&)  { return -1; },
         [](double d)            { return static_cast<int>(d * 100); },
     }, v);
-    assert(summary == 314);
+    DEMO_ASSERT(summary == 314);
     return 0;
 }

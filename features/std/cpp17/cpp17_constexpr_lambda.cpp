@@ -2,10 +2,12 @@
 // description: Lambdas can be constexpr; their call operator participates in constant evaluation.
 // reference: https://en.cppreference.com/w/cpp/language/lambda
 
+#include "support/demo.hpp"
 #include <array>
 #include <cassert>
 
 int main() {
+    demo::title("C++17 constexpr lambda");
     constexpr auto square = [](int n) { return n * n; };
     static_assert(square(5) == 25);
 
@@ -20,6 +22,6 @@ int main() {
 
     // Runtime use of the same lambda still works.
     int x = 6;
-    assert(square(x) == 36);
+    DEMO_ASSERT(square(x) == 36);
     return 0;
 }

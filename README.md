@@ -18,6 +18,7 @@ analyzer job already exercises GCC 16 via `debian:unstable-slim` + apt.)
 
 ```
 features/                          # all examples (single .cpp each)
+  support/demo.hpp                 # tiny stdout helper + DEMO_ASSERT for readable demos
   std/                             # C++ standard library + language features
     cpp11/cpp11_*.cpp              # foundation
     cpp17/cpp17_*.cpp
@@ -44,7 +45,6 @@ features/                          # all examples (single .cpp each)
     gcc16/gcc16_*.cpp
 scripts/
   discover.py                 # build & run engine
-  run-tests.sh                # thin wrapper
   podman-dev.sh               # local entrypoint (uses podman)
 containers/
   gcc.Containerfile           # FROM gcc:${GCC_VERSION} + libtbb-dev + python3
@@ -64,7 +64,7 @@ features/<bucket>/README.md   # auto-generated leaf indexes (one per cppNN/gccNN
 Every example is built with this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread file.cpp $EXTRA_FLAGS -o /tmp/.../bin
+g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures file.cpp $EXTRA_FLAGS -o /tmp/.../bin
 ```
 
 `$STD` is read from the file's `// gcc-test:` header. `$EXTRA_FLAGS` is the
@@ -93,20 +93,23 @@ Each `.cpp` starts with a metadata header that the engine parses:
 #include <ranges>
 #include <vector>
 #include <list>
-#include <cassert>
+#include "support/demo.hpp"
 
 int main() {
+    demo::title("C++23 ranges to");
     std::list<int> l{1, 2, 3, 4, 5};
     auto v = l | std::ranges::to<std::vector<int>>();
-    assert(v.size() == 5);
+    DEMO_ASSERT(v.size() == 5);
     return 0;
 }
 ```
 
 Required keys: `std`, `min-gcc`, `topic`, `experimental`.
 Optional keys: `extra-flags=-foo,-bar`, `run-args="..."`, `expect-exit=N`,
-`max-gcc=N`. Programs return `0` on success; `assert(...)` is the standard way
-to "test" the feature.
+`max-gcc=N`. Programs return `0` on success. Runtime checks use
+`DEMO_ASSERT(...)`, which prints the checked expression before asserting it;
+compile-time-only demos print a short `demo::text(...)` line after their
+`static_assert(...)` checks.
 
 ## Running locally (podman)
 

@@ -2,6 +2,7 @@
 // description: 'nullptr' has its own type std::nullptr_t and isn't ambiguous between integer and pointer overloads.
 // reference: https://en.cppreference.com/w/cpp/language/nullptr
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <cstddef>
 #include <type_traits>
@@ -14,17 +15,18 @@ void calls_int(int)     { got_pointer = false; }
 void calls_int(int*)    { got_pointer = true; }
 
 int main() {
+    demo::title("C++11 nullptr");
     int* p = nullptr;
-    assert(p == nullptr);
+    DEMO_ASSERT(p == nullptr);
 
     static_assert(std::is_same<decltype(nullptr), std::nullptr_t>::value, "");
 
     // nullptr unambiguously selects the pointer overload.
     calls_int(nullptr);
-    assert(got_pointer);
+    DEMO_ASSERT(got_pointer);
 
     // ... whereas '0' or 'NULL' would select the int overload (legacy footgun).
     calls_int(0);
-    assert(!got_pointer);
+    DEMO_ASSERT(!got_pointer);
     return 0;
 }

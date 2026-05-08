@@ -2,6 +2,7 @@
 // description: 'inline' variables can be defined in a header without the ODR violation; perfect for header-only constants.
 // reference: https://en.cppreference.com/w/cpp/language/inline
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 
@@ -16,10 +17,11 @@ struct Config {
 };
 
 int main() {
-    assert(kAppName == "gcc_updates");
+    demo::title("C++17 inline variables");
+    DEMO_ASSERT(kAppName == "gcc_updates");
     static_assert(kMagic == 42);
 
     Config a, b;
-    assert(Config::instances == 2);
+    DEMO_ASSERT(Config::instances == 2);
     return 0;
 }

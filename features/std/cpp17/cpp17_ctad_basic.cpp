@@ -2,6 +2,7 @@
 // description: Class Template Argument Deduction (CTAD) lets you write 'std::pair p{1, 2.0};' without spelling the types.
 // reference: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <map>
 #include <mutex>
@@ -20,10 +21,11 @@ template <typename T>
 Holder(T) -> Holder<T>;
 
 int main() {
+    demo::title("C++17 ctad basic");
     // Standard library CTAD.
     std::vector v{1, 2, 3};
     static_assert(std::is_same_v<decltype(v), std::vector<int>>);
-    assert(v.size() == 3);
+    DEMO_ASSERT(v.size() == 3);
 
     std::pair p{1, std::string("two")};
     static_assert(std::is_same_v<decltype(p), std::pair<int, std::string>>);
@@ -35,6 +37,6 @@ int main() {
     // User-defined CTAD.
     Holder h{3.14};
     static_assert(std::is_same_v<decltype(h), Holder<double>>);
-    assert(h.value == 3.14);
+    DEMO_ASSERT(h.value == 3.14);
     return 0;
 }

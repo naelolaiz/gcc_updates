@@ -2,6 +2,7 @@
 // description: Class types can now be non-type template parameters (NTTPs); enables compile-time string templates.
 // reference: https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter
 
+#include "support/demo.hpp"
 #include <algorithm>
 #include <cassert>
 #include <string_view>
@@ -29,6 +30,7 @@ struct TaggedCounter {
 };
 
 int main() {
+    demo::title("C++20 nttp class");
     TaggedCounter<"hello"> a;
     TaggedCounter<"world"> b;
 
@@ -38,7 +40,7 @@ int main() {
 
     a.hits++;
     b.hits += 5;
-    assert(a.hits == 1);
-    assert(b.hits == 5);
+    DEMO_ASSERT(a.hits == 1);
+    DEMO_ASSERT(b.hits == 5);
     return 0;
 }

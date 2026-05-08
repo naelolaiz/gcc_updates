@@ -2,6 +2,7 @@
 // description: std::initializer_list<T> lets a function (or constructor) accept a {a, b, c, ...} brace list directly.
 // reference: https://en.cppreference.com/w/cpp/utility/initializer_list
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <initializer_list>
 #include <vector>
@@ -22,11 +23,12 @@ int sum(std::initializer_list<int> il) {
 }
 
 int main() {
+    demo::title("C++11 initializer list");
     Stack s{1, 2, 3, 4};
-    assert(s.size() == 4);
-    assert(s.top() == 4);
+    DEMO_ASSERT(s.size() == 4);
+    DEMO_ASSERT(s.top() == 4);
 
-    assert(sum({10, 20, 30}) == 60);
-    assert(sum({}) == 0);    // empty list -> empty initializer_list
+    DEMO_ASSERT(sum({10, 20, 30}) == 60);
+    DEMO_ASSERT(sum({}) == 0);    // empty list -> empty initializer_list
     return 0;
 }

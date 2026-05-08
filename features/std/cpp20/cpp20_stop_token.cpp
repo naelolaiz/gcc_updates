@@ -2,6 +2,7 @@
 // description: std::stop_source / stop_token / stop_callback decouple cancellation request from the threads observing it.
 // reference: https://en.cppreference.com/w/cpp/thread/stop_source
 
+#include "support/demo.hpp"
 #include <atomic>
 #include <cassert>
 #include <chrono>
@@ -10,6 +11,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++20 stop token");
     std::stop_source src;
     std::atomic<int> callback_fired{0};
     std::atomic<int> observed{0};
@@ -32,11 +34,11 @@ int main() {
     bool first = src.request_stop();
     bool second = src.request_stop();   // already requested -> false
 
-    assert(first);
-    assert(!second);
+    DEMO_ASSERT(first);
+    DEMO_ASSERT(!second);
 
     workers.clear();   // joins
-    assert(observed.load() == 4);
-    assert(callback_fired.load() == 11);
+    DEMO_ASSERT(observed.load() == 4);
+    DEMO_ASSERT(callback_fired.load() == 11);
     return 0;
 }

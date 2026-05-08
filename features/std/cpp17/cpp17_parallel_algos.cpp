@@ -3,6 +3,7 @@
 // reference: https://en.cppreference.com/w/cpp/algorithm/reduce
 // note: Parallel STL on libstdc++ uses TBB at link time -- hence -ltbb.
 
+#include "support/demo.hpp"
 #include <algorithm>
 #include <cassert>
 #include <execution>
@@ -10,6 +11,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++17 parallel algos");
     std::vector<int> v(1000);
     std::iota(v.begin(), v.end(), 1);   // 1..1000
 
@@ -23,9 +25,9 @@ int main() {
 #else
     auto sum_par = std::reduce(std::execution::par, v.begin(), v.end(), 0);
 #endif
-    assert(sum_seq == 500500);
-    assert(sum_red == 500500);
-    assert(sum_par == 500500);
+    DEMO_ASSERT(sum_seq == 500500);
+    DEMO_ASSERT(sum_red == 500500);
+    DEMO_ASSERT(sum_par == 500500);
 
     // transform_reduce: map-reduce in one pass.
 #if defined(__SANITIZE_THREAD__)
@@ -37,12 +39,12 @@ int main() {
         std::execution::par, v.begin(), v.end(), 0,
         std::plus<>{}, [](int x) { return x * x; });
 #endif
-    assert(sum_squares == 333833500);    // 1^2 + 2^2 + ... + 1000^2
+    DEMO_ASSERT(sum_squares == 333833500);    // 1^2 + 2^2 + ... + 1000^2
 
     // exclusive_scan: prefix sums, but the i-th output excludes v[i].
     std::vector<int> small{1, 2, 3, 4, 5};
     std::vector<int> ps(small.size());
     std::exclusive_scan(small.begin(), small.end(), ps.begin(), 0);
-    assert((ps == std::vector<int>{0, 1, 3, 6, 10}));
+    DEMO_ASSERT((ps == std::vector<int>{0, 1, 3, 6, 10}));
     return 0;
 }

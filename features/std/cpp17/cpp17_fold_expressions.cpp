@@ -2,6 +2,7 @@
 // description: Fold expressions reduce parameter packs with a binary operator: (... op pack) and (init op ... op pack).
 // reference: https://en.cppreference.com/w/cpp/language/fold
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <string>
 
@@ -26,6 +27,7 @@ void push_each(std::string& dest, const Args&... args) {
 }
 
 int main() {
+    demo::title("C++17 fold expressions");
     static_assert(sum(1, 2, 3, 4) == 10);
     static_assert(sum_with_init(1, 2, 3) == 6);
     static_assert(sum_with_init() == 0);    // empty pack OK with init form
@@ -35,6 +37,6 @@ int main() {
 
     std::string out;
     push_each(out, std::string("a"), std::string("b"), std::string("c"));
-    assert(out == "abc");
+    DEMO_ASSERT(out == "abc");
     return 0;
 }

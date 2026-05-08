@@ -2,6 +2,7 @@
 // description: [[noreturn]] tells the compiler a function never returns -- enables better diagnostics and dead-code elimination.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/noreturn
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <stdexcept>
 
@@ -15,12 +16,13 @@ int classify(int x) {
 }
 
 int main() {
-    assert(classify(0) == 0);
-    assert(classify(5) == 1);
+    demo::title("C++11 attribute noreturn");
+    DEMO_ASSERT(classify(0) == 0);
+    DEMO_ASSERT(classify(5) == 1);
 
     bool caught = false;
     try { (void)classify(-1); }
     catch (const std::runtime_error&) { caught = true; }
-    assert(caught);
+    DEMO_ASSERT(caught);
     return 0;
 }

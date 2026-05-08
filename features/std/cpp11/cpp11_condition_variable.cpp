@@ -2,6 +2,7 @@
 // description: std::condition_variable: classic mutex+predicate wait/notify. Always pair wait() with a predicate to handle spurious wake-ups.
 // reference: https://en.cppreference.com/w/cpp/thread/condition_variable
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <condition_variable>
 #include <mutex>
@@ -10,6 +11,7 @@
 #include <vector>
 
 int main() {
+    demo::title("C++11 condition variable");
     std::queue<int>          q;
     std::mutex               m;
     std::condition_variable  cv;
@@ -45,6 +47,6 @@ int main() {
     cv.notify_one();
 
     consumer.join();
-    assert((int)received.size() == N);
+    DEMO_ASSERT((int)received.size() == N);
     return 0;
 }

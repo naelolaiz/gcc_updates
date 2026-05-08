@@ -2,6 +2,7 @@
 // description: std::function<R(Args...)> is a polymorphic wrapper for any callable matching the signature; type-erases the actual type.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/function
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <functional>
 
@@ -13,22 +14,23 @@ struct Multiplier {
 };
 
 int main() {
+    demo::title("C++11 function");
     std::function<int(int, int)> f;
 
     f = free_fn;
-    assert(f(2, 3) == 5);
+    DEMO_ASSERT(f(2, 3) == 5);
 
     f = [](int a, int b) { return a - b; };
-    assert(f(10, 4) == 6);
+    DEMO_ASSERT(f(10, 4) == 6);
 
     std::function<int(int)> g = Multiplier{7};
-    assert(g(3) == 21);
+    DEMO_ASSERT(g(3) == 21);
 
     // Empty function -- calling throws std::bad_function_call.
     std::function<void()> empty;
-    assert(!empty);
+    DEMO_ASSERT(!empty);
     bool threw = false;
     try { empty(); } catch (const std::bad_function_call&) { threw = true; }
-    assert(threw);
+    DEMO_ASSERT(threw);
     return 0;
 }

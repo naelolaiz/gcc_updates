@@ -5,6 +5,7 @@
 // Compiled under -fanalyzer only; binary is never executed.
 // Expect a -Wanalyzer-null-dereference diagnostic on the path where allocate() returns nullptr.
 
+#include "support/demo.hpp"
 #include <cstddef>
 #include <new>
 
@@ -13,6 +14,7 @@
 }
 
 int main(int argc, char**) {
+    demo::title("GCC extension analyzer null deref");
     // The analyzer reasons about the call site: when argc <= 1, allocate()
     // returns nullptr and the next line dereferences it.
     int* p = allocate(argc > 1);

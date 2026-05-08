@@ -2,6 +2,7 @@
 // description: requires-expressions can introspect type capabilities (simple, type, compound, nested requirements).
 // reference: https://en.cppreference.com/w/cpp/language/requires
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <concepts>
 #include <type_traits>
@@ -31,6 +32,7 @@ concept SmallTrivial = requires {
 struct NoOps {};
 
 int main() {
+    demo::title("C++20 concepts requires expr");
     static_assert(Addable<int>);
     static_assert(!Addable<NoOps>);
 
@@ -46,5 +48,6 @@ int main() {
     // requires-expression as a runtime bool too.
     constexpr bool int_addable = requires(int a, int b) { a + b; };
     static_assert(int_addable);
+    demo::text("check", "static assertions passed");
     return 0;
 }

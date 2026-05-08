@@ -2,10 +2,12 @@
 // description: <chrono> grew calendar types: year_month_day, weekday, sys_days, ymd_weekday arithmetic.
 // reference: https://en.cppreference.com/w/cpp/chrono
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <chrono>
 
 int main() {
+    demo::title("C++20 chrono calendar");
     using namespace std::chrono;
 
     constexpr year_month_day ymd{year{2026}, May, day{5}};
@@ -28,5 +30,6 @@ int main() {
     constexpr sys_days yesterday = today - days{1};
     constexpr year_month_day y_ymd{yesterday};
     static_assert(y_ymd.day() == day{4});
+    demo::text("check", "static assertions passed");
     return 0;
 }

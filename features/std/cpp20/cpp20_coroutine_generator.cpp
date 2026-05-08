@@ -3,6 +3,7 @@
 // reference: https://en.cppreference.com/w/cpp/language/coroutines
 // note: C++23 ships std::generator which supersedes hand-rolled versions; see cpp23_generator.cpp.
 
+#include "support/demo.hpp"
 #include <cassert>
 #include <coroutine>
 #include <vector>
@@ -48,10 +49,11 @@ Generator<int> fibs(int count) {
 }
 
 int main() {
+    demo::title("C++20 coroutine generator");
     std::vector<int> got;
     auto g = fibs(8);
     while (g.next()) got.push_back(g.value());
     // 0,1,1,2,3,5,8,13
-    assert((got == std::vector<int>{0, 1, 1, 2, 3, 5, 8, 13}));
+    DEMO_ASSERT((got == std::vector<int>{0, 1, 1, 2, 3, 5, 8, 13}));
     return 0;
 }
