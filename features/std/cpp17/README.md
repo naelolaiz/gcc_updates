@@ -1,6 +1,6 @@
 # C++17 examples
 
-_Folder: `features/std/cpp17/`. 19 example(s) across 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp17/`. 20 example(s) across 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
@@ -41,6 +41,7 @@ _Folder: `features/std/cpp17/`. 19 example(s) across 4 topic(s). Index of exampl
 | [cpp17_ctad_basic.cpp](cpp17_ctad_basic.cpp) | c++17 | 13 | Class Template Argument Deduction (CTAD) lets you write 'std::pair p{1, 2.0};' without spelling the types. |
 | [cpp17_fold_expressions.cpp](cpp17_fold_expressions.cpp) | c++17 | 13 | Fold expressions reduce parameter packs with a binary operator: (... op pack) and (init op ... op pack). |
 | [cpp17_if_constexpr.cpp](cpp17_if_constexpr.cpp) | c++17 | 13 | 'if constexpr' discards the unselected branch at compile time, enabling clean template specialization. |
+| [cpp17_type_trait_helpers.cpp](cpp17_type_trait_helpers.cpp) | c++17 | 13 | C++17 polished <type_traits>: _v helpers (no ::value), _t aliases (no typename ::type), std::void_t for SFINAE detection, std::conjunction/disjunction/negation for short-circuiting trait composition, and std::is_invocable / std::invoke_result. |
 
 ## threading
 

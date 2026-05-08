@@ -26,6 +26,7 @@ add_subdirectory(features/gccext/sanitize/ubsan)
 
 # Standard C++ revisions
 add_subdirectory(features/std/cpp11)
+add_subdirectory(features/std/cpp14)
 add_subdirectory(features/std/cpp17)
 add_subdirectory(features/std/cpp20)
 add_subdirectory(features/std/cpp23)

@@ -35,4 +35,5 @@ gcc_feature_test(cpp20_stop_token             STD c++20  MIN_GCC 14  TOPIC threa
 gcc_feature_test(cpp20_string_starts_ends     STD c++20  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp20_syncstream             STD c++20  MIN_GCC 14  TOPIC threading)
 gcc_feature_test(cpp20_to_address             STD c++20  MIN_GCC 13  TOPIC stl)
+gcc_feature_test(cpp20_type_identity          STD c++20  MIN_GCC 13  TOPIC templates)
 gcc_feature_test(cpp20_views_keys_values      STD c++20  MIN_GCC 13  TOPIC ranges)

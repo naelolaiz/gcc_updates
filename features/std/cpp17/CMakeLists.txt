@@ -17,4 +17,5 @@ gcc_feature_test(cpp17_parallel_algos       STD c++17  MIN_GCC 13  TOPIC stl
 gcc_feature_test(cpp17_shared_mutex         STD c++17  MIN_GCC 13  TOPIC threading)
 gcc_feature_test(cpp17_string_view          STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_structured_bindings  STD c++17  MIN_GCC 13  TOPIC language)
+gcc_feature_test(cpp17_type_trait_helpers   STD c++17  MIN_GCC 13  TOPIC templates)
 gcc_feature_test(cpp17_variant              STD c++17  MIN_GCC 13  TOPIC stl)

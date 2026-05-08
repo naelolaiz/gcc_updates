@@ -1,6 +1,6 @@
 # C++11 examples
 
-_Folder: `features/std/cpp11/`. 36 example(s) across 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp11/`. 38 example(s) across 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
@@ -53,6 +53,8 @@ _Folder: `features/std/cpp11/`. 36 example(s) across 4 topic(s). Index of exampl
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
 | [cpp11_alias_template.cpp](cpp11_alias_template.cpp) | c++11 | 13 | 'using' creates type aliases that work as templates -- the modern replacement for 'typedef ... ::type' (e.g. std::add_const_t). |
+| [cpp11_ratio.cpp](cpp11_ratio.cpp) | c++11 | 13 | std::ratio<N, D> is a compile-time rational number; <ratio> exposes ratio_add/subtract/multiply/divide and ratio_equal/less for arithmetic on types. |
+| [cpp11_type_traits.cpp](cpp11_type_traits.cpp) | c++11 | 13 | <type_traits> is the C++11 metaprogramming toolbox -- compile-time type queries (is_*) and type transformations (remove_*, decay, conditional, enable_if). |
 | [cpp11_variadic_templates.cpp](cpp11_variadic_templates.cpp) | c++11 | 13 | Variadic templates take a parameter pack 'Args...' that you expand with '...' and recurse over. |
 
 ## threading
