@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
 // description: __attribute__((cleanup(fn))) calls fn(&var) when var goes out of scope -- C-style RAII; redundant in C++ but works there too.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
 

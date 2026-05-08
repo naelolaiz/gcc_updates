@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=language experimental=false
 // description: C++17 standardised three useful attributes: [[nodiscard]], [[maybe_unused]], [[fallthrough]].
 // reference: https://en.cppreference.com/w/cpp/language/attributes
 

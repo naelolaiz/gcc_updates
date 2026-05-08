@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::osyncstream interleaves output safely from multiple threads -- each scope's text is emitted as one block.
 // reference: https://en.cppreference.com/w/cpp/io/basic_osyncstream
 

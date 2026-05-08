@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=15 topic=gcc-release experimental=false
 // description: GCC 15 promoted std::print/std::println from libstdc++exp into the main libstdc++ -- no extra link flags needed.
 // reference: https://gcc.gnu.org/gcc-15/changes.html
 

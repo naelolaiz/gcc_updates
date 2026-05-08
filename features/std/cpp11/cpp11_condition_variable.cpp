@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=threading experimental=false
 // description: std::condition_variable: classic mutex+predicate wait/notify. Always pair wait() with a predicate to handle spurious wake-ups.
 // reference: https://en.cppreference.com/w/cpp/thread/condition_variable
 

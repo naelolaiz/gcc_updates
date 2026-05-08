@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: std::views::zip turns parallel ranges into a single range of tuples; stops at shortest input.
 // reference: https://en.cppreference.com/w/cpp/ranges/zip_view
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::optional gained monadic ops (and_then / transform / or_else) -- chain fallible computations cleanly.
 // reference: https://en.cppreference.com/w/cpp/utility/optional
 

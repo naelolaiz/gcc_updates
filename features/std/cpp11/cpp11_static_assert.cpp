@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: static_assert(cond, "msg") is a compile-time assertion; in C++17+ the message is optional.
 // reference: https://en.cppreference.com/w/cpp/language/static_assert
 

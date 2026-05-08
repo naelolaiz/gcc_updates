@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::join_with flattens a range-of-ranges with a separator (single element OR a range).
 // reference: https://en.cppreference.com/w/cpp/ranges/join_with_view
 

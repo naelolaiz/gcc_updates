@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
 // description: __attribute__((packed)) removes padding between struct members; useful for binary protocols, but unaligned access can be slower.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=gcc-sanitize experimental=false
 // description: [[assume(expr)]] is a hint to the optimizer; under -fsanitize=undefined GCC additionally checks the assumption at runtime.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/assume
 

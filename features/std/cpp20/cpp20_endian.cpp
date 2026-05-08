@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=13 topic=stl experimental=false
 // description: std::endian exposes the host byte order at compile time -- portable replacement for compiler-specific macros.
 // reference: https://en.cppreference.com/w/cpp/types/endian
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::move_only_function is std::function but for move-only callables (e.g. unique_ptr captures, std::packaged_task-style ownership).
 // reference: https://en.cppreference.com/w/cpp/utility/functional/move_only_function
 

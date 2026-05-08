@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=templates experimental=false
 // description: C++20 lets CTAD work through alias templates -- no manual deduction guide needed.
 // reference: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=templates experimental=false
 // description: 'if constexpr' discards the unselected branch at compile time, enabling clean template specialization.
 // reference: https://en.cppreference.com/w/cpp/language/if#Constexpr_If
 

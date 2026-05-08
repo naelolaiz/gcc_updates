@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-openmp experimental=false extra-flags=-fopenmp skip-sanitizer=thread
 // description: OpenMP #pragma omp parallel for parallelises a loop across threads via libgomp; -fopenmp both compiles and links.
 // reference: https://gcc.gnu.org/onlinedocs/libgomp/
 

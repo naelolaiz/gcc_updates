@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::atomic<T>::wait/notify_one/notify_all enable lock-free condition-variable-style blocking.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic/wait
 

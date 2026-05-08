@@ -1,4 +1,3 @@
-// gcc-test: std=c++26 min-gcc=15 topic=language experimental=true extra-flags=-fcontracts expect-error="(expected initializer before .pre.|value parameter used in a postcondition must be const)"
 // description: C++26 contracts: pre/post/contract_assert. Implementation status varies; this file is allowed to fail on partial support.
 // reference: https://en.cppreference.com/w/cpp/language/contracts
 

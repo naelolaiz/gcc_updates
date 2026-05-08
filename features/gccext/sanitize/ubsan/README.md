@@ -1,6 +1,6 @@
 # GCC extensions: UndefinedBehaviorSanitizer trip demos
 
-_Folder: `features/gccext/sanitize/ubsan/`. 3 example(s) across 1 topic(s). Auto-generated from each file's `// gcc-test:` header — do not edit by hand. Run `python3 scripts/discover.py --emit-docs` to refresh._
+_Folder: `features/gccext/sanitize/ubsan/`. 3 example(s) across 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## gcc-sanitize
 

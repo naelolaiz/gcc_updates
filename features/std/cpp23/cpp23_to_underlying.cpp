@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::to_underlying returns the underlying-type value of an enum -- replaces the static_cast boilerplate.
 // reference: https://en.cppreference.com/w/cpp/utility/to_underlying
 

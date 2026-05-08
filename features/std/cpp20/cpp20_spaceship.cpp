@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=language experimental=false
 // description: operator<=> ("spaceship") generates the full set of relational operators from one declaration.
 // reference: https://en.cppreference.com/w/cpp/language/default_comparisons
 

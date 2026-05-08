@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::optional<T> represents a value-or-nothing; use has_value(), value_or(), and emplace().
 // reference: https://en.cppreference.com/w/cpp/utility/optional
 

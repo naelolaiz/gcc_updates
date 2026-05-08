@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::chunk splits a range into non-overlapping windows of size N; views::slide does overlapping windows.
 // reference: https://en.cppreference.com/w/cpp/ranges/chunk_view
 

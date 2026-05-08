@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=language experimental=false
 // description: Lambdas can be constexpr; their call operator participates in constant evaluation.
 // reference: https://en.cppreference.com/w/cpp/language/lambda
 

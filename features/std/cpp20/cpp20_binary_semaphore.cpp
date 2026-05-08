@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::binary_semaphore = counting_semaphore<1>; classic single-slot signalling primitive.
 // reference: https://en.cppreference.com/w/cpp/thread/counting_semaphore
 

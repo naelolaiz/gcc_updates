@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-codegen experimental=false extra-flags=-O3,-fopt-info-vec=/dev/null
 // description: A loop the auto-vectorizer should turn into SIMD at -O3. We can't easily ASSERT vectorization at runtime; use 'g++ -O3 -fopt-info-vec' (or this build) to confirm.
 // reference: https://gcc.gnu.org/projects/tree-ssa/vectorization.html
 

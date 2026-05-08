@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::atomic_ref overlays atomic semantics on a non-atomic object you don't own.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic_ref
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=16 topic=gcc-analyzer experimental=false requires-analyzer=true
 // description: -fanalyzer flags a double-delete that only fires on a control-flow branch the runtime might never hit; runtime sanitizers can miss this if the test inputs don't reach that path.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html
 

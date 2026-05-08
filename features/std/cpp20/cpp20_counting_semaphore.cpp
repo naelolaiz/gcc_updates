@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::counting_semaphore caps concurrent access to a fixed number of "permits".
 // reference: https://en.cppreference.com/w/cpp/thread/counting_semaphore
 

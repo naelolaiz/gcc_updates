@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::barrier is reusable across phases and runs an optional completion function between phases.
 // reference: https://en.cppreference.com/w/cpp/thread/barrier
 

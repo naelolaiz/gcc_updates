@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=threading experimental=false
 // description: std::async runs work and returns a std::future; std::promise + std::packaged_task are the lower-level building blocks.
 // reference: https://en.cppreference.com/w/cpp/thread/async
 

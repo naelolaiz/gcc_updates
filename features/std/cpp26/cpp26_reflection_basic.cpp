@@ -1,4 +1,3 @@
-// gcc-test: std=c++26 min-gcc=16 topic=templates experimental=false extra-flags=-freflection
 // description: C++26 static reflection (P2996). API is still settling -- file is experimental.
 // reference: https://en.cppreference.com/w/cpp/meta
 

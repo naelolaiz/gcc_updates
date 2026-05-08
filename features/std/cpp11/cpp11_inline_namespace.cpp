@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: An 'inline namespace' is transparently visible to its parent -- the standard mechanism for ABI versioning.
 // reference: https://en.cppreference.com/w/cpp/language/namespace#Inline_namespaces
 

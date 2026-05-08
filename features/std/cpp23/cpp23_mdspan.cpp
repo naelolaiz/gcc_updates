@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=16 topic=stl experimental=false
 // description: std::mdspan is a non-owning view over multi-dimensional contiguous data; supports static and dynamic extents.
 // reference: https://en.cppreference.com/w/cpp/container/mdspan
 // note: <mdspan> first appeared in libstdc++ 16; on gcc-15 the header is missing, so min-gcc=16.

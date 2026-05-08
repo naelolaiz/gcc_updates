@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=templates experimental=false
 // description: explicit(bool) makes a constructor's explicitness depend on a constexpr predicate.
 // reference: https://en.cppreference.com/w/cpp/language/explicit
 

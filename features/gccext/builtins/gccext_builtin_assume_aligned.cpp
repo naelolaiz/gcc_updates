@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-builtins experimental=false
 // description: __builtin_assume_aligned(p, N) tells the optimizer 'p is N-byte aligned' -- enables aligned vector loads.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
 

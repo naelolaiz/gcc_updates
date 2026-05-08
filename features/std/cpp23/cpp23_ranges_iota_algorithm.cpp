@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: std::ranges::iota (the algorithm, not the view) fills a range with sequentially increasing values; concept-checked.
 // reference: https://en.cppreference.com/w/cpp/algorithm/ranges/iota
 

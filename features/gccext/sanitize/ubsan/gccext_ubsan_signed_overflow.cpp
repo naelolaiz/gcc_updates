@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-sanitize experimental=false requires-sanitizer=undefined expect-exit=1 extra-flags=-fno-sanitize-recover=undefined
 // description: UBSan demo: signed integer overflow. Runs only under -fsanitize=undefined; -fno-sanitize-recover=undefined makes the handler fatal (exit 1).
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
 

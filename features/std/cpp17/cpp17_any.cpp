@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::any is a heterogenous box that holds any copyable type; std::any_cast extracts.
 // reference: https://en.cppreference.com/w/cpp/utility/any
 

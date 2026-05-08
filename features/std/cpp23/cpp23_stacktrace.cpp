@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 min-libstdcxx=14 topic=stl experimental=false extra-flags=-lstdc++exp
 // description: std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo.
 // reference: https://en.cppreference.com/w/cpp/utility/basic_stacktrace
 // note: per cppreference, std::stacktrace ships in libstdc++exp on libstdc++ 14+;

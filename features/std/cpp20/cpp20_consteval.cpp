@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=language experimental=false
 // description: consteval functions MUST be evaluated at compile time; constinit guarantees static-init at compile time.
 // reference: https://en.cppreference.com/w/cpp/language/consteval
 

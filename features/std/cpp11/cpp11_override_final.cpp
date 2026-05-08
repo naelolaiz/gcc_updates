@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'override' makes the compiler verify that a method really overrides a virtual; 'final' forbids further overriding or inheritance.
 // reference: https://en.cppreference.com/w/cpp/language/override
 

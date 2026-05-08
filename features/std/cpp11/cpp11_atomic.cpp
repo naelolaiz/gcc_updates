@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=threading experimental=false
 // description: std::atomic<T> for lock-free (where supported) shared state; memory_order tunes synchronisation strength.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic
 

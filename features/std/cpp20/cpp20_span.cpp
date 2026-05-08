@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::span is a non-owning view over a contiguous sequence; cheap, type-erased over container kind.
 // reference: https://en.cppreference.com/w/cpp/container/span
 

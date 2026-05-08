@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::invoke calls anything callable (function, member, member ptr) uniformly; std::apply unpacks a tuple as args.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/invoke
 
@@ -20,7 +19,7 @@ int main() {
     DEMO_ASSERT(std::invoke(add, 3, 4) == 7);
 
     // ... a member function pointer ...
-    Foo f{.value = 10};
+    Foo f{10};
     DEMO_ASSERT(std::invoke(&Foo::times, f, 3) == 30);
 
     // ... a member data pointer (returns a reference) ...

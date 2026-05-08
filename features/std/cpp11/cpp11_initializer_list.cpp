@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: std::initializer_list<T> lets a function (or constructor) accept a {a, b, c, ...} brace list directly.
 // reference: https://en.cppreference.com/w/cpp/utility/initializer_list
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::atomic<std::shared_ptr<T>> -- lock-free-style atomic load/store/exchange of shared ownership.
 // reference: https://en.cppreference.com/w/cpp/memory/shared_ptr/atomic2
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=ranges experimental=false
 // description: Lazy view composition with views::filter, views::transform and views::take using the | pipe.
 // reference: https://en.cppreference.com/w/cpp/ranges
 

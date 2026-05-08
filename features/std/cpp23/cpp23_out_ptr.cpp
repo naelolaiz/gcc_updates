@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::out_ptr / std::inout_ptr adapt smart pointers to legacy 'T**' APIs without manual reset() dancing.
 // reference: https://en.cppreference.com/w/cpp/memory/out_ptr_t
 

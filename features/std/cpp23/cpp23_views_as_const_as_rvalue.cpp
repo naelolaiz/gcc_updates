@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::as_const yields const references; views::as_rvalue yields rvalue references (enables move-iteration).
 // reference: https://en.cppreference.com/w/cpp/ranges/as_const_view
 

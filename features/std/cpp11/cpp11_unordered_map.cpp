@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: std::unordered_map / unordered_set are hash-based containers; O(1) average lookup, O(n) worst case.
 // reference: https://en.cppreference.com/w/cpp/container/unordered_map
 

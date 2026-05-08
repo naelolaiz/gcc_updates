@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::string_view is a non-owning, copy-cheap view over a contiguous sequence of chars.
 // reference: https://en.cppreference.com/w/cpp/string/basic_string_view
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=templates experimental=false
 // description: Variadic templates take a parameter pack 'Args...' that you expand with '...' and recurse over.
 // reference: https://en.cppreference.com/w/cpp/language/parameter_pack
 

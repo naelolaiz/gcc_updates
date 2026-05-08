@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
 // description: [[gnu::flatten]] inlines every direct call inside the marked function -- careful: bloats code.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 

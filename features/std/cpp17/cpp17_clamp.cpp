@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::clamp(v, lo, hi) returns max(lo, min(v, hi)); avoids the if/else dance.
 // reference: https://en.cppreference.com/w/cpp/algorithm/clamp
 

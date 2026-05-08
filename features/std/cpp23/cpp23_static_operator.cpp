@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=templates experimental=false
 // description: operator() and operator[] can be 'static' -- no implicit object parameter, slightly cheaper to call.
 // reference: https://en.cppreference.com/w/cpp/language/operators#Function_call_operator
 
@@ -20,7 +19,10 @@ int main() {
     static_assert(Negate{}(7) == -7);
     static_assert(Negate::operator()(3) == -3);   // call without an instance
 
-    Indexer idx;
+    // [[maybe_unused]] sidesteps a GCC -Wunused-but-set-variable false
+    // positive: static operator[] has no implicit object parameter, so the
+    // diagnostic doesn't see `idx` as read in `idx[4]` (unlike `neg(5)`).
+    [[maybe_unused]] Indexer idx;
     static_assert(idx[4] == 40);
     static_assert(Indexer::operator[](6) == 60);
     demo::text("check", "static assertions passed");

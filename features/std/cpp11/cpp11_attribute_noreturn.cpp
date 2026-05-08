@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: [[noreturn]] tells the compiler a function never returns -- enables better diagnostics and dead-code elimination.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/noreturn
 

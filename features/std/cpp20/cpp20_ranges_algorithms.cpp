@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=ranges experimental=false
 // description: std::ranges versions of classic algorithms accept full ranges + projections directly.
 // reference: https://en.cppreference.com/w/cpp/algorithm/ranges
 

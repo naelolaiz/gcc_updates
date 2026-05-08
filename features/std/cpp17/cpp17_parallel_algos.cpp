@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false extra-flags=-ltbb
 // description: <numeric> gained reduce/transform_reduce/inclusive_scan/exclusive_scan; <execution> adds parallel policies.
 // reference: https://en.cppreference.com/w/cpp/algorithm/reduce
 // note: Parallel STL on libstdc++ uses TBB at link time -- hence -ltbb.

@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'auto' deduces a variable's type from its initializer; 'decltype' deduces the type of an expression without evaluating it.
 // reference: https://en.cppreference.com/w/cpp/language/auto
 

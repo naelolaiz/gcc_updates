@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=16 topic=gcc-analyzer experimental=false requires-analyzer=true
 // description: -fanalyzer warns at compile time about use-after-delete on a path through main(). GCC 16 is the first version where this works on C++ (NRVO + initial exception support).
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html
 

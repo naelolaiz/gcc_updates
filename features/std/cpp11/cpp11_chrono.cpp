@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: <chrono> models durations and time_points with type-safe units; arithmetic between mismatched units is rejected.
 // reference: https://en.cppreference.com/w/cpp/chrono
 

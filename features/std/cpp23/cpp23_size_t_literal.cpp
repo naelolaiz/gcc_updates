@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=language experimental=false
 // description: 1uz / 1z literal suffix yields a std::size_t / std::ptrdiff_t directly; no more static_cast<size_t>(0).
 // reference: https://en.cppreference.com/w/cpp/language/integer_literal
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false extra-flags=-lstdc++exp
 // description: std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp.
 // reference: https://en.cppreference.com/w/cpp/io/print
 

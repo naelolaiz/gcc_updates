@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-sanitize experimental=false
 // description: __attribute__((no_sanitize("undefined"))) opts a single function out of UBSan -- useful when a hot path provably can't trip the check.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 

@@ -14,10 +14,9 @@ namespace demo {
 
 namespace detail {
 
-// Decide once whether to emit ANSI escapes. Order matches scripts/discover.py:
-// NO_COLOR wins, then FORCE_COLOR (set by discover.py when its own gate is on),
-// then GITHUB_ACTIONS (CI captures stdout so isatty would be false), then
-// fall back to a real terminal check.
+// Decide once whether to emit ANSI escapes:
+// NO_COLOR wins, then FORCE_COLOR, then GITHUB_ACTIONS (CI captures stdout
+// so isatty would be false), then fall back to a real terminal check.
 inline bool color_enabled() {
     static const bool enabled = []() -> bool {
         if (const char* nc = std::getenv("NO_COLOR")) {
@@ -43,7 +42,7 @@ inline const char* code(const char* esc) {
 // Bright bold cyan / red render visibly stronger than the bold-on-standard
 // form (\033[1;36m) in GitHub Actions' log viewer.
 inline void title(const std::string& text) {
-    std::cout << detail::code("\033[1;96m") << "\xe2\x96\xb6 demo: " << text
+    std::cout << detail::code("\033[1;96m") << "demo: " << text
               << detail::code("\033[0m") << std::endl;
 }
 

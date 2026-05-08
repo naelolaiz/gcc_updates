@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=templates experimental=false
 // description: Class types can now be non-type template parameters (NTTPs); enables compile-time string templates.
 // reference: https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter
 

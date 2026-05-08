@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-sanitize experimental=false extra-flags=-D_GLIBCXX_DEBUG
 // description: -D_GLIBCXX_DEBUG turns on libstdc++'s debug mode -- iterator misuse, out-of-range access, mismatched containers all assert at runtime.
 // reference: https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode.html
 

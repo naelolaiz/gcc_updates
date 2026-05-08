@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: <numbers> ships precise math constants typed as templates; no more M_PI macros.
 // reference: https://en.cppreference.com/w/cpp/header/numbers
 

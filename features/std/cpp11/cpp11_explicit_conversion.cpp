@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'explicit operator T()' allows static_cast<T>(obj) but blocks implicit conversion (e.g. accidental bool conversion).
 // reference: https://en.cppreference.com/w/cpp/language/cast_operator
 

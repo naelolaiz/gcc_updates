@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::cartesian_product yields the Cartesian product of N input ranges as tuples.
 // reference: https://en.cppreference.com/w/cpp/ranges/cartesian_product_view
 

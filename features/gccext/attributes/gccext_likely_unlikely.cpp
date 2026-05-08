@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=13 topic=gcc-attributes experimental=false
 // description: [[likely]] and [[unlikely]] (C++20 standard) hint branch frequency to the optimizer; GCC implements them via __builtin_expect.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/likely
 

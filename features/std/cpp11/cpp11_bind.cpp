@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: std::bind partially applies arguments; placeholders _1, _2, ... thread remaining args. std::ref/cref pass references through copies.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/bind
 

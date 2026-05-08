@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: <filesystem> standardised path manipulation, directory iteration, and basic file ops.
 // reference: https://en.cppreference.com/w/cpp/filesystem
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
 // description: [[gnu::hot]] / [[gnu::cold]] tell the optimizer how often a function runs; influences inlining and code layout.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 

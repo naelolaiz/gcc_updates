@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: Trailing return type 'auto f(...) -> T' enables decltype-based return types that need parameters in scope.
 // reference: https://en.cppreference.com/w/cpp/language/function
 

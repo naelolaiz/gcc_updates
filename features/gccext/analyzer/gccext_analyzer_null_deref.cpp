@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=16 topic=gcc-analyzer experimental=false requires-analyzer=true
 // description: -fanalyzer follows the path where a function may return nullptr and is then dereferenced unconditionally; demonstrates path-sensitivity that lint checkers miss.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html
 

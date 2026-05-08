@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::byte is an enum-class-shaped distinct byte type -- byte ops without unsigned char's arithmetic baggage.
 // reference: https://en.cppreference.com/w/cpp/types/byte
 

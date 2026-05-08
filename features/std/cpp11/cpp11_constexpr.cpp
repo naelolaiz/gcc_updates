@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'constexpr' allows functions and variables to be evaluated at compile time when their inputs are constant.
 // reference: https://en.cppreference.com/w/cpp/language/constexpr
 

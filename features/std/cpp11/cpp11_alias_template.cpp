@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=templates experimental=false
 // description: 'using' creates type aliases that work as templates -- the modern replacement for 'typedef ... ::type' (e.g. std::add_const_t).
 // reference: https://en.cppreference.com/w/cpp/language/type_alias
 

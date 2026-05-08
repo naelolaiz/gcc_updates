@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=language experimental=false
 // description: Nested namespace declarations: 'namespace a::b::c { ... }' replaces three lines of nesting.
 // reference: https://en.cppreference.com/w/cpp/language/namespace
 

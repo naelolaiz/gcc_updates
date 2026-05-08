@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 min-libstdcxx=13 topic=ranges experimental=false
 // description: ranges::fold_left / fold_right / fold_left_first replace std::accumulate; concept-checked, projection-aware.
 // reference: https://en.cppreference.com/w/cpp/algorithm/ranges/fold_left
 // note: ranges::fold_* live in <algorithm>, not <ranges>. Per cppreference,

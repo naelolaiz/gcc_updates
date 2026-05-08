@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::unreachable() marks code paths that cannot be reached -- the optimizer assumes UB if they ever are.
 // reference: https://en.cppreference.com/w/cpp/utility/unreachable
 

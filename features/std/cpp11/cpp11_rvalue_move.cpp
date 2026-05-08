@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: Rvalue references && + std::move enable transferring resources without copying. std::forward preserves value category in templates.
 // reference: https://en.cppreference.com/w/cpp/utility/move
 

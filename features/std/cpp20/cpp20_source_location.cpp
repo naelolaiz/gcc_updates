@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::source_location replaces __FILE__/__LINE__/__func__ macros with a real value type.
 // reference: https://en.cppreference.com/w/cpp/utility/source_location
 
