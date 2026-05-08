@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::lerp and std::midpoint give numerically-careful linear interpolation and midpoint, including for integers.
 // reference: https://en.cppreference.com/w/cpp/numeric/lerp
 

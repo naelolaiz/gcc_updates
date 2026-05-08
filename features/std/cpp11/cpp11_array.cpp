@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: std::array<T,N> is a fixed-size, value-semantic, container-like wrapper around a C array; size in the type, no decay to pointer.
 // reference: https://en.cppreference.com/w/cpp/container/array
 

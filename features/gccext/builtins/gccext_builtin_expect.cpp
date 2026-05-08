@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-builtins experimental=false
 // description: __builtin_expect(expr, val) is the GCC predecessor of [[likely]]/[[unlikely]]; still useful in C and pre-C++20.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-pragmas experimental=false
 // description: '#pragma GCC diagnostic push/pop/ignored' silences a warning locally without -Wno-* polluting the rest of the file.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
 

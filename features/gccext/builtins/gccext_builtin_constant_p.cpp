@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-builtins experimental=false
 // description: __builtin_constant_p(x) is true at compile time iff x is a constant expression. Used to pick a faster path for known inputs.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
 

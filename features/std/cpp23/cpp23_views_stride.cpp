@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::stride takes every N-th element; useful for downsampling.
 // reference: https://en.cppreference.com/w/cpp/ranges/stride_view
 

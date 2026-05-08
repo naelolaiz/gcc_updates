@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=gcc-release experimental=false
 // description: GCC 14 was the first release where libstdc++ shipped std::ranges::to in the main library (no extra flags).
 // reference: https://gcc.gnu.org/gcc-14/changes.html
 

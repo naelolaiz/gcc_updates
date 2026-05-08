@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=13 topic=gcc-release experimental=false
 // description: GCC 13 was the first release where libstdc++ shipped a usable <format> implementation by default.
 // reference: https://gcc.gnu.org/gcc-13/changes.html
 

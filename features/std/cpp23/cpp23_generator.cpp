@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=coroutines experimental=false
 // description: std::generator is the standard library's coroutine generator -- a range-compatible co_yield producer.
 // reference: https://en.cppreference.com/w/cpp/coroutine/generator
 

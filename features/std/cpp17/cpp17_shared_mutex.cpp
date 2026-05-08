@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=threading experimental=false
 // description: std::shared_mutex (C++17) + std::shared_lock = many readers OR one writer; std::unique_lock for the writer.
 // reference: https://en.cppreference.com/w/cpp/thread/shared_mutex
 

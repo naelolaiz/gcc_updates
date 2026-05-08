@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=language experimental=false
 // description: 'if consteval' is the standardised, simpler replacement for std::is_constant_evaluated().
 // reference: https://en.cppreference.com/w/cpp/language/if#Consteval_if
 

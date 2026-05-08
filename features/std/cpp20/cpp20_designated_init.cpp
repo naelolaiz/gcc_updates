@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=language experimental=false
 // description: Designated initializers let you initialise aggregate members by name; order must match declaration.
 // reference: https://en.cppreference.com/w/cpp/language/aggregate_initialization
 
@@ -9,8 +8,8 @@
 struct Config {
     std::string host;
     int port;
-    bool tls;
-    int timeout_ms;
+    bool tls = false;
+    int timeout_ms = 0;
 };
 
 int main() {
@@ -26,7 +25,8 @@ int main() {
     DEMO_ASSERT(c.tls);
     DEMO_ASSERT(c.timeout_ms == 5000);
 
-    // Skipping members is allowed; they get value-initialized.
+    // Skipping members is allowed; they fall back to the default member
+    // initializer (or value-init if the struct doesn't supply one).
     Config minimal{.host = "localhost", .port = 80};
     DEMO_ASSERT(!minimal.tls);
     DEMO_ASSERT(minimal.timeout_ms == 0);

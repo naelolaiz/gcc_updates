@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::enumerate yields (index, value) pairs -- the standard equivalent of Python's enumerate().
 // reference: https://en.cppreference.com/w/cpp/ranges/enumerate_view
 

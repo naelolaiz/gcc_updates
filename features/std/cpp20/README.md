@@ -1,6 +1,6 @@
 # C++20 examples
 
-_Folder: `features/std/cpp20/`. 38 example(s) across 9 topic(s). Auto-generated from each file's `// gcc-test:` header — do not edit by hand. Run `python3 scripts/discover.py --emit-docs` to refresh._
+_Folder: `features/std/cpp20/`. 38 example(s) across 9 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 

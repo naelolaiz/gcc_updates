@@ -6,8 +6,8 @@ latent UB / leak / data race in an example is caught the same day it lands.
 ## TL;DR
 
 ```bash
-# Locally: re-run everything under UBSan + ASan via podman.
-./scripts/podman-dev.sh 15 --sanitize=undefined,address
+# Locally: re-build everything under UBSan + ASan via podman.
+./scripts/podman-dev.sh 15 sanitize=undefined,address
 
 # CI does the equivalent on a dedicated job (see .github/workflows/ci.yml).
 ```
@@ -19,17 +19,20 @@ with `[[gnu::no_sanitize("...")]]` (see
 
 Files that *deliberately* trip a sanitizer (e.g. a heap-use-after-free demo)
 live under [../features/gccext/sanitize/{asan,ubsan,tsan,leak}/](../features/gccext/sanitize/)
-and set `requires-sanitizer=…` in their metadata so `discover.py` runs them
-**only** in the matching sanitize row; their `expect-exit=` is the
-sanitizer's documented abort code, so the harness asserts the *correct*
-failure rather than any failure.
+and use `REQUIRES_SANITIZER` in their `gcc_feature_test()` call so CTest
+enables them **only** under the matching sanitizer. They use `WILL_FAIL` plus
+`EXPECT_OUTPUT` so an unrelated crash or loader error does not pass as the
+expected sanitizer report.
 
-## What `--sanitize=` adds to the build
+## What `-DGCC_FEATURE_SANITIZE=…` adds to the build
 
-Whatever you pass becomes `-fsanitize=<list>`, plus two always-on companions:
+Whatever you pass becomes `-fsanitize=<list>`, plus three always-on companions
+(and `-O2` is dropped to `-O1` so the optimiser doesn't elide deliberate UB
+in asan/ubsan demos):
 
 ```
 -fsanitize=<list>
+-O1                            # was -O2; -O2 can elide deliberate out-of-bounds stores
 -fno-omit-frame-pointer        # readable backtraces in reports
 -g                             # source-level locations in reports
 ```
@@ -77,8 +80,8 @@ Multiple checks can be listed: `[[gnu::no_sanitize("address", "undefined")]]`.
   [../features/gccext/analyzer/](../features/gccext/analyzer/) bucket has
   three demos (use-after-`delete`, conditional double-`delete`,
   path-sensitive null deref); CI's `analyze` job runs them on GCC 16
-  via `discover.py --analyzer` (compile-only). For ad-hoc runs, add
-  `-fanalyzer` to any line from `--show-cmds`.
+  via `cmake -DGCC_FEATURE_ANALYZER=ON` (compile-only). For ad-hoc runs:
+  `./scripts/podman-dev.sh 16 analyzer`.
 
 ## Runtime knobs
 

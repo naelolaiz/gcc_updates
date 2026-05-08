@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-sanitize experimental=false requires-sanitizer=undefined expect-exit=1
 // description: UBSan demo: shifting an int by a count >= the type's width is UB. Runs only under -fsanitize=undefined.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
 

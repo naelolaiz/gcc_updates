@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::adjacent<N> yields N-tuples of consecutive elements; pairwise = adjacent<2>.
 // reference: https://en.cppreference.com/w/cpp/ranges/adjacent_view
 

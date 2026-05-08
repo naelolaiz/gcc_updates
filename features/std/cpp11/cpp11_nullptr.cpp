@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'nullptr' has its own type std::nullptr_t and isn't ambiguous between integer and pointer overloads.
 // reference: https://en.cppreference.com/w/cpp/language/nullptr
 

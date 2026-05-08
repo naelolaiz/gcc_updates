@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=threading experimental=false
 // description: std::mutex + RAII locks (lock_guard, unique_lock); std::lock locks N mutexes deadlock-free.
 // reference: https://en.cppreference.com/w/cpp/thread/mutex
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=format experimental=false
 // description: std::format provides Python-style typesafe formatting; std::format_to writes into an output iterator.
 // reference: https://en.cppreference.com/w/cpp/utility/format/format
 

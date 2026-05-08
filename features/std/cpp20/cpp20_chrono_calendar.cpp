@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=chrono experimental=false
 // description: <chrono> grew calendar types: year_month_day, weekday, sys_days, ymd_weekday arithmetic.
 // reference: https://en.cppreference.com/w/cpp/chrono
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=15 topic=stl experimental=false
 // description: std::flat_set is the set-shaped counterpart of flat_map: sorted contiguous storage instead of an RB tree.
 // reference: https://en.cppreference.com/w/cpp/container/flat_set
 

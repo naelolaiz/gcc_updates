@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: std::tuple holds a heterogeneous fixed-size pack; std::tie + std::ignore destructure (C++17 added structured bindings).
 // reference: https://en.cppreference.com/w/cpp/utility/tuple
 

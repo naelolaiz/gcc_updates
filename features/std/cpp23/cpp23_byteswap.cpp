@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::byteswap reverses the byte order of an integer; constexpr-friendly endian conversion.
 // reference: https://en.cppreference.com/w/cpp/numeric/byteswap
 

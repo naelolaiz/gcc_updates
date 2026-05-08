@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: '= delete' removes a special member function; '= default' asks the compiler to write the default version.
 // reference: https://en.cppreference.com/w/cpp/language/function
 

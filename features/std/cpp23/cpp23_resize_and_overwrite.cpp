@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::string::resize_and_overwrite gives you an uninitialized buffer of N bytes, then trusts your callback to size it down.
 // reference: https://en.cppreference.com/w/cpp/string/basic_string/resize_and_overwrite
 

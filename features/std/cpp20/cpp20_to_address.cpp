@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=13 topic=stl experimental=false
 // description: std::to_address turns any 'fancy pointer' (smart, iterator) into a raw pointer without dereferencing.
 // reference: https://en.cppreference.com/w/cpp/memory/to_address
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: <regex>: build a regex_basic / regex_match / regex_search / regex_replace pipeline. ECMAScript syntax by default.
 // reference: https://en.cppreference.com/w/cpp/regex
 

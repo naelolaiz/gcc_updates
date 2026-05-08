@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=stl experimental=false
 // description: std::expected<T,E> is a value-or-error type with monadic and_then / or_else / transform.
 // reference: https://en.cppreference.com/w/cpp/utility/expected
 

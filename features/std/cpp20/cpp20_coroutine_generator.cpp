@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=coroutines experimental=false
 // description: Hand-rolled minimal generator using <coroutine> primitives -- co_yield, promise_type, coroutine_handle.
 // reference: https://en.cppreference.com/w/cpp/language/coroutines
 // note: C++23 ships std::generator which supersedes hand-rolled versions; see cpp23_generator.cpp.

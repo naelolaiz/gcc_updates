@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=language experimental=false
 // description: [[assume(expr)]] tells the optimizer 'expr is true here' WITHOUT evaluating it -- a portable hint.
 // reference: https://en.cppreference.com/w/cpp/language/attributes/assume
 

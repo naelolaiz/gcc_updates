@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'noexcept' is a specifier (promises a function does not throw) and an operator (asks at compile time whether an expression can throw).
 // reference: https://en.cppreference.com/w/cpp/language/noexcept_spec
 

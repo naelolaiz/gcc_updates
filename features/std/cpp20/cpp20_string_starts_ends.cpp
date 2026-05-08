@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::string and std::string_view gained starts_with / ends_with member functions.
 // reference: https://en.cppreference.com/w/cpp/string/basic_string/starts_with
 

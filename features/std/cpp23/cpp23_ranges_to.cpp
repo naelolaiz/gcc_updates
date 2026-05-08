@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: std::ranges::to materialises a view (or any range) into a concrete container in one expression.
 // reference: https://en.cppreference.com/w/cpp/ranges/to
 

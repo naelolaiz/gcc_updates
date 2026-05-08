@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: <random>: an engine (Mersenne, etc.) plus a distribution. Replaces srand/rand for serious code.
 // reference: https://en.cppreference.com/w/cpp/numeric/random
 

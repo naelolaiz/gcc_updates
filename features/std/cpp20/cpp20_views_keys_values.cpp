@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=13 topic=ranges experimental=false
 // description: views::keys / views::values / views::elements project tuple-like ranges to a single component.
 // reference: https://en.cppreference.com/w/cpp/ranges/elements_view
 

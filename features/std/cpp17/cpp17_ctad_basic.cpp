@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=templates experimental=false
 // description: Class Template Argument Deduction (CTAD) lets you write 'std::pair p{1, 2.0};' without spelling the types.
 // reference: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=15 topic=stl experimental=false
 // description: std::flat_map keeps two parallel sorted vectors instead of a tree -- cache-friendly, lookup O(log n), insert O(n).
 // reference: https://en.cppreference.com/w/cpp/container/flat_map
 

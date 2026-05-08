@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::jthread auto-joins on destruction and supports cooperative cancellation via stop_token.
 // since: GCC 10 (jthread); fully usable across GCC 14/15/16.
 // reference: https://en.cppreference.com/w/cpp/thread/jthread

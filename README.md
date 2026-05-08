@@ -4,15 +4,15 @@ A structured, CI-tested workspace serving as a reference for the C++11 / C++17 /
 C++20 / C++23 / (experimental) C++26 standard library and tracking what each new
 GCC release ships.
 
-Every example under [features/](features/) is a single-file program with a
-metadata header. A small Python engine ([scripts/discover.py](scripts/discover.py))
-discovers each example, builds it with the right `-std=` flag against the
-installed `g++`, runs it, and checks the exit code. CI runs that engine three
-times on the GCC matrix (13, 14, 15), then three more times on GCC 15/16
-under UBSan+ASan, TSan, and `-fanalyzer` — so correctness, runtime UB, data
-races, and compile-time path analysis are all covered per push. (The `gcc:16`
-Docker image isn't published yet; the matrix re-adds it once it lands. The
-analyzer job already exercises GCC 16 via `debian:unstable-slim` + apt.)
+Every example under [features/](features/) is a single-file program registered
+as one `gcc_feature_test()` call in its folder's `CMakeLists.txt`. CMake +
+CTest drive the build and run; the function macro lives in
+[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the matrix three
+times on GCC 13/14/15 plus three more on GCC 15/16 under UBSan+ASan, TSan,
+and `-fanalyzer` — so correctness, runtime UB, data races, and compile-time
+path analysis are all covered per push. (The `gcc:16` Docker image isn't
+published yet; the matrix re-adds it once it lands. The analyzer job already
+exercises GCC 16 via `debian:unstable-slim` + apt.)
 
 ## Layout
 
@@ -43,20 +43,22 @@ features/                          # all examples (single .cpp each)
     gcc14/gcc14_*.cpp
     gcc15/gcc15_*.cpp
     gcc16/gcc16_*.cpp
+CMakeLists.txt                 # top-level: discovers all features/<bucket>/ subdirs
+cmake/
+  GccFeature.cmake             # gcc_feature_test() function and registration validation
+  expect_failure.cmake         # command runner for expected failures with diagnostic regexes
+features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per .cpp in the bucket
+features/<bucket>/README.md     # per-bucket index (manual, hand-edited)
 scripts/
-  discover.py                 # build & run engine
-  podman-dev.sh               # local entrypoint (uses podman)
+  podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
 containers/
-  gcc.Containerfile           # FROM gcc:${GCC_VERSION} + libtbb-dev + python3
+  gcc.Containerfile           # FROM gcc:${GCC_VERSION} + cmake + libtbb-dev
 docs/
   compiler-flags.md           # default and per-file flag reference
-  sanitizers.md               # what `--sanitize=…` adds, per-function opt-out, runtime knobs
+  sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
-features/<bucket>/README.md   # auto-generated leaf indexes (one per cppNN/gccNN/gccext-topic)
 .github/workflows/
   ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
-.githooks/
-  pre-commit                  # opt-in: regenerates leaf READMEs when features/ is touched
 ```
 
 ## How each file gets compiled
@@ -64,30 +66,25 @@ features/<bucket>/README.md   # auto-generated leaf indexes (one per cppNN/gccNN
 Every example is built with this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures file.cpp $EXTRA_FLAGS -o /tmp/.../bin
+g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/<bucket>/bin
 ```
 
-`$STD` is read from the file's `// gcc-test:` header. `$EXTRA_FLAGS` is the
-file's `extra-flags=` value if present (e.g. `-lstdc++exp` for `std::stacktrace`,
-`-ltbb` for parallel algorithms). The full per-file command for any example
-can be dumped with `--show-cmds`:
-
-```bash
-./scripts/podman-dev.sh 15 --show-cmds | head -3
-```
+`$STD` is the `STD` argument of the example's `gcc_feature_test()` call.
+`$EXTRA` is its `EXTRA_LIBS` / `EXTRA_COMPILE_FLAGS` (e.g. `stdc++exp` for
+`std::stacktrace`, `tbb` for parallel algorithms). Sanitizer mode swaps
+`-O2` for `-O1` and adds `-fsanitize=…`; analyzer mode adds `-fanalyzer`.
 
 [docs/compiler-flags.md](docs/compiler-flags.md) is the complete reference —
-every default flag, every per-file `extra-flags=` value, and how to reproduce
-any build by hand inside a container.
+every default flag, every per-test `EXTRA_*`, and how to reproduce any
+build by hand inside a container.
 
 ## Anatomy of one example
 
-Each `.cpp` starts with a metadata header that the engine parses:
+Each `.cpp` is plain code with a `description` and `reference` comment block;
+the build metadata lives in the folder's `CMakeLists.txt`:
 
 ```cpp
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: std::ranges::to converts a range to a container in one expression.
-// since: GCC 14 / libstdc++ 14
 // reference: https://en.cppreference.com/w/cpp/ranges/to
 
 #include <ranges>
@@ -104,27 +101,44 @@ int main() {
 }
 ```
 
-Required keys: `std`, `min-gcc`, `topic`, `experimental`.
-Optional keys: `extra-flags=-foo,-bar`, `run-args="..."`, `expect-exit=N`,
-`max-gcc=N`. Programs return `0` on success. Runtime checks use
-`DEMO_ASSERT(...)`, which prints the checked expression before asserting it;
-compile-time-only demos print a short `demo::text(...)` line after their
-`static_assert(...)` checks.
+Build metadata in `features/std/cpp23/CMakeLists.txt`:
+
+```cmake
+gcc_feature_test(cpp23_ranges_to  STD c++23  MIN_GCC 14  TOPIC ranges)
+```
+
+Required keyword args: `STD`, `MIN_GCC`, `TOPIC`. Optional: `MAX_GCC`,
+`MIN_LIBSTDCXX`, `MAX_LIBSTDCXX`, `EXTRA_LIBS`, `EXTRA_COMPILE_FLAGS`,
+`REQUIRES_SANITIZER`, `SKIP_SANITIZER`, `REQUIRES_ANALYZER`, `WILL_FAIL`,
+`EXPECT_OUTPUT`, `EXPERIMENTAL`, `EXPECT_ERROR`. See
+[cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
+Programs return `0` on success; runtime checks use `DEMO_ASSERT(...)`.
 
 ## Running locally (podman)
 
-This repo never invokes the host's `g++` directly. Local runs go through
-[scripts/podman-dev.sh](scripts/podman-dev.sh), which builds a small image from
-[containers/gcc.Containerfile](containers/gcc.Containerfile) (the official
-`gcc:N` Docker image + `libtbb-dev` + `python3`) and runs the engine inside it:
+This repo never invokes the host's `g++`/`cmake` directly. Local runs go
+through [scripts/podman-dev.sh](scripts/podman-dev.sh), which builds a small
+image from [containers/gcc.Containerfile](containers/gcc.Containerfile) (the
+official `gcc:N` Docker image + `cmake` + `libtbb-dev`), then runs cmake +
+ctest inside it. The build directory lives in a named podman volume, so it
+persists across runs.
 
 ```bash
-./scripts/podman-dev.sh 13            # build + run all GCC-13-eligible examples
+./scripts/podman-dev.sh 13            # build + run all GCC-13-eligible tests
 ./scripts/podman-dev.sh 14            # same, GCC 14
 ./scripts/podman-dev.sh 15            # same, GCC 15
 ./scripts/podman-dev.sh 16            # same, GCC 16
-./scripts/podman-dev.sh 15 --dry-run  # parse metadata only, don't compile
-./scripts/podman-dev.sh 15 --filter=threading   # only threading/sync examples
+
+# CTest filters (everything after `--` is forwarded as-is to ctest):
+./scripts/podman-dev.sh 15 -- -R cpp23_         # only tests matching cpp23_
+./scripts/podman-dev.sh 15 -- -L threading      # only the 'threading' topic
+./scripts/podman-dev.sh 15 -- -j                # parallel CTest when speed matters
+./scripts/podman-dev.sh 15 -- -N                # list tests, don't run
+
+# Sanitizer / analyzer modes:
+./scripts/podman-dev.sh 15 sanitize=address,undefined
+./scripts/podman-dev.sh 15 sanitize=thread
+./scripts/podman-dev.sh 16 analyzer
 ```
 
 The image is built once per GCC version and cached.
@@ -140,17 +154,17 @@ between local and CI for those jobs. The analyzer job uses
 
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
-| `gcc-{13,14,15}` | `discover.py --gcc-version=N` (one row per version, in `gcc:N`) | every example whose `min-gcc` ≤ N and `max-gcc` ≥ N |
-| `sanitize (gcc-15, ubsan + asan + lsan)` | `--sanitize=undefined,address` in `gcc:15` | every example **plus** `requires-sanitizer={undefined,address,leak}` demos |
-| `sanitize (gcc-15, tsan)` | `--sanitize=thread` in `gcc:15` (separate; can't share with ASan) | every example plus `requires-sanitizer=thread` demos |
-| `analyze (gcc-16, -fanalyzer)` | `--analyzer` in `debian:unstable-slim` with `g++-16` installed from apt | `requires-analyzer=true` compile-only demos |
+| `gcc-{13,14,15}` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N |
+| `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
+| `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
+| `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `debian:unstable-slim` with `g++-16` installed from apt | `REQUIRES_ANALYZER` compile-only demos |
 
-Each example is printed as a foldable GitHub log group containing the exact
-`g++` command, runtime command, captured diagnostics/output, and final status.
-The job summary also writes a compact markdown table to `$GITHUB_STEP_SUMMARY`.
+Each CTest run uses `--verbose` so the example output remains visible in the
+log. Tests gated out by version / sanitizer / analyzer requirements are not
+registered in that configure mode.
 
 See [docs/sanitizers.md](docs/sanitizers.md) for what each sanitizer adds to
-the build and how the deliberate-trip demos assert their abort code.
+the build and how the deliberate-trip demos assert their expected report text.
 
 ### libstdc++ vs g++ — separate version axes
 
@@ -160,9 +174,10 @@ against can be older or newer than the one that compiled it. The
 official `gcc:N` Docker images keep both at version N, which is why CI
 uses them. To express a libstdc++ requirement on individual files:
 
-- The harness probes `_GLIBCXX_RELEASE` at startup and prints it.
-- `// gcc-test:` headers can declare `min-libstdcxx=N`; jobs whose
-  libstdc++ is older skip the file silently.
+- `cmake/GccFeature.cmake` probes `_GLIBCXX_RELEASE` at configure time and
+  caches it in `LIBSTDCXX_RELEASE`.
+- `gcc_feature_test()` accepts `MIN_LIBSTDCXX` / `MAX_LIBSTDCXX`; tests
+  outside that window are not registered in that configure mode.
 
 Some C++23 library features ship at different libstdc++ releases than
 their language counterparts. Notably, per cppreference:
@@ -205,37 +220,22 @@ cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./   # next to your_bin
 CI itself never ships binaries outside the container that built them,
 so this concern is purely informational.
 
-### Optional: install the pre-commit hook
-
-The auto-generated per-leaf `features/<bucket>/README.md` indexes are kept fresh
-by an opt-in pre-commit hook in [.githooks/pre-commit](.githooks/pre-commit).
-On commits that touch `features/`, the hook runs `discover.py --emit-docs`
-(pure stdlib Python — no compiler, no container needed) and stages any updated
-README.md files into the same commit. Enable it once with:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-If you skip the hook, the indexes simply lag the metadata until the next
-contributor's commit refreshes them — CI no longer gates on this.
-
 ## Adding a new example
 
 1. Drop a single `.cpp` under [features/](features/) in the right subfolder:
    `features/std/cppNN/`, `features/gcc/gccNN/`, or
    `features/gccext/<topic>/`. Filename must start with the bucket prefix
-   (`cpp11_`, `cpp20_`, `gcc14_`, `gccext_`, …) — the engine reads the bucket
-   from the filename.
-2. Add the `// gcc-test:` metadata header (required keys above) and a
-   `// description:` line.
+   (`cpp11_`, `cpp20_`, `gcc14_`, `gccext_`, …).
+2. Add a `// description:` and `// reference:` comment block at the top of
+   the `.cpp` file (no machine-readable header needed any more).
 3. Write `int main()` that asserts what should hold, returns 0 on success.
-4. Run `./scripts/podman-dev.sh <ver>` to verify locally.
-5. Commit. If you've enabled the pre-commit hook (above), the per-leaf
-   `features/<bucket>/README.md` index is regenerated and staged automatically.
-   Otherwise run `python3 scripts/discover.py --emit-docs` (pure stdlib —
-   no compiler, no container needed) and commit the regenerated index
-   alongside the example.
+4. Add a `gcc_feature_test(<name> STD c++NN MIN_GCC N TOPIC <topic>)` line
+   to that folder's `CMakeLists.txt`. See
+   [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
+5. Run `./scripts/podman-dev.sh <ver>` to verify locally.
+6. Update the bucket's `features/<bucket>/README.md` index by hand if you
+   want it to list your new example. (Auto-generation from CMake target
+   properties may come later.)
 
 ## Suggested reference path
 
@@ -352,13 +352,14 @@ implemented via the same machinery as `__builtin_expect`, etc.
   [features/gccext/sanitize/integration/](features/gccext/sanitize/integration/).
 - **Sanitizer trips (deliberate UB):** `gccext_asan_*`, `gccext_ubsan_*`,
   `gccext_tsan_*`, `gccext_lsan_*` — each one is gated on a matching
-  `--sanitize=…` and asserts the *correct* abort code instead of just any
-  failure. Run with `./scripts/podman-dev.sh 15 --sanitize=undefined,address`
-  (or `=thread`).
+  `REQUIRES_SANITIZER` and asserts expected sanitizer report text instead of
+  accepting any failure. Run with
+  `./scripts/podman-dev.sh 15 sanitize=undefined,address` (or
+  `sanitize=thread`).
 - **Static analyzer (compile-only):** `gccext_analyzer_double_free`,
   `gccext_analyzer_null_deref`, `gccext_analyzer_use_after_free` — show paths
   that runtime sanitizers can miss. Need GCC 16 for usable C++ analyzer
-  support; CI runs them via `--analyzer`.
+  support; CI runs them via `cmake -DGCC_FEATURE_ANALYZER=ON`.
 
 Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/README.md), [builtins/](features/gccext/builtins/README.md), [codegen/](features/gccext/codegen/README.md), [openmp/](features/gccext/openmp/README.md), [pragmas/](features/gccext/pragmas/README.md), [sanitize/](features/gccext/sanitize/README.md), [analyzer/](features/gccext/analyzer/README.md).
 
@@ -377,10 +378,11 @@ Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [fea
 
 ## Why this layout
 
-- **Two-level subfolders under `features/` + metadata header** keeps the tree
-  navigable as it grows. Filename prefix (`cpp23_…`) doubles as the bucket
-  key so the engine and emit-docs both work off the same fact.
+- **Two-level subfolders under `features/` + per-folder `CMakeLists.txt`**
+  keeps the tree navigable as it grows. Filename prefix (`cpp23_…`) is the
+  bucket key; the matching `gcc_feature_test()` call in the folder's
+  `CMakeLists.txt` carries the build metadata.
 - **One toolchain source (official `gcc:N` Docker image)** for both local
   podman and CI means there is exactly one place a version pin can drift.
-- **Experimental flag** lets C++26 / cutting-edge GCC features live in the same
-  matrix without making every PR red whenever a feature breaks.
+- **`EXPERIMENTAL` keyword** lets C++26 / cutting-edge GCC features live in
+  the same matrix without making every PR red whenever a feature breaks.

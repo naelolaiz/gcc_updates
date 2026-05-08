@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'enum class' (scoped enums) don't leak names into the surrounding scope and don't implicitly convert to int.
 // reference: https://en.cppreference.com/w/cpp/language/enum
 

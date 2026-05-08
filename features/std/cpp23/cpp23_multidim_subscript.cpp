@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=templates experimental=false
 // description: operator[] now accepts multiple arguments -- the natural syntax for tensor / matrix types.
 // reference: https://en.cppreference.com/w/cpp/language/operators#Subscript_operator
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=concepts experimental=false
 // description: Defining and using concepts to constrain templates -- replaces SFINAE for most cases.
 // reference: https://en.cppreference.com/w/cpp/language/constraints
 

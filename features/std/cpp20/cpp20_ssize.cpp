@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::ssize returns a SIGNED size, eliminating the int/size_t mixed-comparison warnings of c.size().
 // reference: https://en.cppreference.com/w/cpp/iterator/size
 

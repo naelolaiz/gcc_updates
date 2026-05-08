@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: <bit> standardises common bit tricks: popcount, countl_zero, has_single_bit, bit_ceil, bit_cast.
 // reference: https://en.cppreference.com/w/cpp/header/bit
 

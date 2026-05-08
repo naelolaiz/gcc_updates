@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=stl experimental=false
 // description: std::function<R(Args...)> is a polymorphic wrapper for any callable matching the signature; type-erases the actual type.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/function
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-builtins experimental=false
 // description: __attribute__((vector_size(N))) makes a real SIMD vector type; element-wise +,-,*, etc. compile to one instruction.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
 

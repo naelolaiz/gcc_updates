@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: std::erase / std::erase_if removes the erase-remove idiom for every standard container.
 // reference: https://en.cppreference.com/w/cpp/container/vector/erase2
 

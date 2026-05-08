@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=stl experimental=false
 // description: std::variant<Ts...> is a type-safe tagged union; std::visit dispatches on the active alternative.
 // reference: https://en.cppreference.com/w/cpp/utility/variant
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-attributes experimental=false
 // description: [[gnu::target("avx2")]] compiles ONE function with extra ISA flags; the rest of the TU stays at the default ISA.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
 // note: experimental because the runner CPU must support AVX2; if it doesn't, the program SIGILLs.

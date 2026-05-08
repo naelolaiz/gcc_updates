@@ -1,4 +1,3 @@
-// gcc-test: std=c++11 min-gcc=13 topic=language experimental=false
 // description: 'alignof(T)' yields T's alignment; 'alignas(N)' constrains a variable or type's alignment.
 // reference: https://en.cppreference.com/w/cpp/language/alignof
 

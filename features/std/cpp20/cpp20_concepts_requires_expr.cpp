@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=concepts experimental=false
 // description: requires-expressions can introspect type capabilities (simple, type, compound, nested requirements).
 // reference: https://en.cppreference.com/w/cpp/language/requires
 

@@ -220,32 +220,32 @@ the [gccext index](../features/gccext/README.md). The per-topic indexes
 [pragmas/](../features/gccext/pragmas/README.md),
 [sanitize/](../features/gccext/sanitize/README.md),
 [analyzer/](../features/gccext/analyzer/README.md))
-are auto-generated from each file's `// gcc-test:` header.
+list the examples whose build metadata is declared in each folder's
+`CMakeLists.txt`.
 
 ## What's intentionally *not* benchmarked here
 
 A few classes of compiler features can't be exercised through this repo's
-"compile + run + assert exit code" harness:
+"compile + run + assert output" harness:
 
 - **Auto-vectorization / instruction selection.** We can compile with `-O3`
   and assert *correctness* (see
   [features/gccext/codegen/gccext_autovectorize.cpp](../features/gccext/codegen/gccext_autovectorize.cpp)),
   but verifying that a loop *actually* used `vfmadd231ps` requires reading
-  assembly or `-fopt-info-vec`. Use the script's `--show-cmds`/`--verbose`
-  to grab the exact build line, then re-run it locally with `-fopt-info-vec`
-  or `objdump -d`.
+  assembly or `-fopt-info-vec`. Use `cmake --build build --target
+  gccext_autovectorize --verbose` to grab the exact build line, then re-run it
+  locally with `-fopt-info-vec` or `objdump -d`.
 - **LTO / PGO** improve speed without changing observable behaviour. Add
   `-flto` to a build command to test it; correctness assertions still hold.
 - **`-fanalyzer` (the static analyzer)** emits warnings, not exit codes —
   the harness can't `assert(...)` against a warning. The analyzer demos in
   [../features/gccext/analyzer/](../features/gccext/analyzer/) work around
   this by being **compile-only**: CI's `analyze` job builds them with
-  `-fanalyzer` on GCC 16, and the step log carries the diagnostic. Run any
-  example with `-fanalyzer` locally by adding the flag to a line from
-  `--show-cmds`.
+  `-fanalyzer` on GCC 16, and the step log carries the diagnostic. Run the
+  analyzer lane locally with `./scripts/podman-dev.sh 16 analyzer`.
 - **Sanitizers** (`-fsanitize=address,undefined,thread`) abort at runtime
   on errors but don't change the *successful* path. The deliberate-trip demos
   under [../features/gccext/sanitize/](../features/gccext/sanitize/) get around
-  this by setting `expect-exit=` to the sanitizer's documented abort code,
-  so we assert "*the right kind* of failure". CI runs three sanitizer jobs
-  (UBSan+ASan+LSan, TSan, plus the `analyze` job above).
+  this with `WILL_FAIL` plus `EXPECT_OUTPUT`, so we assert the expected report
+  text instead of accepting any failure. CI runs separate sanitizer jobs for
+  UBSan+ASan+LSan and TSan, plus the `analyze` job above.

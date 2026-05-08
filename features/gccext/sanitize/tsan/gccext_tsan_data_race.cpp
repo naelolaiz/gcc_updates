@@ -1,7 +1,6 @@
-// gcc-test: std=c++17 min-gcc=13 topic=gcc-sanitize experimental=false requires-sanitizer=thread expect-exit=66
 // description: TSan demo: two threads writing the same plain int without synchronisation. Runs only under -fsanitize=thread; reports a data race.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
-// note: TSan default exit code on race-on-error is 66 (set via TSAN_OPTIONS=halt_on_error=1). TSan is INCOMPATIBLE with ASan -- run in a separate sanitizer profile.
+// note: TSan is INCOMPATIBLE with ASan, so CI runs it in a separate sanitizer profile.
 
 #include "support/demo.hpp"
 #include <thread>

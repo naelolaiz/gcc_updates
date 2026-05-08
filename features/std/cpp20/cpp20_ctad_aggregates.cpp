@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=templates experimental=false
 // description: Class template argument deduction now works on aggregates without writing deduction guides by hand.
 // reference: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
 

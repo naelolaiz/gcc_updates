@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=templates experimental=false
 // description: Deducing this lets a lambda recurse into itself without std::function or fixed-point combinator gymnastics.
 // reference: https://en.cppreference.com/w/cpp/language/lambda#Lambda_capture
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=templates experimental=false
 // description: Fold expressions reduce parameter packs with a binary operator: (... op pack) and (init op ... op pack).
 // reference: https://en.cppreference.com/w/cpp/language/fold
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: C++20 added test()/wait()/notify_one to std::atomic_flag, finally making it useful beyond test_and_set.
 // reference: https://en.cppreference.com/w/cpp/atomic/atomic_flag
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=threading experimental=false
 // description: std::stop_source / stop_token / stop_callback decouple cancellation request from the threads observing it.
 // reference: https://en.cppreference.com/w/cpp/thread/stop_source
 

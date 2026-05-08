@@ -1,4 +1,3 @@
-// gcc-test: std=c++20 min-gcc=14 topic=stl experimental=false
 // description: Associative containers gained .contains(key) -- clearer than 'count(k) > 0' or 'find(k) != end()'.
 // reference: https://en.cppreference.com/w/cpp/container/map/contains
 

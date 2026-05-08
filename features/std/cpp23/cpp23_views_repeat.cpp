@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=ranges experimental=false
 // description: views::repeat yields the same value forever (or N times); composes with views::take for finite ranges.
 // reference: https://en.cppreference.com/w/cpp/ranges/repeat_view
 

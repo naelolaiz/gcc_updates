@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=templates experimental=false
 // description: Explicit object parameter ('deducing this') replaces ref-qual overload sets and enables CRTP-without-CRTP.
 // reference: https://en.cppreference.com/w/cpp/language/member_functions#Explicit_object_parameter
 

@@ -1,4 +1,3 @@
-// gcc-test: std=c++17 min-gcc=13 topic=language experimental=false
 // description: Structured bindings: 'auto [a, b, c] = expr;' destructures arrays, tuples/pairs, and aggregates.
 // reference: https://en.cppreference.com/w/cpp/language/structured_binding
 

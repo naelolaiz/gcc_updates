@@ -1,4 +1,3 @@
-// gcc-test: std=c++23 min-gcc=14 topic=language experimental=false
 // description: auto(x) and auto{x} produce a decayed prvalue copy of x -- handy for materialising a copy in generic code.
 // reference: https://en.cppreference.com/w/cpp/language/auto
 
