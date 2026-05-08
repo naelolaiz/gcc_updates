@@ -12,6 +12,8 @@ gcc_feature_test(cpp17_inline_variables     STD c++17  MIN_GCC 13  TOPIC languag
 gcc_feature_test(cpp17_invoke_apply         STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_nested_namespace     STD c++17  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp17_optional             STD c++17  MIN_GCC 13  TOPIC stl)
+# EXTRA_LIBS tbb: libstdc++'s parallel <execution> policies dispatch through Intel
+# TBB; without -ltbb the link fails with undefined references to TBB symbols.
 gcc_feature_test(cpp17_parallel_algos       STD c++17  MIN_GCC 13  TOPIC stl
                  EXTRA_LIBS tbb)
 gcc_feature_test(cpp17_shared_mutex         STD c++17  MIN_GCC 13  TOPIC threading)

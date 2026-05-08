@@ -5,5 +5,8 @@ gcc_feature_test(gccext_attribute_packed      STD c++17  MIN_GCC 13  TOPIC gcc-a
 gcc_feature_test(gccext_attribute_pure_const  STD c++17  MIN_GCC 13  TOPIC gcc-attributes)
 gcc_feature_test(gccext_attribute_target      STD c++17  MIN_GCC 13  TOPIC gcc-attributes)
 gcc_feature_test(gccext_likely_unlikely       STD c++20  MIN_GCC 13  TOPIC gcc-attributes)
+# SKIP_SANITIZER thread: target_clones uses an IFUNC resolver, which is known to
+# interact badly with TSan startup. Skip the example on the TSan job instead of
+# producing spurious failures.
 gcc_feature_test(gccext_target_clones         STD c++17  MIN_GCC 13  TOPIC gcc-attributes
                  SKIP_SANITIZER thread)
