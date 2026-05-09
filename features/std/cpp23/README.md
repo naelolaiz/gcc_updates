@@ -1,6 +1,6 @@
 # C++23 examples
 
-_Folder: `features/std/cpp23/`. 37 example(s) across 5 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp23/`. 5 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
@@ -52,13 +52,17 @@ _Folder: `features/std/cpp23/`. 37 example(s) across 5 topic(s). Index of exampl
 | [cpp23_expected.cpp](cpp23_expected.cpp) | c++23 | 14 | std::expected<T,E> is a value-or-error type with monadic and_then / or_else / transform. |
 | [cpp23_flat_map.cpp](cpp23_flat_map.cpp) | c++23 | 15 | std::flat_map keeps two parallel sorted vectors instead of a tree -- cache-friendly, lookup O(log n), insert O(n). |
 | [cpp23_flat_set.cpp](cpp23_flat_set.cpp) | c++23 | 15 | std::flat_set is the set-shaped counterpart of flat_map: sorted contiguous storage instead of an RB tree. |
+| [cpp23_format_ranges.cpp](cpp23_format_ranges.cpp) | c++23 | 14 | C++23 made every range formattable by std::format -- pass any container/view through "{}", customise per-element with the nested format spec "{::}", or pick join_with for a custom separator. |
+| [cpp23_forward_like.cpp](cpp23_forward_like.cpp) | c++23 | 14 | std::forward_like<Self>(x) returns x with the cv-qualification AND value category of Self -- the cleanest way to forward an inner member from a deducing-this method without writing four overloads. |
 | [cpp23_mdspan.cpp](cpp23_mdspan.cpp) | c++23 | 16 | std::mdspan is a non-owning view over multi-dimensional contiguous data; supports static and dynamic extents. |
 | [cpp23_move_only_function.cpp](cpp23_move_only_function.cpp) | c++23 | 14 | std::move_only_function is std::function but for move-only callables (e.g. unique_ptr captures, std::packaged_task-style ownership). |
 | [cpp23_optional_monadic.cpp](cpp23_optional_monadic.cpp) | c++23 | 14 | std::optional gained monadic ops (and_then / transform / or_else) -- chain fallible computations cleanly. |
 | [cpp23_out_ptr.cpp](cpp23_out_ptr.cpp) | c++23 | 14 | std::out_ptr / std::inout_ptr adapt smart pointers to legacy 'T**' APIs without manual reset() dancing. |
 | [cpp23_print.cpp](cpp23_print.cpp) | c++23 | 14 | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
 | [cpp23_resize_and_overwrite.cpp](cpp23_resize_and_overwrite.cpp) | c++23 | 14 | std::string::resize_and_overwrite gives you an uninitialized buffer of N bytes, then trusts your callback to size it down. |
+| [cpp23_spanstream.cpp](cpp23_spanstream.cpp) | c++23 | 14 | <spanstream> wraps a std::span as the buffer for an iostream -- ispanstream / ospanstream / spanstream do the same job as stringstream but with no allocation, no copy, and no implicit lifetime ownership. |
 | [cpp23_stacktrace.cpp](cpp23_stacktrace.cpp) | c++23 | 14 | std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo. |
+| [cpp23_start_lifetime_as.cpp](cpp23_start_lifetime_as.cpp) | c++23 | 16 | std::start_lifetime_as<T>(p) formally begins T's lifetime at the bytes pointed to by p without running a constructor -- the standardised, defined-behaviour way to "view a buffer as a T", obsoleting the reinterpret_cast / memcpy dance for trivially-copyable types. |
 | [cpp23_string_contains.cpp](cpp23_string_contains.cpp) | c++23 | 14 | std::string and std::string_view gained .contains() in C++23 (starts_with/ends_with were C++20). |
 | [cpp23_to_underlying.cpp](cpp23_to_underlying.cpp) | c++23 | 14 | std::to_underlying returns the underlying-type value of an enum -- replaces the static_cast boilerplate. |
 | [cpp23_unreachable.cpp](cpp23_unreachable.cpp) | c++23 | 14 | std::unreachable() marks code paths that cannot be reached -- the optimizer assumes UB if they ever are. |

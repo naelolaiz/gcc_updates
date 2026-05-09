@@ -1,6 +1,6 @@
 # C++11 examples
 
-_Folder: `features/std/cpp11/`. 36 example(s) across 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp11/`. 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
@@ -38,13 +38,22 @@ _Folder: `features/std/cpp11/`. 36 example(s) across 4 topic(s). Index of exampl
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
+| [cpp11_algorithms_new.cpp](cpp11_algorithms_new.cpp) | c++11 | 13 | C++11 added a batch of <algorithm> conveniences: all_of/any_of/none_of, find_if_not, copy_if/copy_n, std::move (algorithm form), shuffle, is_sorted/is_partitioned, partition_point, minmax/minmax_element. |
 | [cpp11_array.cpp](cpp11_array.cpp) | c++11 | 13 | std::array<T,N> is a fixed-size, value-semantic, container-like wrapper around a C array; size in the type, no decay to pointer. |
 | [cpp11_bind.cpp](cpp11_bind.cpp) | c++11 | 13 | std::bind partially applies arguments; placeholders _1, _2, ... thread remaining args. std::ref/cref pass references through copies. |
 | [cpp11_chrono.cpp](cpp11_chrono.cpp) | c++11 | 13 | <chrono> models durations and time_points with type-safe units; arithmetic between mismatched units is rejected. |
+| [cpp11_emplace.cpp](cpp11_emplace.cpp) | c++11 | 13 | emplace_back / emplace forward arguments and construct the element in-place inside the container, avoiding the temporary that push_back requires. std::piecewise_construct lets std::pair / std::map values be constructed in two halves separately. |
+| [cpp11_exception_ptr.cpp](cpp11_exception_ptr.cpp) | c++11 | 13 | std::exception_ptr captures an in-flight exception so it can be transported across threads / async boundaries; std::nested_exception lets a handler chain a new exception while preserving the original. |
+| [cpp11_forward_list.cpp](cpp11_forward_list.cpp) | c++11 | 13 | std::forward_list is a singly-linked list -- O(1) splice/insert_after, no .size(), only forward iteration. |
 | [cpp11_function.cpp](cpp11_function.cpp) | c++11 | 13 | std::function<R(Args...)> is a polymorphic wrapper for any callable matching the signature; type-erases the actual type. |
+| [cpp11_hash.cpp](cpp11_hash.cpp) | c++11 | 13 | std::hash<T> is the customisation point that makes T usable as a key in unordered_map / unordered_set. Specialising it teaches the standard hash containers about your type. |
+| [cpp11_iota.cpp](cpp11_iota.cpp) | c++11 | 13 | std::iota fills a range with sequential, incrementing values starting at a given seed -- the standard "0..N-1" generator. |
+| [cpp11_iterator_helpers.cpp](cpp11_iterator_helpers.cpp) | c++11 | 13 | C++11 added free std::begin/std::end (work on raw arrays AND containers), std::next/std::prev (advance an iterator by N without mutation), and std::move_iterator (turns *it into std::move(*it)). |
 | [cpp11_random.cpp](cpp11_random.cpp) | c++11 | 13 | <random>: an engine (Mersenne, etc.) plus a distribution. Replaces srand/rand for serious code. |
+| [cpp11_reference_wrapper.cpp](cpp11_reference_wrapper.cpp) | c++11 | 13 | std::reference_wrapper<T> = an assignable, copyable handle that *behaves like* a reference. std::ref / std::cref construct it; how you put 'real references' into a std::vector or pass them through std::bind/std::thread without decay-to-copy. |
 | [cpp11_regex.cpp](cpp11_regex.cpp) | c++11 | 13 | <regex>: build a regex_basic / regex_match / regex_search / regex_replace pipeline. ECMAScript syntax by default. |
 | [cpp11_smart_ptrs.cpp](cpp11_smart_ptrs.cpp) | c++11 | 13 | unique_ptr (sole ownership) / shared_ptr (refcounted) / weak_ptr (non-owning observer); std::make_shared is the preferred construction. |
+| [cpp11_system_error.cpp](cpp11_system_error.cpp) | c++11 | 13 | <system_error> standardises error reporting -- error_code is a (value, category) pair; std::system_error is the matching exception. Used by <filesystem>, <future>, networking, etc. |
 | [cpp11_tuple.cpp](cpp11_tuple.cpp) | c++11 | 13 | std::tuple holds a heterogeneous fixed-size pack; std::tie + std::ignore destructure (C++17 added structured bindings). |
 | [cpp11_unordered_map.cpp](cpp11_unordered_map.cpp) | c++11 | 13 | std::unordered_map / unordered_set are hash-based containers; O(1) average lookup, O(n) worst case. |
 
@@ -53,6 +62,8 @@ _Folder: `features/std/cpp11/`. 36 example(s) across 4 topic(s). Index of exampl
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
 | [cpp11_alias_template.cpp](cpp11_alias_template.cpp) | c++11 | 13 | 'using' creates type aliases that work as templates -- the modern replacement for 'typedef ... ::type' (e.g. std::add_const_t). |
+| [cpp11_ratio.cpp](cpp11_ratio.cpp) | c++11 | 13 | std::ratio<N, D> is a compile-time rational number; <ratio> exposes ratio_add/subtract/multiply/divide and ratio_equal/less for arithmetic on types. |
+| [cpp11_type_traits.cpp](cpp11_type_traits.cpp) | c++11 | 13 | <type_traits> is the C++11 metaprogramming toolbox -- compile-time type queries (is_*) and type transformations (remove_*, decay, conditional, enable_if). |
 | [cpp11_variadic_templates.cpp](cpp11_variadic_templates.cpp) | c++11 | 13 | Variadic templates take a parameter pack 'Args...' that you expand with '...' and recurse over. |
 
 ## threading

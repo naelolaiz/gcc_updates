@@ -1,6 +1,6 @@
 # GCC 16 release-notes examples
 
-_Folder: `features/gcc/gcc16/`. 1 example(s) across 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/gcc/gcc16/`. 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## gcc-release
 

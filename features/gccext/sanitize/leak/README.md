@@ -1,6 +1,6 @@
 # GCC extensions: LeakSanitizer trip demos
 
-_Folder: `features/gccext/sanitize/leak/`. 1 example(s) across 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/gccext/sanitize/leak/`. 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## gcc-sanitize
 

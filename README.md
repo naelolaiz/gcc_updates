@@ -21,6 +21,7 @@ features/                          # all examples (single .cpp each)
   support/demo.hpp                 # tiny stdout helper + DEMO_ASSERT for readable demos
   std/                             # C++ standard library + language features
     cpp11/cpp11_*.cpp              # foundation
+    cpp14/cpp14_*.cpp
     cpp17/cpp17_*.cpp
     cpp20/cpp20_*.cpp
     cpp23/cpp23_*.cpp
@@ -254,10 +255,15 @@ that came after assumes you have these in muscle memory.
   `cpp11_noexcept`, `cpp11_static_assert`, `cpp11_override_final`,
   `cpp11_delete_default`, `cpp11_trailing_return`, `cpp11_explicit_conversion`.
 - **Move semantics (the hardest one — read it twice):** `cpp11_rvalue_move`.
-- **Templates:** `cpp11_variadic_templates`, `cpp11_alias_template`.
+- **Templates / metaprogramming:** `cpp11_variadic_templates`,
+  `cpp11_alias_template`, `cpp11_type_traits`, `cpp11_ratio`.
 - **STL value types:** `cpp11_array`, `cpp11_tuple`, `cpp11_unordered_map`,
   `cpp11_initializer_list`, `cpp11_smart_ptrs`, `cpp11_chrono`, `cpp11_random`,
-  `cpp11_regex`.
+  `cpp11_regex`, `cpp11_forward_list`.
+- **STL infrastructure:** `cpp11_emplace`, `cpp11_hash`,
+  `cpp11_reference_wrapper`, `cpp11_iterator_helpers`,
+  `cpp11_algorithms_new`, `cpp11_iota`, `cpp11_system_error`,
+  `cpp11_exception_ptr`.
 - **Callables:** `cpp11_function`, `cpp11_bind`.
 - **Concurrency:** `cpp11_thread`, `cpp11_mutex_lock`,
   `cpp11_condition_variable`, `cpp11_async_future`, `cpp11_atomic`.
@@ -267,17 +273,27 @@ that came after assumes you have these in muscle memory.
 
 Full index: [features/std/cpp11/README.md](features/std/cpp11/README.md).
 
+### 1.5 Spot-fills (C++14)
+
+- **Templates / metaprogramming:** `cpp14_integer_sequence`.
+
+Full index: [features/std/cpp14/README.md](features/std/cpp14/README.md).
+
 ### 2. Quality-of-life (C++17)
 
 - **STL value types:** `cpp17_optional`, `cpp17_variant`, `cpp17_any`,
-  `cpp17_string_view`, `cpp17_byte`, `cpp17_filesystem`.
-- **Algorithms:** `cpp17_clamp`, `cpp17_invoke_apply`, `cpp17_parallel_algos`.
-- **Templates:** `cpp17_if_constexpr`, `cpp17_fold_expressions`,
-  `cpp17_ctad_basic`.
+  `cpp17_string_view`, `cpp17_byte`, `cpp17_filesystem`,
+  `cpp17_shared_ptr_array`.
+- **Algorithms / numerics:** `cpp17_clamp`, `cpp17_invoke_apply`,
+  `cpp17_parallel_algos`, `cpp17_gcd_lcm_sample`, `cpp17_not_fn_as_const`.
+- **STL infrastructure:** `cpp17_charconv`, `cpp17_memory_resource`,
+  `cpp17_node_handles`, `cpp17_launder`.
+- **Templates / metaprogramming:** `cpp17_if_constexpr`, `cpp17_fold_expressions`,
+  `cpp17_ctad_basic`, `cpp17_type_trait_helpers`.
 - **Language:** `cpp17_structured_bindings`, `cpp17_init_statement`,
   `cpp17_inline_variables`, `cpp17_nested_namespace`,
   `cpp17_constexpr_lambda`, `cpp17_attributes`.
-- **Concurrency:** `cpp17_shared_mutex`.
+- **Concurrency:** `cpp17_shared_mutex`, `cpp17_scoped_lock`.
 
 Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 
@@ -285,9 +301,10 @@ Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 
 This is where the language genuinely changed shape.
 
-- **Concepts & templates:** `cpp20_concepts_intro`,
+- **Concepts & templates / metaprogramming:** `cpp20_concepts_intro`,
   `cpp20_concepts_requires_expr`, `cpp20_ctad_alias`,
-  `cpp20_ctad_aggregates`, `cpp20_nttp_class`, `cpp20_explicit_bool`.
+  `cpp20_ctad_aggregates`, `cpp20_nttp_class`, `cpp20_explicit_bool`,
+  `cpp20_type_identity`.
 - **Ranges & views:** `cpp20_ranges_algorithms`, `cpp20_ranges_views`,
   `cpp20_views_keys_values`.
 - **Coroutines:** `cpp20_coroutine_generator` (read after concepts; this is the
@@ -325,7 +342,9 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   `cpp23_views_stride`, `cpp23_views_as_const_as_rvalue`.
 - **Library:** `cpp23_optional_monadic`, `cpp23_byteswap`,
   `cpp23_to_underlying`, `cpp23_unreachable`, `cpp23_move_only_function`,
-  `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`.
+  `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`,
+  `cpp23_spanstream`, `cpp23_format_ranges`, `cpp23_forward_like`,
+  `cpp23_start_lifetime_as`.
 
 Full index: [features/std/cpp23/README.md](features/std/cpp23/README.md).
 

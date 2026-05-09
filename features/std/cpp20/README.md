@@ -1,6 +1,6 @@
 # C++20 examples
 
-_Folder: `features/std/cpp20/`. 38 example(s) across 9 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp20/`. 9 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
@@ -80,6 +80,7 @@ _Folder: `features/std/cpp20/`. 38 example(s) across 9 topic(s). Index of exampl
 | [cpp20_ctad_alias.cpp](cpp20_ctad_alias.cpp) | c++20 | 14 | C++20 lets CTAD work through alias templates -- no manual deduction guide needed. |
 | [cpp20_explicit_bool.cpp](cpp20_explicit_bool.cpp) | c++20 | 14 | explicit(bool) makes a constructor's explicitness depend on a constexpr predicate. |
 | [cpp20_nttp_class.cpp](cpp20_nttp_class.cpp) | c++20 | 14 | Class types can now be non-type template parameters (NTTPs); enables compile-time string templates. |
+| [cpp20_type_identity.cpp](cpp20_type_identity.cpp) | c++20 | 13 | C++20 added std::type_identity<T> (block template argument deduction in non-deduced contexts) and std::remove_cvref<T> (the common 'strip cv + reference, but not array-to-pointer decay' transformation). |
 
 ## threading
 

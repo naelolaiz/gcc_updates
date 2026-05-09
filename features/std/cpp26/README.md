@@ -1,6 +1,6 @@
 # C++26 (experimental) examples
 
-_Folder: `features/std/cpp26/`. 3 example(s) across 3 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp26/`. 3 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
 
 ## Topics
 
