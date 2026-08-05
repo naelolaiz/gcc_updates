@@ -106,6 +106,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | Example | Bucket | std | min-gcc |
 | ------- | ------ | --- | ------- |
 | [gcc13_libstdcxx_format.cpp](gcc/gcc13/gcc13_libstdcxx_format.cpp) | gcc/gcc13 | c++20 | 13 |
+| [gcc14_libstdcxx_print_exp.cpp](gcc/gcc14/gcc14_libstdcxx_print_exp.cpp) | gcc/gcc14 | c++23 | 14 |
 | [gcc14_libstdcxx_ranges_to.cpp](gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp) | gcc/gcc14 | c++23 | 14 |
 | [gcc15_default_print.cpp](gcc/gcc15/gcc15_default_print.cpp) | gcc/gcc15 | c++23 | 15 |
 | [gcc16_cpp26_features_default.cpp](gcc/gcc16/gcc16_cpp26_features_default.cpp) | gcc/gcc16 | c++26 | 16 |
@@ -245,6 +246,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_not_fn_as_const.cpp](std/cpp17/cpp17_not_fn_as_const.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_optional.cpp](std/cpp17/cpp17_optional.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_parallel_algos.cpp](std/cpp17/cpp17_parallel_algos.cpp) | std/cpp17 | c++17 | 13 |
+| [cpp17_searchers.cpp](std/cpp17/cpp17_searchers.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_shared_ptr_array.cpp](std/cpp17/cpp17_shared_ptr_array.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_variant.cpp](std/cpp17/cpp17_variant.cpp) | std/cpp17 | c++17 | 13 |
@@ -320,6 +322,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp11_condition_variable.cpp](std/cpp11/cpp11_condition_variable.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp11_mutex_lock.cpp](std/cpp11/cpp11_mutex_lock.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp11_thread.cpp](std/cpp11/cpp11_thread.cpp) | std/cpp11 | c++11 | 13 |
+| [cpp11_thread_local.cpp](std/cpp11/cpp11_thread_local.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp14_shared_timed_mutex.cpp](std/cpp14/cpp14_shared_timed_mutex.cpp) | std/cpp14 | c++14 | 13 |
 | [cpp17_scoped_lock.cpp](std/cpp17/cpp17_scoped_lock.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_shared_mutex.cpp](std/cpp17/cpp17_shared_mutex.cpp) | std/cpp17 | c++17 | 13 |

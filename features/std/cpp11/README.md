@@ -75,3 +75,4 @@ _Folder: `features/std/cpp11/`. 4 topic(s). Generated from `gcc_feature_test()` 
 | [cpp11_condition_variable.cpp](cpp11_condition_variable.cpp) | c++11 | 13 | std::condition_variable: classic mutex+predicate wait/notify. Always pair wait() with a predicate to handle spurious wake-ups. |
 | [cpp11_mutex_lock.cpp](cpp11_mutex_lock.cpp) | c++11 | 13 | std::mutex + RAII locks (lock_guard, unique_lock); std::lock locks N mutexes deadlock-free. |
 | [cpp11_thread.cpp](cpp11_thread.cpp) | c++11 | 13 | std::thread launches a thread; .join() waits, .detach() abandons. Failing to do either before destruction calls std::terminate. |
+| [cpp11_thread_local.cpp](cpp11_thread_local.cpp) | c++11 | 13 | thread_local gives each thread its own copy of a static-duration variable, initialised on that thread's first use -- per-thread counters and caches without locks. |

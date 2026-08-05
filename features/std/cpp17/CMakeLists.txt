@@ -21,6 +21,7 @@ gcc_feature_test(cpp17_optional             STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_parallel_algos       STD c++17  MIN_GCC 13  TOPIC stl
                  EXTRA_LIBS tbb)
 gcc_feature_test(cpp17_scoped_lock          STD c++17  MIN_GCC 13  TOPIC threading)
+gcc_feature_test(cpp17_searchers            STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_shared_mutex         STD c++17  MIN_GCC 13  TOPIC threading)
 gcc_feature_test(cpp17_shared_ptr_array     STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_string_view          STD c++17  MIN_GCC 13  TOPIC stl)

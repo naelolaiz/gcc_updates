@@ -37,6 +37,7 @@ _Folder: `features/std/cpp17/`. 4 topic(s). Generated from `gcc_feature_test()` 
 | [cpp17_not_fn_as_const.cpp](cpp17_not_fn_as_const.cpp) | c++17 | 13 | std::not_fn(p) returns a callable that negates p (replaces the deprecated not1/not2 binders); std::as_const(x) returns a const reference, forcing the const overload of begin()/find()/etc. without copying. |
 | [cpp17_optional.cpp](cpp17_optional.cpp) | c++17 | 13 | std::optional<T> represents a value-or-nothing; use has_value(), value_or(), and emplace(). |
 | [cpp17_parallel_algos.cpp](cpp17_parallel_algos.cpp) | c++17 | 13 | <numeric> gained reduce/transform_reduce/inclusive_scan/exclusive_scan; <execution> adds parallel policies. |
+| [cpp17_searchers.cpp](cpp17_searchers.cpp) | c++17 | 13 | <functional> gained Boyer-Moore(-Horspool) searchers: preprocess the needle once, then hand the searcher to std::search for every haystack -- repeated substring searches get much cheaper. |
 | [cpp17_shared_ptr_array.cpp](cpp17_shared_ptr_array.cpp) | c++17 | 13 | C++17 added shared_ptr<T[]> -- shared ownership of a dynamically-allocated array, with operator[] and the correct delete[] on destruction. Pre-C++17, only unique_ptr<T[]> had this. |
 | [cpp17_string_view.cpp](cpp17_string_view.cpp) | c++17 | 13 | std::string_view is a non-owning, copy-cheap view over a contiguous sequence of chars. |
 | [cpp17_variant.cpp](cpp17_variant.cpp) | c++17 | 13 | std::variant<Ts...> is a type-safe tagged union; std::visit dispatches on the active alternative. |

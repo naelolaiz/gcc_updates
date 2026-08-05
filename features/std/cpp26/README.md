@@ -21,7 +21,7 @@ _Folder: `features/std/cpp26/`. 3 topic(s). Generated from `gcc_feature_test()` 
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
-| [cpp26_saturation_arith.cpp](cpp26_saturation_arith.cpp) | c++26 | 14 | <numeric> in C++26 adds saturation arithmetic (add_sat, sub_sat, mul_sat, div_sat) and saturate_cast. |
+| [cpp26_saturation_arith.cpp](cpp26_saturation_arith.cpp) | c++26 | 14 | <numeric> in C++26 adds saturation arithmetic -- and shows live draft churn: GCC 14/15 ship add_sat/saturate_cast (__cpp_lib_saturation_arithmetic 202311), GCC 16 the renamed saturating_add/saturating_cast (202603). |
 | [cpp26_span_at.cpp](cpp26_span_at.cpp) | c++26 | 15 | C++26 gives std::span bounds-checked element access: span.at(i) throws std::out_of_range like vector::at -- opt-in safety for the otherwise unchecked view. |
 | [cpp26_text_encoding.cpp](cpp26_text_encoding.cpp) | c++26 | 15 | std::text_encoding identifies character encodings via the IANA registry: text_encoding::literal() reports the encoding of the string literals baked into this binary, environment() the locale's. |
 
