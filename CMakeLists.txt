@@ -6,6 +6,7 @@ enable_testing()
 include(cmake/GccFeature.cmake)
 
 # C++ language extras (gcc-features)
+add_subdirectory(features/gcc/defaults)
 add_subdirectory(features/gcc/gcc13)
 add_subdirectory(features/gcc/gcc14)
 add_subdirectory(features/gcc/gcc15)

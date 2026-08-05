@@ -1,10 +1,17 @@
 # GCC 15 release-notes examples
 
-_Folder: `features/gcc/gcc15/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+_Folder: `features/gcc/gcc15/`. 2 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
 
 ## Topics
 
+- [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-release](#gcc-release)
+
+## gcc-diagnostics
+
+| File | std | min-gcc | Description |
+| ---- | --- | ------- | ----------- |
+| [gcc15_warn_deprecated_literal_operator.cpp](gcc15_warn_deprecated_literal_operator.cpp) | c++23 | 15 | GCC 15 introduced -Wdeprecated-literal-operator: C++23 deprecated the space between "" and the suffix when declaring a literal operator. Built with -Werror=deprecated-literal-operator; CTest asserts the diagnostic fires. |
 
 ## gcc-release
 

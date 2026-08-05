@@ -124,6 +124,43 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
+  test-gcc16:
+    # Runs the NORMAL test suite on GCC 16. The matrix above stops at 15
+    # (Docker Hub has no `gcc:16` yet), and the analyzer job below only builds
+    # REQUIRES_ANALYZER demos -- without this job, MIN_GCC 16 examples
+    # (mdspan, start_lifetime_as, reflection, the gcc16 smoke test) would
+    # never execute in CI. Same apt-based toolchain as the analyzer job.
+    name: gcc-16 (debian unstable)
+    runs-on: ubuntu-latest
+    container:
+      image: debian:unstable-slim
+    steps:
+      - name: Install GCC 16 + cmake + libtbb
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends \
+              ca-certificates git gcc-16 g++-16 cmake make libtbb-dev
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
+          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
+          g++ --version
+          printf '#include <version>\n' | g++ -x c++ -E -dM - | grep _GLIBCXX_RELEASE || true
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure
+        run: cmake -S . -B build
+
+      - name: Build
+        run: |
+          echo "::group::Compile commands (verbose)"
+          cmake --build build --parallel --verbose
+          echo "::endgroup::"
+
+      - name: Test
+        run: ctest --test-dir build --verbose
+
   analyze:
     # Compile-time static analyzer. Distinct from runtime sanitizers:
     # -fanalyzer walks paths in the IR and emits -Wanalyzer-* warnings. GCC 16

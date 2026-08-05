@@ -91,9 +91,6 @@ function(gcc_feature_test NAME)
     if(ARG_EXPERIMENTAL AND NOT ARG_EXPECT_ERROR)
         message(FATAL_ERROR "gcc_feature_test(${NAME}): EXPERIMENTAL requires EXPECT_ERROR <regex>")
     endif()
-    if(ARG_EXPECT_ERROR AND NOT ARG_EXPERIMENTAL)
-        message(FATAL_ERROR "gcc_feature_test(${NAME}): EXPECT_ERROR requires EXPERIMENTAL")
-    endif()
 
     set(_source "${CMAKE_CURRENT_SOURCE_DIR}/${NAME}.cpp")
     if(NOT EXISTS "${_source}")
@@ -148,7 +145,13 @@ function(gcc_feature_test NAME)
         endif()
     endif()
 
-    set(_compile_flags -std=${ARG_STD} ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    if(ARG_STD STREQUAL "default")
+        # STD default: pass no -std flag at all -- the example deliberately
+        # tests the compiler's default dialect (see features/gcc/defaults/).
+        set(_compile_flags ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    else()
+        set(_compile_flags -std=${ARG_STD} ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    endif()
     set(_link_flags "")
 
     if("-fopenmp" IN_LIST ARG_EXTRA_COMPILE_FLAGS)

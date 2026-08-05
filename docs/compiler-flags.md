@@ -30,7 +30,7 @@ subfolder the example lives in.
 | Token        | Source                          | Why                                                                             |
 |--------------|---------------------------------|---------------------------------------------------------------------------------|
 | `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix and sanitizer jobs run in `gcc:N`, where `g++` is the default. The analyze job runs in `debian:unstable-slim` and installs `g++-16`, then points `g++` at it via `update-alternatives`. |
-| `-std=$STD`  | `STD` arg of `gcc_feature_test()` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. |
+| `-std=$STD`  | `STD` arg of `gcc_feature_test()` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`, or `default` (omit `-std` entirely — used by `features/gcc/defaults/` to observe the compiler's default dialect). |
 | `-Wall -Wextra -Wpedantic` | hard-coded default | Strict warnings — examples must compile clean.                                  |
 | `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes. **Sanitizer mode lowers this to `-O1`** to keep deliberate UB observable. |
 | `-pthread`   | hard-coded default              | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
@@ -66,7 +66,7 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | Argument            | Required? | Meaning |
 |---------------------|-----------|---------|
 | `<name>`            | yes       | Matches `<name>.cpp` in the same folder. |
-| `STD <std>`         | yes       | Passed to `-std=`. One of `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`. |
+| `STD <std>`         | yes       | Passed to `-std=`. One of `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26` — or `default`, which omits `-std` so the example sees the compiler's default dialect. |
 | `MIN_GCC <n>`       | yes       | Tests on older GCC are not registered in that configure mode. |
 | `TOPIC <name>`      | yes       | Becomes the CTest label — filter with `ctest -L <topic>`. |
 | `MAX_GCC <n>`       | no        | Symmetric upper bound; useful for since-removed behaviour. |
@@ -80,7 +80,7 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `WILL_FAIL`         | no        | Runtime test is expected to fail; requires `EXPECT_OUTPUT` so unrelated failures do not pass. |
 | `EXPECT_OUTPUT <re>` | required with `WILL_FAIL` | Output regex that must match the expected sanitizer report text. |
 | `EXPERIMENTAL`      | no        | Feature not yet supported by current GCC; combined with `EXPECT_ERROR`, the expected outcome is a compile failure. |
-| `EXPECT_ERROR <re>` | required with `EXPERIMENTAL` | Output regex that must match the expected compiler diagnostic. Compilation success or an unrelated diagnostic fails the test. |
+| `EXPECT_ERROR <re>` | no (required by `EXPERIMENTAL`) | The test compiles only, must FAIL, and the regex must match the diagnostic. Also used standalone by the `gcc-diagnostics` demos, which pair it with `-Werror=<warning>` to assert a specific warning fires. |
 
 The libstdc++ release is detected at configure time by asking `g++` to
 preprocess a tiny translation unit that includes `<version>` and reports

@@ -1,6 +1,6 @@
 # Topic index
 
-_All 17 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
+_All 19 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
 
 ## Topics
 
@@ -12,6 +12,8 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 - [gcc-attributes](#gcc-attributes)
 - [gcc-builtins](#gcc-builtins)
 - [gcc-codegen](#gcc-codegen)
+- [gcc-defaults](#gcc-defaults)
+- [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-openmp](#gcc-openmp)
 - [gcc-pragmas](#gcc-pragmas)
 - [gcc-release](#gcc-release)
@@ -89,6 +91,23 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [gccext_autovectorize.cpp](gccext/codegen/gccext_autovectorize.cpp) | gccext/codegen | c++17 | 13 |
 | [gccext_inline_asm.cpp](gccext/codegen/gccext_inline_asm.cpp) | gccext/codegen | c++17 | 13 |
 
+## gcc-defaults
+
+| Example | Bucket | std | min-gcc |
+| ------- | ------ | --- | ------- |
+| [gccdef_dialect.cpp](gcc/defaults/gccdef_dialect.cpp) | gcc/defaults | default | 13 |
+| [gccdef_fp_contract.cpp](gcc/defaults/gccdef_fp_contract.cpp) | gcc/defaults | c++17 | 13 |
+| [gccdef_pie_default.cpp](gcc/defaults/gccdef_pie_default.cpp) | gcc/defaults | c++17 | 13 |
+
+## gcc-diagnostics
+
+| Example | Bucket | std | min-gcc |
+| ------- | ------ | --- | ------- |
+| [gcc13_warn_dangling_reference.cpp](gcc/gcc13/gcc13_warn_dangling_reference.cpp) | gcc/gcc13 | c++17 | 13 |
+| [gcc14_warn_calloc_transposed.cpp](gcc/gcc14/gcc14_warn_calloc_transposed.cpp) | gcc/gcc14 | c++17 | 14 |
+| [gcc15_warn_deprecated_literal_operator.cpp](gcc/gcc15/gcc15_warn_deprecated_literal_operator.cpp) | gcc/gcc15 | c++23 | 15 |
+| [gcc16_warn_cpp26_compat.cpp](gcc/gcc16/gcc16_warn_cpp26_compat.cpp) | gcc/gcc16 | c++23 | 16 |
+
 ## gcc-openmp
 
 | Example | Bucket | std | min-gcc |
@@ -106,6 +125,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | Example | Bucket | std | min-gcc |
 | ------- | ------ | --- | ------- |
 | [gcc13_libstdcxx_format.cpp](gcc/gcc13/gcc13_libstdcxx_format.cpp) | gcc/gcc13 | c++20 | 13 |
+| [gcc14_libstdcxx_print_exp.cpp](gcc/gcc14/gcc14_libstdcxx_print_exp.cpp) | gcc/gcc14 | c++23 | 14 |
 | [gcc14_libstdcxx_ranges_to.cpp](gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp) | gcc/gcc14 | c++23 | 14 |
 | [gcc15_default_print.cpp](gcc/gcc15/gcc15_default_print.cpp) | gcc/gcc15 | c++23 | 15 |
 | [gcc16_cpp26_features_default.cpp](gcc/gcc16/gcc16_cpp26_features_default.cpp) | gcc/gcc16 | c++26 | 16 |
@@ -245,6 +265,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_not_fn_as_const.cpp](std/cpp17/cpp17_not_fn_as_const.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_optional.cpp](std/cpp17/cpp17_optional.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_parallel_algos.cpp](std/cpp17/cpp17_parallel_algos.cpp) | std/cpp17 | c++17 | 13 |
+| [cpp17_searchers.cpp](std/cpp17/cpp17_searchers.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_shared_ptr_array.cpp](std/cpp17/cpp17_shared_ptr_array.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_variant.cpp](std/cpp17/cpp17_variant.cpp) | std/cpp17 | c++17 | 13 |
@@ -320,6 +341,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp11_condition_variable.cpp](std/cpp11/cpp11_condition_variable.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp11_mutex_lock.cpp](std/cpp11/cpp11_mutex_lock.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp11_thread.cpp](std/cpp11/cpp11_thread.cpp) | std/cpp11 | c++11 | 13 |
+| [cpp11_thread_local.cpp](std/cpp11/cpp11_thread_local.cpp) | std/cpp11 | c++11 | 13 |
 | [cpp14_shared_timed_mutex.cpp](std/cpp14/cpp14_shared_timed_mutex.cpp) | std/cpp14 | c++14 | 13 |
 | [cpp17_scoped_lock.cpp](std/cpp17/cpp17_scoped_lock.cpp) | std/cpp17 | c++17 | 13 |
 | [cpp17_shared_mutex.cpp](std/cpp17/cpp17_shared_mutex.cpp) | std/cpp17 | c++17 | 13 |

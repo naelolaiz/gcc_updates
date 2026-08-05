@@ -7,12 +7,12 @@ each new GCC release ships.
 Every example under [features/](features/) is a single-file program registered
 as one `gcc_feature_test()` call in its folder's `CMakeLists.txt`. CMake +
 CTest drive the build and run; the function macro lives in
-[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the matrix three
-times on GCC 13/14/15 plus three more on GCC 15/16 under UBSan+ASan, TSan,
-and `-fanalyzer` — so correctness, runtime UB, data races, and compile-time
-path analysis are all covered per push. (The `gcc:16` Docker image isn't
-published yet; the matrix re-adds it once it lands. The analyzer job already
-exercises GCC 16 via `debian:unstable-slim` + apt.)
+[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the full suite four
+times on GCC 13/14/15/16 plus three more runs on GCC 15/16 under UBSan+ASan,
+TSan, and `-fanalyzer` — so correctness, runtime UB, data races, and
+compile-time path analysis are all covered per push. (The `gcc:16` Docker
+image isn't published yet; the GCC 16 jobs use `debian:unstable-slim` + apt
+until it lands.)
 
 ## Layout
 
@@ -41,6 +41,7 @@ features/                          # all examples (single .cpp each)
       leak/gccext_lsan_*.cpp       # deliberate leak
     analyzer/gccext_analyzer_*.cpp # compile-time -fanalyzer demos (UAF/null-deref/double-delete)
   gcc/                             # release-notes smoke tests, one per version
+    defaults/gccdef_*.cpp          # toolchain defaults: -std dialect, fp-contract, PIE
     gcc13/gcc13_*.cpp
     gcc14/gcc14_*.cpp
     gcc15/gcc15_*.cpp
@@ -60,6 +61,7 @@ docs/
   sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
   evolution.md                # one concept traced across standards (constexpr, lambdas, …)
+  default-changes.md          # measured default-flag/dialect changes between GCC releases
 .github/workflows/
   ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
 ```
@@ -148,16 +150,17 @@ The image is built once per GCC version and cached.
 
 ## Running in CI
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) defines four jobs. Each
+[.github/workflows/ci.yml](.github/workflows/ci.yml) defines five jobs. Each
 default and sanitizer job runs inside the official `gcc:N` Docker image
 (Debian-based, upstream gcc-N + matching upstream libstdc++-N). The same image
 is what `scripts/podman-dev.sh` builds locally, so behaviour is bit-identical
-between local and CI for those jobs. The analyzer job uses
-`debian:unstable-slim` until Docker Hub publishes `gcc:16`.
+between local and CI for those jobs. The GCC 16 jobs use
+`debian:unstable-slim` + apt `g++-16` until Docker Hub publishes `gcc:16`.
 
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
 | `gcc-{13,14,15}` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N |
+| `gcc-16 (debian unstable)` | same, with apt `g++-16` in `debian:unstable-slim` | every test with `MIN_GCC` ≤ 16 — the only job that executes the `MIN_GCC 16` examples (mdspan, start_lifetime_as, reflection, gcc16 smoke) |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
 | `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `debian:unstable-slim` with `g++-16` installed from apt | `REQUIRES_ANALYZER` compile-only demos |
@@ -417,10 +420,20 @@ breaking CI.
   `cpp26_text_encoding`.
 - **Reflection:** `cpp26_reflection_basic` (GCC 16, `-freflection`).
 
-Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`,
-`gcc15_default_print`, `gcc16_cpp26_features_default`. The narrative version of
-"what each release shipped" is in
-[docs/gcc-changelogs.md](docs/gcc-changelogs.md).
+Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`
++ `gcc14_libstdcxx_print_exp`, `gcc15_default_print`,
+`gcc16_cpp26_features_default`. The narrative version of "what each release
+shipped" is in [docs/gcc-changelogs.md](docs/gcc-changelogs.md).
+
+Toolchain *defaults* get their own bucket: `gccdef_dialect` (what you get
+with no `-std` — changed at GCC 15 for C and GCC 16 for C++),
+`gccdef_fp_contract` (`-ffp-contract=fast` is always on), and
+`gccdef_pie_default` (upstream vs distro packaging). Each release bucket also
+carries one demo of a diagnostic that release introduced (`ctest -L
+gcc-diagnostics`): `-Wdangling-reference` (13), `-Wcalloc-transposed-args`
+(14), `-Wdeprecated-literal-operator` (15), `-Wc++26-compat` (16) — each
+compiled with `-Werror=<warning>` and asserting the exact diagnostic.
+Measured details in [docs/default-changes.md](docs/default-changes.md).
 
 Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [features/gcc/gcc13/README.md](features/gcc/gcc13/README.md), [features/gcc/gcc14/README.md](features/gcc/gcc14/README.md), [features/gcc/gcc15/README.md](features/gcc/gcc15/README.md), [features/gcc/gcc16/README.md](features/gcc/gcc16/README.md).
 
