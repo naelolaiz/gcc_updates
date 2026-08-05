@@ -348,17 +348,18 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   `cpp23_if_consteval`, `cpp23_assume`, `cpp23_size_t_literal`,
   `cpp23_auto_decay_copy`.
 - **Ranges/views:** `cpp23_ranges_to`, `cpp23_ranges_zip`,
-  `cpp23_ranges_chunk_slide`, `cpp23_ranges_enumerate`,
-  `cpp23_ranges_join_with`, `cpp23_ranges_cartesian_product`,
-  `cpp23_ranges_adjacent`, `cpp23_ranges_fold`,
-  `cpp23_ranges_starts_ends_contains`, `cpp23_ranges_find_last`,
-  `cpp23_ranges_iota_algorithm`, `cpp23_views_repeat`,
-  `cpp23_views_stride`, `cpp23_views_as_const_as_rvalue`.
+  `cpp23_ranges_chunk_slide`, `cpp23_views_chunk_by`,
+  `cpp23_ranges_enumerate`, `cpp23_ranges_join_with`,
+  `cpp23_ranges_cartesian_product`, `cpp23_ranges_adjacent`,
+  `cpp23_ranges_fold`, `cpp23_ranges_starts_ends_contains`,
+  `cpp23_ranges_find_last`, `cpp23_ranges_iota_algorithm`,
+  `cpp23_views_repeat`, `cpp23_views_stride`,
+  `cpp23_views_as_const_as_rvalue`.
 - **Library:** `cpp23_optional_monadic`, `cpp23_byteswap`,
   `cpp23_to_underlying`, `cpp23_unreachable`, `cpp23_move_only_function`,
   `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`,
   `cpp23_spanstream`, `cpp23_format_ranges`, `cpp23_forward_like`,
-  `cpp23_start_lifetime_as`.
+  `cpp23_start_lifetime_as`, `cpp23_invoke_r`, `cpp23_stdfloat`.
 
 Full index: [features/std/cpp23/README.md](features/std/cpp23/README.md).
 
@@ -371,10 +372,12 @@ implemented via the same machinery as `__builtin_expect`, etc.
 - **Attributes:** `gccext_likely_unlikely`, `gccext_attribute_pure_const`,
   `gccext_attribute_hot_cold`, `gccext_attribute_flatten`,
   `gccext_attribute_packed`, `gccext_attribute_cleanup`,
+  `gccext_attribute_constructor` (pre-main/post-main hooks),
   `gccext_attribute_target` (per-function ISA selection),
   `gccext_target_clones` (multi-version + IFUNC dispatch).
 - **Builtins:** `gccext_builtin_expect`, `gccext_builtin_constant_p`,
-  `gccext_builtin_assume_aligned`.
+  `gccext_builtin_assume_aligned`, `gccext_builtin_cpu_supports`
+  (manual runtime dispatch), `gccext_builtin_prefetch`, `gccext_int128`.
 - **Vectorization / SIMD:** `gccext_vector_extensions` (`vector_size` types),
   `gccext_autovectorize` (auto-vectorisable SAXPY at `-O3`).
 - **Parallelism:** `gccext_openmp_parallel_for`.
@@ -398,9 +401,15 @@ Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/
 
 ### 6. Edge — experimental C++26 + per-release smoke tests
 
-C++26 examples are flagged `experimental=true`; CI tolerates failures here.
+Most C++26 entries run as normal tests on the GCC version that ships them
+(`MIN_GCC 15`/`16`); only the ones flagged `EXPERIMENTAL` may fail without
+breaking CI.
 
-- `cpp26_saturation_arith`, `cpp26_contracts_basic`, `cpp26_reflection_basic`.
+- **Language:** `cpp26_pack_indexing`, `cpp26_delete_reason`,
+  `cpp26_static_assert_messages`, `cpp26_contracts_basic` (experimental).
+- **Library:** `cpp26_saturation_arith`, `cpp26_span_at`,
+  `cpp26_text_encoding`.
+- **Reflection:** `cpp26_reflection_basic` (GCC 16, `-freflection`).
 
 Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`,
 `gcc15_default_print`, `gcc16_cpp26_features_default`. The narrative version of

@@ -41,6 +41,7 @@ _Folder: `features/std/cpp23/`. 5 topic(s). Generated from `gcc_feature_test()` 
 | [cpp23_ranges_to.cpp](cpp23_ranges_to.cpp) | c++23 | 14 | std::ranges::to materialises a view (or any range) into a concrete container in one expression. |
 | [cpp23_ranges_zip.cpp](cpp23_ranges_zip.cpp) | c++23 | 14 | std::views::zip turns parallel ranges into a single range of tuples; stops at shortest input. |
 | [cpp23_views_as_const_as_rvalue.cpp](cpp23_views_as_const_as_rvalue.cpp) | c++23 | 14 | views::as_const yields const references; views::as_rvalue yields rvalue references (enables move-iteration). |
+| [cpp23_views_chunk_by.cpp](cpp23_views_chunk_by.cpp) | c++23 | 13 | views::chunk_by splits a range into subranges at every adjacent pair where the predicate turns false -- group ascending runs or equal neighbours without hand-written loops. |
 | [cpp23_views_repeat.cpp](cpp23_views_repeat.cpp) | c++23 | 14 | views::repeat yields the same value forever (or N times); composes with views::take for finite ranges. |
 | [cpp23_views_stride.cpp](cpp23_views_stride.cpp) | c++23 | 14 | views::stride takes every N-th element; useful for downsampling. |
 
@@ -54,6 +55,7 @@ _Folder: `features/std/cpp23/`. 5 topic(s). Generated from `gcc_feature_test()` 
 | [cpp23_flat_set.cpp](cpp23_flat_set.cpp) | c++23 | 15 | std::flat_set is the set-shaped counterpart of flat_map: sorted contiguous storage instead of an RB tree. |
 | [cpp23_format_ranges.cpp](cpp23_format_ranges.cpp) | c++23 | 14 | C++23 made every range formattable by std::format -- pass any container/view through "{}", customise per-element with the nested format spec "{::}", or pick join_with for a custom separator. |
 | [cpp23_forward_like.cpp](cpp23_forward_like.cpp) | c++23 | 14 | std::forward_like<Self>(x) returns x with the cv-qualification AND value category of Self -- the cleanest way to forward an inner member from a deducing-this method without writing four overloads. |
+| [cpp23_invoke_r.cpp](cpp23_invoke_r.cpp) | c++23 | 13 | std::invoke_r<R>(f, args...) is std::invoke with the result converted to R -- pin the return type in generic code (widen int to double, or discard via R=void) without casting at every call site. |
 | [cpp23_mdspan.cpp](cpp23_mdspan.cpp) | c++23 | 16 | std::mdspan is a non-owning view over multi-dimensional contiguous data; supports static and dynamic extents. |
 | [cpp23_move_only_function.cpp](cpp23_move_only_function.cpp) | c++23 | 14 | std::move_only_function is std::function but for move-only callables (e.g. unique_ptr captures, std::packaged_task-style ownership). |
 | [cpp23_optional_monadic.cpp](cpp23_optional_monadic.cpp) | c++23 | 14 | std::optional gained monadic ops (and_then / transform / or_else) -- chain fallible computations cleanly. |
@@ -63,6 +65,7 @@ _Folder: `features/std/cpp23/`. 5 topic(s). Generated from `gcc_feature_test()` 
 | [cpp23_spanstream.cpp](cpp23_spanstream.cpp) | c++23 | 14 | <spanstream> wraps a std::span as the buffer for an iostream -- ispanstream / ospanstream / spanstream do the same job as stringstream but with no allocation, no copy, and no implicit lifetime ownership. |
 | [cpp23_stacktrace.cpp](cpp23_stacktrace.cpp) | c++23 | 14 | std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo. |
 | [cpp23_start_lifetime_as.cpp](cpp23_start_lifetime_as.cpp) | c++23 | 16 | std::start_lifetime_as<T>(p) formally begins T's lifetime at the bytes pointed to by p without running a constructor -- the standardised, defined-behaviour way to "view a buffer as a T", obsoleting the reinterpret_cast / memcpy dance for trivially-copyable types. |
+| [cpp23_stdfloat.cpp](cpp23_stdfloat.cpp) | c++23 | 13 | <stdfloat> defines fixed-width floating types: std::float32_t/float64_t are guaranteed IEEE binary32/64 (unlike float/double, which only usually are), plus float16_t/bfloat16_t where the target has them. |
 | [cpp23_string_contains.cpp](cpp23_string_contains.cpp) | c++23 | 14 | std::string and std::string_view gained .contains() in C++23 (starts_with/ends_with were C++20). |
 | [cpp23_to_underlying.cpp](cpp23_to_underlying.cpp) | c++23 | 14 | std::to_underlying returns the underlying-type value of an enum -- replaces the static_cast boilerplate. |
 | [cpp23_unreachable.cpp](cpp23_unreachable.cpp) | c++23 | 14 | std::unreachable() marks code paths that cannot be reached -- the optimizer assumes UB if they ever are. |
