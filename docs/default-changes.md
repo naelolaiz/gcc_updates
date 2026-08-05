@@ -79,11 +79,23 @@ prints `__PIE__`/`__PIC__` and asserts the one invariant that survives
 packaging (PIE ⇒ PIC). Moral: when comparing toolchains, compare the
 *build* of the compiler, not just its version number.
 
-## Diagnostics defaults (context)
+## New diagnostics per release
 
-Each release also turns on new default-enabled warnings (GCC 14:
-`-Whardened`, several `-Wanalyzer-*`; GCC 15: `-Wmusttail-local-addr`,
-diagnostics event links/colours; GCC 16: `-Wanalyzer-throw-of-unexpected-type`).
-These only affect builds that already opt into the relevant feature
-(`-fanalyzer`, musttail, hardening flags), so they are listed here for
+Each release adds warnings. One representative new warning per release has a
+runnable demo in its `features/gcc/gccNN/` bucket (topic `gcc-diagnostics`,
+run them all with `ctest -L gcc-diagnostics`); each demo compiles a
+deliberately flawed file with `-Werror=<warning>` and asserts the exact
+diagnostic fires:
+
+| Introduced | Warning | Demo |
+|------------|---------|------|
+| GCC 13 | `-Wdangling-reference` — reference bound to a temporary through a call | [gcc13_warn_dangling_reference.cpp](../features/gcc/gcc13/gcc13_warn_dangling_reference.cpp) |
+| GCC 14 | `-Wcalloc-transposed-args` — `calloc(sizeof(T), n)` arguments backwards | [gcc14_warn_calloc_transposed.cpp](../features/gcc/gcc14/gcc14_warn_calloc_transposed.cpp) |
+| GCC 15 | `-Wdeprecated-literal-operator` — C++23-deprecated `operator "" _x` spelling | [gcc15_warn_deprecated_literal_operator.cpp](../features/gcc/gcc15/gcc15_warn_deprecated_literal_operator.cpp) |
+| GCC 16 | `-Wc++26-compat` — identifiers (e.g. `contract_assert`) becoming C++26 keywords | [gcc16_warn_cpp26_compat.cpp](../features/gcc/gcc16/gcc16_warn_cpp26_compat.cpp) |
+
+Other default-enabled additions (GCC 14: `-Whardened`, several
+`-Wanalyzer-*`; GCC 15: `-Wmusttail-local-addr`, diagnostics event
+links/colours; GCC 16: `-Wanalyzer-throw-of-unexpected-type`) only matter for
+builds already opting into the relevant feature, so they are listed for
 completeness rather than demoed.

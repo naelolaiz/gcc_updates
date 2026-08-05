@@ -80,7 +80,7 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `WILL_FAIL`         | no        | Runtime test is expected to fail; requires `EXPECT_OUTPUT` so unrelated failures do not pass. |
 | `EXPECT_OUTPUT <re>` | required with `WILL_FAIL` | Output regex that must match the expected sanitizer report text. |
 | `EXPERIMENTAL`      | no        | Feature not yet supported by current GCC; combined with `EXPECT_ERROR`, the expected outcome is a compile failure. |
-| `EXPECT_ERROR <re>` | required with `EXPERIMENTAL` | Output regex that must match the expected compiler diagnostic. Compilation success or an unrelated diagnostic fails the test. |
+| `EXPECT_ERROR <re>` | no (required by `EXPERIMENTAL`) | The test compiles only, must FAIL, and the regex must match the diagnostic. Also used standalone by the `gcc-diagnostics` demos, which pair it with `-Werror=<warning>` to assert a specific warning fires. |
 
 The libstdc++ release is detected at configure time by asking `g++` to
 preprocess a tiny translation unit that includes `<version>` and reports

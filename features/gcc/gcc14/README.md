@@ -1,10 +1,17 @@
 # GCC 14 release-notes examples
 
-_Folder: `features/gcc/gcc14/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+_Folder: `features/gcc/gcc14/`. 2 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
 
 ## Topics
 
+- [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-release](#gcc-release)
+
+## gcc-diagnostics
+
+| File | std | min-gcc | Description |
+| ---- | --- | ------- | ----------- |
+| [gcc14_warn_calloc_transposed.cpp](gcc14_warn_calloc_transposed.cpp) | c++17 | 14 | GCC 14 introduced -Wcalloc-transposed-args: calloc(sizeof(T), n) has the arguments backwards (element count first, element size second). Built with -Werror=calloc-transposed-args; CTest asserts the diagnostic fires. |
 
 ## gcc-release
 

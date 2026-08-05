@@ -428,8 +428,12 @@ shipped" is in [docs/gcc-changelogs.md](docs/gcc-changelogs.md).
 Toolchain *defaults* get their own bucket: `gccdef_dialect` (what you get
 with no `-std` — changed at GCC 15 for C and GCC 16 for C++),
 `gccdef_fp_contract` (`-ffp-contract=fast` is always on), and
-`gccdef_pie_default` (upstream vs distro packaging). Measured details in
-[docs/default-changes.md](docs/default-changes.md).
+`gccdef_pie_default` (upstream vs distro packaging). Each release bucket also
+carries one demo of a diagnostic that release introduced (`ctest -L
+gcc-diagnostics`): `-Wdangling-reference` (13), `-Wcalloc-transposed-args`
+(14), `-Wdeprecated-literal-operator` (15), `-Wc++26-compat` (16) — each
+compiled with `-Werror=<warning>` and asserting the exact diagnostic.
+Measured details in [docs/default-changes.md](docs/default-changes.md).
 
 Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [features/gcc/gcc13/README.md](features/gcc/gcc13/README.md), [features/gcc/gcc14/README.md](features/gcc/gcc14/README.md), [features/gcc/gcc15/README.md](features/gcc/gcc15/README.md), [features/gcc/gcc16/README.md](features/gcc/gcc16/README.md).
 

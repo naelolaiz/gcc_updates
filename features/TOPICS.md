@@ -1,6 +1,6 @@
 # Topic index
 
-_All 18 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
+_All 19 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
 
 ## Topics
 
@@ -13,6 +13,7 @@ _All 18 topics across every bucket, generated from `gcc_feature_test()` metadata
 - [gcc-builtins](#gcc-builtins)
 - [gcc-codegen](#gcc-codegen)
 - [gcc-defaults](#gcc-defaults)
+- [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-openmp](#gcc-openmp)
 - [gcc-pragmas](#gcc-pragmas)
 - [gcc-release](#gcc-release)
@@ -97,6 +98,15 @@ _All 18 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [gccdef_dialect.cpp](gcc/defaults/gccdef_dialect.cpp) | gcc/defaults | default | 13 |
 | [gccdef_fp_contract.cpp](gcc/defaults/gccdef_fp_contract.cpp) | gcc/defaults | c++17 | 13 |
 | [gccdef_pie_default.cpp](gcc/defaults/gccdef_pie_default.cpp) | gcc/defaults | c++17 | 13 |
+
+## gcc-diagnostics
+
+| Example | Bucket | std | min-gcc |
+| ------- | ------ | --- | ------- |
+| [gcc13_warn_dangling_reference.cpp](gcc/gcc13/gcc13_warn_dangling_reference.cpp) | gcc/gcc13 | c++17 | 13 |
+| [gcc14_warn_calloc_transposed.cpp](gcc/gcc14/gcc14_warn_calloc_transposed.cpp) | gcc/gcc14 | c++17 | 14 |
+| [gcc15_warn_deprecated_literal_operator.cpp](gcc/gcc15/gcc15_warn_deprecated_literal_operator.cpp) | gcc/gcc15 | c++23 | 15 |
+| [gcc16_warn_cpp26_compat.cpp](gcc/gcc16/gcc16_warn_cpp26_compat.cpp) | gcc/gcc16 | c++23 | 16 |
 
 ## gcc-openmp
 
