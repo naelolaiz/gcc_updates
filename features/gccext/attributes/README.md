@@ -1,12 +1,17 @@
 # GCC extensions: attributes
 
-_Folder: `features/gccext/attributes/`. 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/gccext/attributes/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+
+## Topics
+
+- [gcc-attributes](#gcc-attributes)
 
 ## gcc-attributes
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
 | [gccext_attribute_cleanup.cpp](gccext_attribute_cleanup.cpp) | c++17 | 13 | __attribute__((cleanup(fn))) calls fn(&var) when var goes out of scope -- C-style RAII; redundant in C++ but works there too. |
+| [gccext_attribute_constructor.cpp](gccext_attribute_constructor.cpp) | c++17 | 13 | __attribute__((constructor)) / ((destructor)) run a function before main() and after it returns -- the C-linkage cousin of static-object constructors, with explicit ordering priorities. |
 | [gccext_attribute_flatten.cpp](gccext_attribute_flatten.cpp) | c++17 | 13 | [[gnu::flatten]] inlines every direct call inside the marked function -- careful: bloats code. |
 | [gccext_attribute_hot_cold.cpp](gccext_attribute_hot_cold.cpp) | c++17 | 13 | [[gnu::hot]] / [[gnu::cold]] tell the optimizer how often a function runs; influences inlining and code layout. |
 | [gccext_attribute_packed.cpp](gccext_attribute_packed.cpp) | c++17 | 13 | __attribute__((packed)) removes padding between struct members; useful for binary protocols, but unaligned access can be slower. |

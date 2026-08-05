@@ -1,6 +1,6 @@
 # C++17 examples
 
-_Folder: `features/std/cpp17/`. 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp17/`. 4 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
 
 ## Topics
 
@@ -33,7 +33,7 @@ _Folder: `features/std/cpp17/`. 4 topic(s). Index of examples; build metadata li
 | [cpp17_invoke_apply.cpp](cpp17_invoke_apply.cpp) | c++17 | 13 | std::invoke calls anything callable (function, member, member ptr) uniformly; std::apply unpacks a tuple as args. |
 | [cpp17_launder.cpp](cpp17_launder.cpp) | c++17 | 13 | std::launder<T>(p) tells the compiler "the bytes at p now hold a different T -- don't reuse cached info from the previous T at the same address". Needed when reusing storage across different types of object, especially with const/reference members. |
 | [cpp17_memory_resource.cpp](cpp17_memory_resource.cpp) | c++17 | 13 | <memory_resource> introduces a polymorphic allocator (std::pmr::polymorphic_allocator) backed by a runtime memory_resource pointer; you can swap in a monotonic, pool, or custom resource without changing the container's type. |
-| [cpp17_node_handles.cpp](cpp17_node_handles.cpp) | c++17 | 13 | C++17 gave map/set node handles -- extract() removes a node WITHOUT destroying it, and you can move it to another container with insert(node) or merge(). Also try_emplace / insert_or_assign tighten map insertion semantics. |
+| [cpp17_node_handles.cpp](cpp17_node_handles.cpp) | c++17 | 13 | C++17 gave map/set node handles -- extract() removes a node WITHOUT destroying it, and you can move it to another container with insert(node) or merge() (no per-element copy/move). Also try_emplace / insert_or_assign tighten map insertion semantics. |
 | [cpp17_not_fn_as_const.cpp](cpp17_not_fn_as_const.cpp) | c++17 | 13 | std::not_fn(p) returns a callable that negates p (replaces the deprecated not1/not2 binders); std::as_const(x) returns a const reference, forcing the const overload of begin()/find()/etc. without copying. |
 | [cpp17_optional.cpp](cpp17_optional.cpp) | c++17 | 13 | std::optional<T> represents a value-or-nothing; use has_value(), value_or(), and emplace(). |
 | [cpp17_parallel_algos.cpp](cpp17_parallel_algos.cpp) | c++17 | 13 | <numeric> gained reduce/transform_reduce/inclusive_scan/exclusive_scan; <execution> adds parallel policies. |

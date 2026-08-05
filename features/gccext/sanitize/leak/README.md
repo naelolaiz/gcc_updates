@@ -1,6 +1,10 @@
 # GCC extensions: LeakSanitizer trip demos
 
-_Folder: `features/gccext/sanitize/leak/`. 1 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/gccext/sanitize/leak/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+
+## Topics
+
+- [gcc-sanitize](#gcc-sanitize)
 
 ## gcc-sanitize
 

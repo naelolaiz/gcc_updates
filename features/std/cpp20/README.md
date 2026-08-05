@@ -1,6 +1,6 @@
 # C++20 examples
 
-_Folder: `features/std/cpp20/`. 9 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp20/`. 9 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
 
 ## Topics
 
@@ -44,9 +44,12 @@ _Folder: `features/std/cpp20/`. 9 topic(s). Index of examples; build metadata li
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
 | [cpp20_consteval.cpp](cpp20_consteval.cpp) | c++20 | 14 | consteval functions MUST be evaluated at compile time; constinit guarantees static-init at compile time. |
+| [cpp20_constinit.cpp](cpp20_constinit.cpp) | c++20 | 13 | constinit forces a static/thread_local variable to be initialised at compile time (killing static-init-order surprises) while staying mutable at runtime -- unlike constexpr, which also makes it const. |
 | [cpp20_designated_init.cpp](cpp20_designated_init.cpp) | c++20 | 14 | Designated initializers let you initialise aggregate members by name; order must match declaration. |
+| [cpp20_is_constant_evaluated.cpp](cpp20_is_constant_evaluated.cpp) | c++20 | 13 | std::is_constant_evaluated() lets one constexpr function take a compile-time-safe path during constant evaluation and a faster/library path at runtime (C++23's 'if consteval' supersedes the pattern). |
 | [cpp20_lambdas.cpp](cpp20_lambdas.cpp) | c++20 | 14 | C++20 added template parameter lists on lambdas, default-construction, and capture of *this by value. |
 | [cpp20_spaceship.cpp](cpp20_spaceship.cpp) | c++20 | 14 | operator<=> ("spaceship") generates the full set of relational operators from one declaration. |
+| [cpp20_using_enum.cpp](cpp20_using_enum.cpp) | c++20 | 13 | 'using enum' brings a scoped enum's enumerators into the current scope -- switch cases read 'red' instead of 'Color::red' without giving up enum class type safety. |
 
 ## ranges
 
@@ -55,12 +58,15 @@ _Folder: `features/std/cpp20/`. 9 topic(s). Index of examples; build metadata li
 | [cpp20_ranges_algorithms.cpp](cpp20_ranges_algorithms.cpp) | c++20 | 14 | std::ranges versions of classic algorithms accept full ranges + projections directly. |
 | [cpp20_ranges_views.cpp](cpp20_ranges_views.cpp) | c++20 | 14 | Lazy view composition with views::filter, views::transform and views::take using the | pipe. |
 | [cpp20_views_keys_values.cpp](cpp20_views_keys_values.cpp) | c++20 | 13 | views::keys / views::values / views::elements project tuple-like ranges to a single component. |
+| [cpp20_views_split.cpp](cpp20_views_split.cpp) | c++20 | 13 | views::split lazily divides a range on a delimiter (single element or a whole subrange) into subranges -- tokenise a string_view without allocating a token vector up front. |
 
 ## stl
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
+| [cpp20_bind_front.cpp](cpp20_bind_front.cpp) | c++20 | 13 | std::bind_front(f, args...) binds the FIRST arguments of a callable -- the modern replacement for std::bind's placeholder dance, ideal for member-function callbacks. |
 | [cpp20_bit_ops.cpp](cpp20_bit_ops.cpp) | c++20 | 14 | <bit> standardises common bit tricks: popcount, countl_zero, has_single_bit, bit_ceil, bit_cast. |
+| [cpp20_cmp_utilities.cpp](cpp20_cmp_utilities.cpp) | c++20 | 13 | std::cmp_less / cmp_equal / in_range compare signed and unsigned integers mathematically -- with plain operator<, -1 converts to a huge unsigned value and the comparison silently lies. |
 | [cpp20_endian.cpp](cpp20_endian.cpp) | c++20 | 13 | std::endian exposes the host byte order at compile time -- portable replacement for compiler-specific macros. |
 | [cpp20_erase_if.cpp](cpp20_erase_if.cpp) | c++20 | 14 | std::erase / std::erase_if removes the erase-remove idiom for every standard container. |
 | [cpp20_lerp_midpoint.cpp](cpp20_lerp_midpoint.cpp) | c++20 | 14 | std::lerp and std::midpoint give numerically-careful linear interpolation and midpoint, including for integers. |
@@ -76,6 +82,7 @@ _Folder: `features/std/cpp20/`. 9 topic(s). Index of examples; build metadata li
 
 | File | std | min-gcc | Description |
 | ---- | --- | ------- | ----------- |
+| [cpp20_abbreviated_templates.cpp](cpp20_abbreviated_templates.cpp) | c++20 | 13 | Abbreviated function templates: 'auto' in a function parameter list declares a template parameter -- 'void f(auto x)' equals 'template<class T> void f(T x)', and a concept can constrain it in place. |
 | [cpp20_ctad_aggregates.cpp](cpp20_ctad_aggregates.cpp) | c++20 | 14 | Class template argument deduction now works on aggregates without writing deduction guides by hand. |
 | [cpp20_ctad_alias.cpp](cpp20_ctad_alias.cpp) | c++20 | 14 | C++20 lets CTAD work through alias templates -- no manual deduction guide needed. |
 | [cpp20_explicit_bool.cpp](cpp20_explicit_bool.cpp) | c++20 | 14 | explicit(bool) makes a constructor's explicitness depend on a constexpr predicate. |

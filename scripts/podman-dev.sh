@@ -20,6 +20,10 @@
 #   ./scripts/podman-dev.sh 15 sanitize=thread
 #   ./scripts/podman-dev.sh 16 analyzer
 #
+#   # Regenerate the per-bucket README.md indexes (configure-only, then
+#   # copies the generated files back into features/):
+#   ./scripts/podman-dev.sh 15 readme
+#
 # Per project policy, this is the ONLY supported way to invoke the toolchain
 # locally — never run g++/cmake directly on the host.
 set -euo pipefail
@@ -52,6 +56,7 @@ fi
 # anything after `--` is forwarded as-is to ctest.
 CMAKE_ARGS=()
 CTEST_ARGS=(--verbose)
+README_MODE=0
 seen_dashdash=0
 for arg in "$@"; do
     if [ "$seen_dashdash" -eq 1 ]; then
@@ -62,12 +67,29 @@ for arg in "$@"; do
         --)              seen_dashdash=1 ;;
         sanitize=*)      CMAKE_ARGS+=("-DGCC_FEATURE_SANITIZE=${arg#sanitize=}") ;;
         analyzer)        CMAKE_ARGS+=("-DGCC_FEATURE_ANALYZER=ON") ;;
+        readme)          README_MODE=1 ;;
         *)
-            echo "error: unknown argument '$arg' (expected sanitize=… / analyzer / -- <ctest-args>)" >&2
+            echo "error: unknown argument '$arg' (expected sanitize=… / analyzer / readme / -- <ctest-args>)" >&2
             exit 2
             ;;
     esac
 done
+
+if [ "${README_MODE}" -eq 1 ]; then
+    OUT_DIR="$(mktemp -d)"
+    trap 'rm -rf "${OUT_DIR}"' EXIT
+    echo "==> regenerating README indexes"
+    podman run --rm \
+        -v "${REPO_ROOT}:/work:ro,Z" \
+        -v "${BUILD_VOL}:/build:Z" \
+        -v "${OUT_DIR}:/readme-out:rw,Z" \
+        -w /work \
+        "${TAG}" cmake -S /work -B /build \
+        -DGCC_FEATURE_README=write -DGCC_FEATURE_README_OUT=/readme-out
+    cp -R "${OUT_DIR}/features/." "${REPO_ROOT}/features/"
+    echo "==> README indexes updated under features/"
+    exit 0
+fi
 
 run() {
     podman run --rm \
@@ -78,7 +100,9 @@ run() {
 }
 
 echo "==> configuring (cmake -S /work -B /build ${CMAKE_ARGS[*]:-})"
-run cmake -S /work -B /build "${CMAKE_ARGS[@]}"
+# -DGCC_FEATURE_README=check explicitly, so a cached =write from a previous
+# `readme` run can never leak into a normal build (the tree is mounted ro).
+run cmake -S /work -B /build -DGCC_FEATURE_README=check "${CMAKE_ARGS[@]}"
 
 echo "==> building"
 run cmake --build /build --parallel

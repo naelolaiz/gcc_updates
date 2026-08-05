@@ -18,6 +18,7 @@ exercises GCC 16 via `debian:unstable-slim` + apt.)
 
 ```
 features/                          # all examples (single .cpp each)
+  TOPICS.md                        # cross-bucket topic index (generated)
   support/demo.hpp                 # tiny stdout helper + DEMO_ASSERT for readable demos
   std/                             # C++ standard library + language features
     cpp11/cpp11_*.cpp              # foundation
@@ -49,7 +50,7 @@ cmake/
   GccFeature.cmake             # gcc_feature_test() function and registration validation
   expect_failure.cmake         # command runner for expected failures with diagnostic regexes
 features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per .cpp in the bucket
-features/<bucket>/README.md     # per-bucket index (manual, hand-edited)
+features/<bucket>/README.md     # per-bucket index (generated; CI fails if stale)
 scripts/
   podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
 containers/
@@ -58,6 +59,7 @@ docs/
   compiler-flags.md           # default and per-file flag reference
   sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
+  evolution.md                # one concept traced across standards (constexpr, lambdas, …)
 .github/workflows/
   ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
 ```
@@ -234,16 +236,22 @@ so this concern is purely informational.
    to that folder's `CMakeLists.txt`. See
    [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 5. Run `./scripts/podman-dev.sh <ver>` to verify locally.
-6. Update the bucket's `features/<bucket>/README.md` index by hand if you
-   want it to list your new example. (Auto-generation from CMake target
-   properties may come later.)
+6. Run `./scripts/podman-dev.sh <ver> readme` to regenerate the bucket's
+   `README.md` index. Every configure validates the indexes against the
+   registered metadata (`-DGCC_FEATURE_README=check`, the default), so CI
+   fails if this step is skipped. The index title (the H1 line) is the only
+   hand-written part and is preserved across regenerations.
 
 ## Suggested reference path
 
 The examples are independent — each `.cpp` is self-contained — but if you're
 walking through them as a structured tour, this is the order I'd suggest. Each
 step links to the per-bucket index that lists every example for that standard,
-grouped by topic.
+grouped by topic. Two cross-cutting entry points complement this path:
+[docs/evolution.md](docs/evolution.md) traces single concepts (constexpr,
+lambdas, ranges, concurrency, …) across all standards, and
+[features/TOPICS.md](features/TOPICS.md) lists every topic label with its
+examples from every bucket.
 
 ### 1. Foundation (C++11)
 
@@ -313,11 +321,11 @@ Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 This is where the language genuinely changed shape.
 
 - **Concepts & templates / metaprogramming:** `cpp20_concepts_intro`,
-  `cpp20_concepts_requires_expr`, `cpp20_ctad_alias`,
-  `cpp20_ctad_aggregates`, `cpp20_nttp_class`, `cpp20_explicit_bool`,
-  `cpp20_type_identity`.
+  `cpp20_concepts_requires_expr`, `cpp20_abbreviated_templates`,
+  `cpp20_ctad_alias`, `cpp20_ctad_aggregates`, `cpp20_nttp_class`,
+  `cpp20_explicit_bool`, `cpp20_type_identity`.
 - **Ranges & views:** `cpp20_ranges_algorithms`, `cpp20_ranges_views`,
-  `cpp20_views_keys_values`.
+  `cpp20_views_keys_values`, `cpp20_views_split`.
 - **Coroutines:** `cpp20_coroutine_generator` (read after concepts; this is the
   hardest single feature in C++20).
 - **Concurrency (the *big* upgrade):** `cpp20_jthread`, `cpp20_stop_token`,
@@ -328,9 +336,10 @@ This is where the language genuinely changed shape.
   `cpp20_source_location`, `cpp20_numbers`, `cpp20_chrono_calendar`,
   `cpp20_erase_if`, `cpp20_lerp_midpoint`, `cpp20_ssize`,
   `cpp20_string_starts_ends`, `cpp20_map_contains`, `cpp20_to_address`,
-  `cpp20_endian`.
-- **Language:** `cpp20_consteval`, `cpp20_spaceship`,
-  `cpp20_designated_init`, `cpp20_lambdas`.
+  `cpp20_endian`, `cpp20_bind_front`, `cpp20_cmp_utilities`.
+- **Language:** `cpp20_consteval`, `cpp20_constinit`, `cpp20_spaceship`,
+  `cpp20_designated_init`, `cpp20_lambdas`, `cpp20_using_enum`,
+  `cpp20_is_constant_evaluated`.
 
 Full index: [features/std/cpp20/README.md](features/std/cpp20/README.md).
 
@@ -345,17 +354,18 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   `cpp23_if_consteval`, `cpp23_assume`, `cpp23_size_t_literal`,
   `cpp23_auto_decay_copy`.
 - **Ranges/views:** `cpp23_ranges_to`, `cpp23_ranges_zip`,
-  `cpp23_ranges_chunk_slide`, `cpp23_ranges_enumerate`,
-  `cpp23_ranges_join_with`, `cpp23_ranges_cartesian_product`,
-  `cpp23_ranges_adjacent`, `cpp23_ranges_fold`,
-  `cpp23_ranges_starts_ends_contains`, `cpp23_ranges_find_last`,
-  `cpp23_ranges_iota_algorithm`, `cpp23_views_repeat`,
-  `cpp23_views_stride`, `cpp23_views_as_const_as_rvalue`.
+  `cpp23_ranges_chunk_slide`, `cpp23_views_chunk_by`,
+  `cpp23_ranges_enumerate`, `cpp23_ranges_join_with`,
+  `cpp23_ranges_cartesian_product`, `cpp23_ranges_adjacent`,
+  `cpp23_ranges_fold`, `cpp23_ranges_starts_ends_contains`,
+  `cpp23_ranges_find_last`, `cpp23_ranges_iota_algorithm`,
+  `cpp23_views_repeat`, `cpp23_views_stride`,
+  `cpp23_views_as_const_as_rvalue`.
 - **Library:** `cpp23_optional_monadic`, `cpp23_byteswap`,
   `cpp23_to_underlying`, `cpp23_unreachable`, `cpp23_move_only_function`,
   `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`,
   `cpp23_spanstream`, `cpp23_format_ranges`, `cpp23_forward_like`,
-  `cpp23_start_lifetime_as`.
+  `cpp23_start_lifetime_as`, `cpp23_invoke_r`, `cpp23_stdfloat`.
 
 Full index: [features/std/cpp23/README.md](features/std/cpp23/README.md).
 
@@ -368,10 +378,12 @@ implemented via the same machinery as `__builtin_expect`, etc.
 - **Attributes:** `gccext_likely_unlikely`, `gccext_attribute_pure_const`,
   `gccext_attribute_hot_cold`, `gccext_attribute_flatten`,
   `gccext_attribute_packed`, `gccext_attribute_cleanup`,
+  `gccext_attribute_constructor` (pre-main/post-main hooks),
   `gccext_attribute_target` (per-function ISA selection),
   `gccext_target_clones` (multi-version + IFUNC dispatch).
 - **Builtins:** `gccext_builtin_expect`, `gccext_builtin_constant_p`,
-  `gccext_builtin_assume_aligned`.
+  `gccext_builtin_assume_aligned`, `gccext_builtin_cpu_supports`
+  (manual runtime dispatch), `gccext_builtin_prefetch`, `gccext_int128`.
 - **Vectorization / SIMD:** `gccext_vector_extensions` (`vector_size` types),
   `gccext_autovectorize` (auto-vectorisable SAXPY at `-O3`).
 - **Parallelism:** `gccext_openmp_parallel_for`.
@@ -395,9 +407,15 @@ Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/
 
 ### 6. Edge — experimental C++26 + per-release smoke tests
 
-C++26 examples are flagged `experimental=true`; CI tolerates failures here.
+Most C++26 entries run as normal tests on the GCC version that ships them
+(`MIN_GCC 15`/`16`); only the ones flagged `EXPERIMENTAL` may fail without
+breaking CI.
 
-- `cpp26_saturation_arith`, `cpp26_contracts_basic`, `cpp26_reflection_basic`.
+- **Language:** `cpp26_pack_indexing`, `cpp26_delete_reason`,
+  `cpp26_static_assert_messages`, `cpp26_contracts_basic` (experimental).
+- **Library:** `cpp26_saturation_arith`, `cpp26_span_at`,
+  `cpp26_text_encoding`.
+- **Reflection:** `cpp26_reflection_basic` (GCC 16, `-freflection`).
 
 Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`,
 `gcc15_default_print`, `gcc16_cpp26_features_default`. The narrative version of

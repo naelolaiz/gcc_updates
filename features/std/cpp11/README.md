@@ -1,6 +1,6 @@
 # C++11 examples
 
-_Folder: `features/std/cpp11/`. 4 topic(s). Index of examples; build metadata lives in `CMakeLists.txt` next to each `.cpp`. Update by hand when adding new examples._
+_Folder: `features/std/cpp11/`. 4 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
 
 ## Topics
 
@@ -44,11 +44,11 @@ _Folder: `features/std/cpp11/`. 4 topic(s). Index of examples; build metadata li
 | [cpp11_chrono.cpp](cpp11_chrono.cpp) | c++11 | 13 | <chrono> models durations and time_points with type-safe units; arithmetic between mismatched units is rejected. |
 | [cpp11_emplace.cpp](cpp11_emplace.cpp) | c++11 | 13 | emplace_back / emplace forward arguments and construct the element in-place inside the container, avoiding the temporary that push_back requires. std::piecewise_construct lets std::pair / std::map values be constructed in two halves separately. |
 | [cpp11_exception_ptr.cpp](cpp11_exception_ptr.cpp) | c++11 | 13 | std::exception_ptr captures an in-flight exception so it can be transported across threads / async boundaries; std::nested_exception lets a handler chain a new exception while preserving the original. |
-| [cpp11_forward_list.cpp](cpp11_forward_list.cpp) | c++11 | 13 | std::forward_list is a singly-linked list -- O(1) splice/insert_after, no .size(), only forward iteration. |
+| [cpp11_forward_list.cpp](cpp11_forward_list.cpp) | c++11 | 13 | std::forward_list is a singly-linked list -- O(1) splice/insert_after, no .size(), only forward iteration. Use when you really need a singly-linked list and not a vector or list. |
 | [cpp11_function.cpp](cpp11_function.cpp) | c++11 | 13 | std::function<R(Args...)> is a polymorphic wrapper for any callable matching the signature; type-erases the actual type. |
 | [cpp11_hash.cpp](cpp11_hash.cpp) | c++11 | 13 | std::hash<T> is the customisation point that makes T usable as a key in unordered_map / unordered_set. Specialising it teaches the standard hash containers about your type. |
 | [cpp11_iota.cpp](cpp11_iota.cpp) | c++11 | 13 | std::iota fills a range with sequential, incrementing values starting at a given seed -- the standard "0..N-1" generator. |
-| [cpp11_iterator_helpers.cpp](cpp11_iterator_helpers.cpp) | c++11 | 13 | C++11 added free std::begin/std::end (work on raw arrays AND containers), std::next/std::prev (advance an iterator by N without mutation), and std::move_iterator (turns *it into std::move(*it)). |
+| [cpp11_iterator_helpers.cpp](cpp11_iterator_helpers.cpp) | c++11 | 13 | C++11 added free std::begin/std::end (work on raw arrays AND containers), std::next/std::prev (advance an iterator by N without mutation), and std::move_iterator (turns *it into std::move(*it) for moving sequences). |
 | [cpp11_random.cpp](cpp11_random.cpp) | c++11 | 13 | <random>: an engine (Mersenne, etc.) plus a distribution. Replaces srand/rand for serious code. |
 | [cpp11_reference_wrapper.cpp](cpp11_reference_wrapper.cpp) | c++11 | 13 | std::reference_wrapper<T> = an assignable, copyable handle that *behaves like* a reference. std::ref / std::cref construct it; how you put 'real references' into a std::vector or pass them through std::bind/std::thread without decay-to-copy. |
 | [cpp11_regex.cpp](cpp11_regex.cpp) | c++11 | 13 | <regex>: build a regex_basic / regex_match / regex_search / regex_replace pipeline. ECMAScript syntax by default. |
