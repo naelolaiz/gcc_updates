@@ -1,8 +1,8 @@
 # gcc_updates
 
-A structured, CI-tested workspace serving as a reference for the C++11 / C++17 /
-C++20 / C++23 / (experimental) C++26 standard library and tracking what each new
-GCC release ships.
+A structured, CI-tested workspace serving as a reference for the C++11 / C++14 /
+C++17 / C++20 / C++23 / (experimental) C++26 standard library and tracking what
+each new GCC release ships.
 
 Every example under [features/](features/) is a single-file program registered
 as one `gcc_feature_test()` call in its folder's `CMakeLists.txt`. CMake +
@@ -273,9 +273,20 @@ that came after assumes you have these in muscle memory.
 
 Full index: [features/std/cpp11/README.md](features/std/cpp11/README.md).
 
-### 1.5 Spot-fills (C++14)
+### 1.5 The C++11 clean-up round (C++14)
 
-- **Templates / metaprogramming:** `cpp14_integer_sequence`.
+A small release, but its additions are everywhere in modern code — most of
+what people call "C++11 style" is actually C++11 + these.
+
+- **Language:** `cpp14_generic_lambda`, `cpp14_lambda_init_capture`,
+  `cpp14_relaxed_constexpr`, `cpp14_return_type_deduction`,
+  `cpp14_binary_literals`.
+- **Templates / metaprogramming:** `cpp14_variable_templates`,
+  `cpp14_integer_sequence`.
+- **STL:** `cpp14_make_unique`, `cpp14_exchange`, `cpp14_std_literals`,
+  `cpp14_tuple_by_type`, `cpp14_heterogeneous_lookup`, `cpp14_quoted`,
+  `cpp14_dual_range_algorithms`, `cpp14_cbegin_cend`.
+- **Concurrency:** `cpp14_shared_timed_mutex`.
 
 Full index: [features/std/cpp14/README.md](features/std/cpp14/README.md).
 
