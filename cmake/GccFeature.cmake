@@ -148,7 +148,13 @@ function(gcc_feature_test NAME)
         endif()
     endif()
 
-    set(_compile_flags -std=${ARG_STD} ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    if(ARG_STD STREQUAL "default")
+        # STD default: pass no -std flag at all -- the example deliberately
+        # tests the compiler's default dialect (see features/gcc/defaults/).
+        set(_compile_flags ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    else()
+        set(_compile_flags -std=${ARG_STD} ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    endif()
     set(_link_flags "")
 
     if("-fopenmp" IN_LIST ARG_EXTRA_COMPILE_FLAGS)

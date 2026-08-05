@@ -1,6 +1,6 @@
 # Topic index
 
-_All 17 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
+_All 18 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
 
 ## Topics
 
@@ -12,6 +12,7 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 - [gcc-attributes](#gcc-attributes)
 - [gcc-builtins](#gcc-builtins)
 - [gcc-codegen](#gcc-codegen)
+- [gcc-defaults](#gcc-defaults)
 - [gcc-openmp](#gcc-openmp)
 - [gcc-pragmas](#gcc-pragmas)
 - [gcc-release](#gcc-release)
@@ -88,6 +89,14 @@ _All 17 topics across every bucket, generated from `gcc_feature_test()` metadata
 | ------- | ------ | --- | ------- |
 | [gccext_autovectorize.cpp](gccext/codegen/gccext_autovectorize.cpp) | gccext/codegen | c++17 | 13 |
 | [gccext_inline_asm.cpp](gccext/codegen/gccext_inline_asm.cpp) | gccext/codegen | c++17 | 13 |
+
+## gcc-defaults
+
+| Example | Bucket | std | min-gcc |
+| ------- | ------ | --- | ------- |
+| [gccdef_dialect.cpp](gcc/defaults/gccdef_dialect.cpp) | gcc/defaults | default | 13 |
+| [gccdef_fp_contract.cpp](gcc/defaults/gccdef_fp_contract.cpp) | gcc/defaults | c++17 | 13 |
+| [gccdef_pie_default.cpp](gcc/defaults/gccdef_pie_default.cpp) | gcc/defaults | c++17 | 13 |
 
 ## gcc-openmp
 

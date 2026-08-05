@@ -41,6 +41,7 @@ features/                          # all examples (single .cpp each)
       leak/gccext_lsan_*.cpp       # deliberate leak
     analyzer/gccext_analyzer_*.cpp # compile-time -fanalyzer demos (UAF/null-deref/double-delete)
   gcc/                             # release-notes smoke tests, one per version
+    defaults/gccdef_*.cpp          # toolchain defaults: -std dialect, fp-contract, PIE
     gcc13/gcc13_*.cpp
     gcc14/gcc14_*.cpp
     gcc15/gcc15_*.cpp
@@ -60,6 +61,7 @@ docs/
   sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
   evolution.md                # one concept traced across standards (constexpr, lambdas, …)
+  default-changes.md          # measured default-flag/dialect changes between GCC releases
 .github/workflows/
   ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
 ```
@@ -418,10 +420,16 @@ breaking CI.
   `cpp26_text_encoding`.
 - **Reflection:** `cpp26_reflection_basic` (GCC 16, `-freflection`).
 
-Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`,
-`gcc15_default_print`, `gcc16_cpp26_features_default`. The narrative version of
-"what each release shipped" is in
-[docs/gcc-changelogs.md](docs/gcc-changelogs.md).
+Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`
++ `gcc14_libstdcxx_print_exp`, `gcc15_default_print`,
+`gcc16_cpp26_features_default`. The narrative version of "what each release
+shipped" is in [docs/gcc-changelogs.md](docs/gcc-changelogs.md).
+
+Toolchain *defaults* get their own bucket: `gccdef_dialect` (what you get
+with no `-std` — changed at GCC 15 for C and GCC 16 for C++),
+`gccdef_fp_contract` (`-ffp-contract=fast` is always on), and
+`gccdef_pie_default` (upstream vs distro packaging). Measured details in
+[docs/default-changes.md](docs/default-changes.md).
 
 Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [features/gcc/gcc13/README.md](features/gcc/gcc13/README.md), [features/gcc/gcc14/README.md](features/gcc/gcc14/README.md), [features/gcc/gcc15/README.md](features/gcc/gcc15/README.md), [features/gcc/gcc16/README.md](features/gcc/gcc16/README.md).
 
