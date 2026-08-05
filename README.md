@@ -261,26 +261,56 @@ examples from every bucket.
 If you only know pre-C++11, this is the unavoidable starting point. Everything
 that came after assumes you have these in muscle memory.
 
-- **Core language:** `cpp11_auto`, `cpp11_range_for`, `cpp11_nullptr`,
-  `cpp11_scoped_enum`, `cpp11_uniform_init`, `cpp11_lambda`, `cpp11_constexpr`,
-  `cpp11_noexcept`, `cpp11_static_assert`, `cpp11_override_final`,
-  `cpp11_delete_default`, `cpp11_trailing_return`, `cpp11_explicit_conversion`.
-- **Move semantics (the hardest one — read it twice):** `cpp11_rvalue_move`.
-- **Templates / metaprogramming:** `cpp11_variadic_templates`,
-  `cpp11_alias_template`, `cpp11_type_traits`, `cpp11_ratio`.
-- **STL value types:** `cpp11_array`, `cpp11_tuple`, `cpp11_unordered_map`,
-  `cpp11_initializer_list`, `cpp11_smart_ptrs`, `cpp11_chrono`, `cpp11_random`,
-  `cpp11_regex`, `cpp11_forward_list`.
-- **STL infrastructure:** `cpp11_emplace`, `cpp11_hash`,
-  `cpp11_reference_wrapper`, `cpp11_iterator_helpers`,
-  `cpp11_algorithms_new`, `cpp11_iota`, `cpp11_system_error`,
-  `cpp11_exception_ptr`.
-- **Callables:** `cpp11_function`, `cpp11_bind`.
-- **Concurrency:** `cpp11_thread`, `cpp11_mutex_lock`,
-  `cpp11_condition_variable`, `cpp11_async_future`, `cpp11_atomic`.
-- **Niceties:** `cpp11_raw_string`, `cpp11_user_defined_literal`,
-  `cpp11_alignof_alignas`, `cpp11_attribute_noreturn`,
-  `cpp11_inline_namespace`.
+- **Core language:** [`cpp11_auto`](features/std/cpp11/cpp11_auto.cpp),
+  [`cpp11_range_for`](features/std/cpp11/cpp11_range_for.cpp),
+  [`cpp11_nullptr`](features/std/cpp11/cpp11_nullptr.cpp),
+  [`cpp11_scoped_enum`](features/std/cpp11/cpp11_scoped_enum.cpp),
+  [`cpp11_uniform_init`](features/std/cpp11/cpp11_uniform_init.cpp),
+  [`cpp11_lambda`](features/std/cpp11/cpp11_lambda.cpp),
+  [`cpp11_constexpr`](features/std/cpp11/cpp11_constexpr.cpp),
+  [`cpp11_noexcept`](features/std/cpp11/cpp11_noexcept.cpp),
+  [`cpp11_static_assert`](features/std/cpp11/cpp11_static_assert.cpp),
+  [`cpp11_override_final`](features/std/cpp11/cpp11_override_final.cpp),
+  [`cpp11_delete_default`](features/std/cpp11/cpp11_delete_default.cpp),
+  [`cpp11_trailing_return`](features/std/cpp11/cpp11_trailing_return.cpp),
+  [`cpp11_explicit_conversion`](features/std/cpp11/cpp11_explicit_conversion.cpp).
+- **Move semantics (the hardest one — read it twice):**
+  [`cpp11_rvalue_move`](features/std/cpp11/cpp11_rvalue_move.cpp).
+- **Templates / metaprogramming:**
+  [`cpp11_variadic_templates`](features/std/cpp11/cpp11_variadic_templates.cpp),
+  [`cpp11_alias_template`](features/std/cpp11/cpp11_alias_template.cpp),
+  [`cpp11_type_traits`](features/std/cpp11/cpp11_type_traits.cpp),
+  [`cpp11_ratio`](features/std/cpp11/cpp11_ratio.cpp).
+- **STL value types:** [`cpp11_array`](features/std/cpp11/cpp11_array.cpp),
+  [`cpp11_tuple`](features/std/cpp11/cpp11_tuple.cpp),
+  [`cpp11_unordered_map`](features/std/cpp11/cpp11_unordered_map.cpp),
+  [`cpp11_initializer_list`](features/std/cpp11/cpp11_initializer_list.cpp),
+  [`cpp11_smart_ptrs`](features/std/cpp11/cpp11_smart_ptrs.cpp),
+  [`cpp11_chrono`](features/std/cpp11/cpp11_chrono.cpp),
+  [`cpp11_random`](features/std/cpp11/cpp11_random.cpp),
+  [`cpp11_regex`](features/std/cpp11/cpp11_regex.cpp),
+  [`cpp11_forward_list`](features/std/cpp11/cpp11_forward_list.cpp).
+- **STL infrastructure:** [`cpp11_emplace`](features/std/cpp11/cpp11_emplace.cpp),
+  [`cpp11_hash`](features/std/cpp11/cpp11_hash.cpp),
+  [`cpp11_reference_wrapper`](features/std/cpp11/cpp11_reference_wrapper.cpp),
+  [`cpp11_iterator_helpers`](features/std/cpp11/cpp11_iterator_helpers.cpp),
+  [`cpp11_algorithms_new`](features/std/cpp11/cpp11_algorithms_new.cpp),
+  [`cpp11_iota`](features/std/cpp11/cpp11_iota.cpp),
+  [`cpp11_system_error`](features/std/cpp11/cpp11_system_error.cpp),
+  [`cpp11_exception_ptr`](features/std/cpp11/cpp11_exception_ptr.cpp).
+- **Callables:** [`cpp11_function`](features/std/cpp11/cpp11_function.cpp),
+  [`cpp11_bind`](features/std/cpp11/cpp11_bind.cpp).
+- **Concurrency:** [`cpp11_thread`](features/std/cpp11/cpp11_thread.cpp),
+  [`cpp11_thread_local`](features/std/cpp11/cpp11_thread_local.cpp),
+  [`cpp11_mutex_lock`](features/std/cpp11/cpp11_mutex_lock.cpp),
+  [`cpp11_condition_variable`](features/std/cpp11/cpp11_condition_variable.cpp),
+  [`cpp11_async_future`](features/std/cpp11/cpp11_async_future.cpp),
+  [`cpp11_atomic`](features/std/cpp11/cpp11_atomic.cpp).
+- **Niceties:** [`cpp11_raw_string`](features/std/cpp11/cpp11_raw_string.cpp),
+  [`cpp11_user_defined_literal`](features/std/cpp11/cpp11_user_defined_literal.cpp),
+  [`cpp11_alignof_alignas`](features/std/cpp11/cpp11_alignof_alignas.cpp),
+  [`cpp11_attribute_noreturn`](features/std/cpp11/cpp11_attribute_noreturn.cpp),
+  [`cpp11_inline_namespace`](features/std/cpp11/cpp11_inline_namespace.cpp).
 
 Full index: [features/std/cpp11/README.md](features/std/cpp11/README.md).
 
@@ -289,33 +319,58 @@ Full index: [features/std/cpp11/README.md](features/std/cpp11/README.md).
 A small release, but its additions are everywhere in modern code — most of
 what people call "C++11 style" is actually C++11 + these.
 
-- **Language:** `cpp14_generic_lambda`, `cpp14_lambda_init_capture`,
-  `cpp14_relaxed_constexpr`, `cpp14_return_type_deduction`,
-  `cpp14_binary_literals`.
-- **Templates / metaprogramming:** `cpp14_variable_templates`,
-  `cpp14_integer_sequence`.
-- **STL:** `cpp14_make_unique`, `cpp14_exchange`, `cpp14_std_literals`,
-  `cpp14_tuple_by_type`, `cpp14_heterogeneous_lookup`, `cpp14_quoted`,
-  `cpp14_dual_range_algorithms`, `cpp14_cbegin_cend`.
-- **Concurrency:** `cpp14_shared_timed_mutex`.
+- **Language:** [`cpp14_generic_lambda`](features/std/cpp14/cpp14_generic_lambda.cpp),
+  [`cpp14_lambda_init_capture`](features/std/cpp14/cpp14_lambda_init_capture.cpp),
+  [`cpp14_relaxed_constexpr`](features/std/cpp14/cpp14_relaxed_constexpr.cpp),
+  [`cpp14_return_type_deduction`](features/std/cpp14/cpp14_return_type_deduction.cpp),
+  [`cpp14_binary_literals`](features/std/cpp14/cpp14_binary_literals.cpp).
+- **Templates / metaprogramming:**
+  [`cpp14_variable_templates`](features/std/cpp14/cpp14_variable_templates.cpp),
+  [`cpp14_integer_sequence`](features/std/cpp14/cpp14_integer_sequence.cpp).
+- **STL:** [`cpp14_make_unique`](features/std/cpp14/cpp14_make_unique.cpp),
+  [`cpp14_exchange`](features/std/cpp14/cpp14_exchange.cpp),
+  [`cpp14_std_literals`](features/std/cpp14/cpp14_std_literals.cpp),
+  [`cpp14_tuple_by_type`](features/std/cpp14/cpp14_tuple_by_type.cpp),
+  [`cpp14_heterogeneous_lookup`](features/std/cpp14/cpp14_heterogeneous_lookup.cpp),
+  [`cpp14_quoted`](features/std/cpp14/cpp14_quoted.cpp),
+  [`cpp14_dual_range_algorithms`](features/std/cpp14/cpp14_dual_range_algorithms.cpp),
+  [`cpp14_cbegin_cend`](features/std/cpp14/cpp14_cbegin_cend.cpp).
+- **Concurrency:** [`cpp14_shared_timed_mutex`](features/std/cpp14/cpp14_shared_timed_mutex.cpp).
 
 Full index: [features/std/cpp14/README.md](features/std/cpp14/README.md).
 
 ### 2. Quality-of-life (C++17)
 
-- **STL value types:** `cpp17_optional`, `cpp17_variant`, `cpp17_any`,
-  `cpp17_string_view`, `cpp17_byte`, `cpp17_filesystem`,
-  `cpp17_shared_ptr_array`.
-- **Algorithms / numerics:** `cpp17_clamp`, `cpp17_invoke_apply`,
-  `cpp17_parallel_algos`, `cpp17_gcd_lcm_sample`, `cpp17_not_fn_as_const`.
-- **STL infrastructure:** `cpp17_charconv`, `cpp17_memory_resource`,
-  `cpp17_node_handles`, `cpp17_launder`.
-- **Templates / metaprogramming:** `cpp17_if_constexpr`, `cpp17_fold_expressions`,
-  `cpp17_ctad_basic`, `cpp17_type_trait_helpers`.
-- **Language:** `cpp17_structured_bindings`, `cpp17_init_statement`,
-  `cpp17_inline_variables`, `cpp17_nested_namespace`,
-  `cpp17_constexpr_lambda`, `cpp17_attributes`.
-- **Concurrency:** `cpp17_shared_mutex`, `cpp17_scoped_lock`.
+- **STL value types:** [`cpp17_optional`](features/std/cpp17/cpp17_optional.cpp),
+  [`cpp17_variant`](features/std/cpp17/cpp17_variant.cpp),
+  [`cpp17_any`](features/std/cpp17/cpp17_any.cpp),
+  [`cpp17_string_view`](features/std/cpp17/cpp17_string_view.cpp),
+  [`cpp17_byte`](features/std/cpp17/cpp17_byte.cpp),
+  [`cpp17_filesystem`](features/std/cpp17/cpp17_filesystem.cpp),
+  [`cpp17_shared_ptr_array`](features/std/cpp17/cpp17_shared_ptr_array.cpp).
+- **Algorithms / numerics:** [`cpp17_clamp`](features/std/cpp17/cpp17_clamp.cpp),
+  [`cpp17_invoke_apply`](features/std/cpp17/cpp17_invoke_apply.cpp),
+  [`cpp17_parallel_algos`](features/std/cpp17/cpp17_parallel_algos.cpp),
+  [`cpp17_gcd_lcm_sample`](features/std/cpp17/cpp17_gcd_lcm_sample.cpp),
+  [`cpp17_not_fn_as_const`](features/std/cpp17/cpp17_not_fn_as_const.cpp),
+  [`cpp17_searchers`](features/std/cpp17/cpp17_searchers.cpp) (Boyer-Moore).
+- **STL infrastructure:** [`cpp17_charconv`](features/std/cpp17/cpp17_charconv.cpp),
+  [`cpp17_memory_resource`](features/std/cpp17/cpp17_memory_resource.cpp),
+  [`cpp17_node_handles`](features/std/cpp17/cpp17_node_handles.cpp),
+  [`cpp17_launder`](features/std/cpp17/cpp17_launder.cpp).
+- **Templates / metaprogramming:**
+  [`cpp17_if_constexpr`](features/std/cpp17/cpp17_if_constexpr.cpp),
+  [`cpp17_fold_expressions`](features/std/cpp17/cpp17_fold_expressions.cpp),
+  [`cpp17_ctad_basic`](features/std/cpp17/cpp17_ctad_basic.cpp),
+  [`cpp17_type_trait_helpers`](features/std/cpp17/cpp17_type_trait_helpers.cpp).
+- **Language:** [`cpp17_structured_bindings`](features/std/cpp17/cpp17_structured_bindings.cpp),
+  [`cpp17_init_statement`](features/std/cpp17/cpp17_init_statement.cpp),
+  [`cpp17_inline_variables`](features/std/cpp17/cpp17_inline_variables.cpp),
+  [`cpp17_nested_namespace`](features/std/cpp17/cpp17_nested_namespace.cpp),
+  [`cpp17_constexpr_lambda`](features/std/cpp17/cpp17_constexpr_lambda.cpp),
+  [`cpp17_attributes`](features/std/cpp17/cpp17_attributes.cpp).
+- **Concurrency:** [`cpp17_shared_mutex`](features/std/cpp17/cpp17_shared_mutex.cpp),
+  [`cpp17_scoped_lock`](features/std/cpp17/cpp17_scoped_lock.cpp).
 
 Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 
@@ -323,26 +378,54 @@ Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 
 This is where the language genuinely changed shape.
 
-- **Concepts & templates / metaprogramming:** `cpp20_concepts_intro`,
-  `cpp20_concepts_requires_expr`, `cpp20_abbreviated_templates`,
-  `cpp20_ctad_alias`, `cpp20_ctad_aggregates`, `cpp20_nttp_class`,
-  `cpp20_explicit_bool`, `cpp20_type_identity`.
-- **Ranges & views:** `cpp20_ranges_algorithms`, `cpp20_ranges_views`,
-  `cpp20_views_keys_values`, `cpp20_views_split`.
-- **Coroutines:** `cpp20_coroutine_generator` (read after concepts; this is the
-  hardest single feature in C++20).
-- **Concurrency (the *big* upgrade):** `cpp20_jthread`, `cpp20_stop_token`,
-  `cpp20_counting_semaphore`, `cpp20_binary_semaphore`, `cpp20_latch`,
-  `cpp20_barrier`, `cpp20_atomic_wait`, `cpp20_atomic_ref`,
-  `cpp20_atomic_shared_ptr`, `cpp20_atomic_flag_test`, `cpp20_syncstream`.
-- **Library:** `cpp20_format`, `cpp20_span`, `cpp20_bit_ops`,
-  `cpp20_source_location`, `cpp20_numbers`, `cpp20_chrono_calendar`,
-  `cpp20_erase_if`, `cpp20_lerp_midpoint`, `cpp20_ssize`,
-  `cpp20_string_starts_ends`, `cpp20_map_contains`, `cpp20_to_address`,
-  `cpp20_endian`, `cpp20_bind_front`, `cpp20_cmp_utilities`.
-- **Language:** `cpp20_consteval`, `cpp20_constinit`, `cpp20_spaceship`,
-  `cpp20_designated_init`, `cpp20_lambdas`, `cpp20_using_enum`,
-  `cpp20_is_constant_evaluated`.
+- **Concepts & templates / metaprogramming:**
+  [`cpp20_concepts_intro`](features/std/cpp20/cpp20_concepts_intro.cpp),
+  [`cpp20_concepts_requires_expr`](features/std/cpp20/cpp20_concepts_requires_expr.cpp),
+  [`cpp20_abbreviated_templates`](features/std/cpp20/cpp20_abbreviated_templates.cpp),
+  [`cpp20_ctad_alias`](features/std/cpp20/cpp20_ctad_alias.cpp),
+  [`cpp20_ctad_aggregates`](features/std/cpp20/cpp20_ctad_aggregates.cpp),
+  [`cpp20_nttp_class`](features/std/cpp20/cpp20_nttp_class.cpp),
+  [`cpp20_explicit_bool`](features/std/cpp20/cpp20_explicit_bool.cpp),
+  [`cpp20_type_identity`](features/std/cpp20/cpp20_type_identity.cpp).
+- **Ranges & views:** [`cpp20_ranges_algorithms`](features/std/cpp20/cpp20_ranges_algorithms.cpp),
+  [`cpp20_ranges_views`](features/std/cpp20/cpp20_ranges_views.cpp),
+  [`cpp20_views_keys_values`](features/std/cpp20/cpp20_views_keys_values.cpp),
+  [`cpp20_views_split`](features/std/cpp20/cpp20_views_split.cpp).
+- **Coroutines:** [`cpp20_coroutine_generator`](features/std/cpp20/cpp20_coroutine_generator.cpp)
+  (read after concepts; this is the hardest single feature in C++20).
+- **Concurrency (the *big* upgrade):** [`cpp20_jthread`](features/std/cpp20/cpp20_jthread.cpp),
+  [`cpp20_stop_token`](features/std/cpp20/cpp20_stop_token.cpp),
+  [`cpp20_counting_semaphore`](features/std/cpp20/cpp20_counting_semaphore.cpp),
+  [`cpp20_binary_semaphore`](features/std/cpp20/cpp20_binary_semaphore.cpp),
+  [`cpp20_latch`](features/std/cpp20/cpp20_latch.cpp),
+  [`cpp20_barrier`](features/std/cpp20/cpp20_barrier.cpp),
+  [`cpp20_atomic_wait`](features/std/cpp20/cpp20_atomic_wait.cpp),
+  [`cpp20_atomic_ref`](features/std/cpp20/cpp20_atomic_ref.cpp),
+  [`cpp20_atomic_shared_ptr`](features/std/cpp20/cpp20_atomic_shared_ptr.cpp),
+  [`cpp20_atomic_flag_test`](features/std/cpp20/cpp20_atomic_flag_test.cpp),
+  [`cpp20_syncstream`](features/std/cpp20/cpp20_syncstream.cpp).
+- **Library:** [`cpp20_format`](features/std/cpp20/cpp20_format.cpp),
+  [`cpp20_span`](features/std/cpp20/cpp20_span.cpp),
+  [`cpp20_bit_ops`](features/std/cpp20/cpp20_bit_ops.cpp),
+  [`cpp20_source_location`](features/std/cpp20/cpp20_source_location.cpp),
+  [`cpp20_numbers`](features/std/cpp20/cpp20_numbers.cpp),
+  [`cpp20_chrono_calendar`](features/std/cpp20/cpp20_chrono_calendar.cpp),
+  [`cpp20_erase_if`](features/std/cpp20/cpp20_erase_if.cpp),
+  [`cpp20_lerp_midpoint`](features/std/cpp20/cpp20_lerp_midpoint.cpp),
+  [`cpp20_ssize`](features/std/cpp20/cpp20_ssize.cpp),
+  [`cpp20_string_starts_ends`](features/std/cpp20/cpp20_string_starts_ends.cpp),
+  [`cpp20_map_contains`](features/std/cpp20/cpp20_map_contains.cpp),
+  [`cpp20_to_address`](features/std/cpp20/cpp20_to_address.cpp),
+  [`cpp20_endian`](features/std/cpp20/cpp20_endian.cpp),
+  [`cpp20_bind_front`](features/std/cpp20/cpp20_bind_front.cpp),
+  [`cpp20_cmp_utilities`](features/std/cpp20/cpp20_cmp_utilities.cpp).
+- **Language:** [`cpp20_consteval`](features/std/cpp20/cpp20_consteval.cpp),
+  [`cpp20_constinit`](features/std/cpp20/cpp20_constinit.cpp),
+  [`cpp20_spaceship`](features/std/cpp20/cpp20_spaceship.cpp),
+  [`cpp20_designated_init`](features/std/cpp20/cpp20_designated_init.cpp),
+  [`cpp20_lambdas`](features/std/cpp20/cpp20_lambdas.cpp),
+  [`cpp20_using_enum`](features/std/cpp20/cpp20_using_enum.cpp),
+  [`cpp20_is_constant_evaluated`](features/std/cpp20/cpp20_is_constant_evaluated.cpp).
 
 Full index: [features/std/cpp20/README.md](features/std/cpp20/README.md).
 
@@ -350,25 +433,50 @@ Full index: [features/std/cpp20/README.md](features/std/cpp20/README.md).
 
 Mostly about smoothing C++20's rough edges plus a few headline items.
 
-- **The headline items:** `cpp23_expected`, `cpp23_mdspan`, `cpp23_print`,
-  `cpp23_generator`, `cpp23_stacktrace`, `cpp23_flat_map`, `cpp23_flat_set`.
-- **Templates / language:** `cpp23_deducing_this` (huge), `cpp23_recursive_lambda`,
-  `cpp23_static_operator`, `cpp23_multidim_subscript`,
-  `cpp23_if_consteval`, `cpp23_assume`, `cpp23_size_t_literal`,
-  `cpp23_auto_decay_copy`.
-- **Ranges/views:** `cpp23_ranges_to`, `cpp23_ranges_zip`,
-  `cpp23_ranges_chunk_slide`, `cpp23_views_chunk_by`,
-  `cpp23_ranges_enumerate`, `cpp23_ranges_join_with`,
-  `cpp23_ranges_cartesian_product`, `cpp23_ranges_adjacent`,
-  `cpp23_ranges_fold`, `cpp23_ranges_starts_ends_contains`,
-  `cpp23_ranges_find_last`, `cpp23_ranges_iota_algorithm`,
-  `cpp23_views_repeat`, `cpp23_views_stride`,
-  `cpp23_views_as_const_as_rvalue`.
-- **Library:** `cpp23_optional_monadic`, `cpp23_byteswap`,
-  `cpp23_to_underlying`, `cpp23_unreachable`, `cpp23_move_only_function`,
-  `cpp23_out_ptr`, `cpp23_string_contains`, `cpp23_resize_and_overwrite`,
-  `cpp23_spanstream`, `cpp23_format_ranges`, `cpp23_forward_like`,
-  `cpp23_start_lifetime_as`, `cpp23_invoke_r`, `cpp23_stdfloat`.
+- **The headline items:** [`cpp23_expected`](features/std/cpp23/cpp23_expected.cpp),
+  [`cpp23_mdspan`](features/std/cpp23/cpp23_mdspan.cpp),
+  [`cpp23_print`](features/std/cpp23/cpp23_print.cpp),
+  [`cpp23_generator`](features/std/cpp23/cpp23_generator.cpp),
+  [`cpp23_stacktrace`](features/std/cpp23/cpp23_stacktrace.cpp),
+  [`cpp23_flat_map`](features/std/cpp23/cpp23_flat_map.cpp),
+  [`cpp23_flat_set`](features/std/cpp23/cpp23_flat_set.cpp).
+- **Templates / language:** [`cpp23_deducing_this`](features/std/cpp23/cpp23_deducing_this.cpp)
+  (huge), [`cpp23_recursive_lambda`](features/std/cpp23/cpp23_recursive_lambda.cpp),
+  [`cpp23_static_operator`](features/std/cpp23/cpp23_static_operator.cpp),
+  [`cpp23_multidim_subscript`](features/std/cpp23/cpp23_multidim_subscript.cpp),
+  [`cpp23_if_consteval`](features/std/cpp23/cpp23_if_consteval.cpp),
+  [`cpp23_assume`](features/std/cpp23/cpp23_assume.cpp),
+  [`cpp23_size_t_literal`](features/std/cpp23/cpp23_size_t_literal.cpp),
+  [`cpp23_auto_decay_copy`](features/std/cpp23/cpp23_auto_decay_copy.cpp).
+- **Ranges/views:** [`cpp23_ranges_to`](features/std/cpp23/cpp23_ranges_to.cpp),
+  [`cpp23_ranges_zip`](features/std/cpp23/cpp23_ranges_zip.cpp),
+  [`cpp23_ranges_chunk_slide`](features/std/cpp23/cpp23_ranges_chunk_slide.cpp),
+  [`cpp23_views_chunk_by`](features/std/cpp23/cpp23_views_chunk_by.cpp),
+  [`cpp23_ranges_enumerate`](features/std/cpp23/cpp23_ranges_enumerate.cpp),
+  [`cpp23_ranges_join_with`](features/std/cpp23/cpp23_ranges_join_with.cpp),
+  [`cpp23_ranges_cartesian_product`](features/std/cpp23/cpp23_ranges_cartesian_product.cpp),
+  [`cpp23_ranges_adjacent`](features/std/cpp23/cpp23_ranges_adjacent.cpp),
+  [`cpp23_ranges_fold`](features/std/cpp23/cpp23_ranges_fold.cpp),
+  [`cpp23_ranges_starts_ends_contains`](features/std/cpp23/cpp23_ranges_starts_ends_contains.cpp),
+  [`cpp23_ranges_find_last`](features/std/cpp23/cpp23_ranges_find_last.cpp),
+  [`cpp23_ranges_iota_algorithm`](features/std/cpp23/cpp23_ranges_iota_algorithm.cpp),
+  [`cpp23_views_repeat`](features/std/cpp23/cpp23_views_repeat.cpp),
+  [`cpp23_views_stride`](features/std/cpp23/cpp23_views_stride.cpp),
+  [`cpp23_views_as_const_as_rvalue`](features/std/cpp23/cpp23_views_as_const_as_rvalue.cpp).
+- **Library:** [`cpp23_optional_monadic`](features/std/cpp23/cpp23_optional_monadic.cpp),
+  [`cpp23_byteswap`](features/std/cpp23/cpp23_byteswap.cpp),
+  [`cpp23_to_underlying`](features/std/cpp23/cpp23_to_underlying.cpp),
+  [`cpp23_unreachable`](features/std/cpp23/cpp23_unreachable.cpp),
+  [`cpp23_move_only_function`](features/std/cpp23/cpp23_move_only_function.cpp),
+  [`cpp23_out_ptr`](features/std/cpp23/cpp23_out_ptr.cpp),
+  [`cpp23_string_contains`](features/std/cpp23/cpp23_string_contains.cpp),
+  [`cpp23_resize_and_overwrite`](features/std/cpp23/cpp23_resize_and_overwrite.cpp),
+  [`cpp23_spanstream`](features/std/cpp23/cpp23_spanstream.cpp),
+  [`cpp23_format_ranges`](features/std/cpp23/cpp23_format_ranges.cpp),
+  [`cpp23_forward_like`](features/std/cpp23/cpp23_forward_like.cpp),
+  [`cpp23_start_lifetime_as`](features/std/cpp23/cpp23_start_lifetime_as.cpp),
+  [`cpp23_invoke_r`](features/std/cpp23/cpp23_invoke_r.cpp),
+  [`cpp23_stdfloat`](features/std/cpp23/cpp23_stdfloat.cpp).
 
 Full index: [features/std/cpp23/README.md](features/std/cpp23/README.md).
 
@@ -378,33 +486,51 @@ These features aren't in any C++ standard but ship with every modern GCC.
 Read these alongside the standard-library bucket — `[[likely]]` is C++20 *and*
 implemented via the same machinery as `__builtin_expect`, etc.
 
-- **Attributes:** `gccext_likely_unlikely`, `gccext_attribute_pure_const`,
-  `gccext_attribute_hot_cold`, `gccext_attribute_flatten`,
-  `gccext_attribute_packed`, `gccext_attribute_cleanup`,
-  `gccext_attribute_constructor` (pre-main/post-main hooks),
-  `gccext_attribute_target` (per-function ISA selection),
-  `gccext_target_clones` (multi-version + IFUNC dispatch).
-- **Builtins:** `gccext_builtin_expect`, `gccext_builtin_constant_p`,
-  `gccext_builtin_assume_aligned`, `gccext_builtin_cpu_supports`
-  (manual runtime dispatch), `gccext_builtin_prefetch`, `gccext_int128`.
-- **Vectorization / SIMD:** `gccext_vector_extensions` (`vector_size` types),
-  `gccext_autovectorize` (auto-vectorisable SAXPY at `-O3`).
-- **Parallelism:** `gccext_openmp_parallel_for`.
-- **Tooling:** `gccext_diagnostic_pragma`, `gccext_inline_asm`.
-- **Sanitizer interaction (clean):** `gccext_no_sanitize_attribute`,
-  `gccext_glibcxx_debug`, `gccext_assume_under_sanitize` — how to opt-in,
-  opt-out, and reason about runtime checks. Live under
+- **Attributes:** [`gccext_likely_unlikely`](features/gccext/attributes/gccext_likely_unlikely.cpp),
+  [`gccext_attribute_pure_const`](features/gccext/attributes/gccext_attribute_pure_const.cpp),
+  [`gccext_attribute_hot_cold`](features/gccext/attributes/gccext_attribute_hot_cold.cpp),
+  [`gccext_attribute_flatten`](features/gccext/attributes/gccext_attribute_flatten.cpp),
+  [`gccext_attribute_packed`](features/gccext/attributes/gccext_attribute_packed.cpp),
+  [`gccext_attribute_cleanup`](features/gccext/attributes/gccext_attribute_cleanup.cpp),
+  [`gccext_attribute_constructor`](features/gccext/attributes/gccext_attribute_constructor.cpp)
+  (pre-main/post-main hooks),
+  [`gccext_attribute_target`](features/gccext/attributes/gccext_attribute_target.cpp)
+  (per-function ISA selection),
+  [`gccext_target_clones`](features/gccext/attributes/gccext_target_clones.cpp)
+  (multi-version + IFUNC dispatch).
+- **Builtins:** [`gccext_builtin_expect`](features/gccext/builtins/gccext_builtin_expect.cpp),
+  [`gccext_builtin_constant_p`](features/gccext/builtins/gccext_builtin_constant_p.cpp),
+  [`gccext_builtin_assume_aligned`](features/gccext/builtins/gccext_builtin_assume_aligned.cpp),
+  [`gccext_builtin_cpu_supports`](features/gccext/builtins/gccext_builtin_cpu_supports.cpp)
+  (manual runtime dispatch),
+  [`gccext_builtin_prefetch`](features/gccext/builtins/gccext_builtin_prefetch.cpp),
+  [`gccext_int128`](features/gccext/builtins/gccext_int128.cpp).
+- **Vectorization / SIMD:** [`gccext_vector_extensions`](features/gccext/builtins/gccext_vector_extensions.cpp)
+  (`vector_size` types),
+  [`gccext_autovectorize`](features/gccext/codegen/gccext_autovectorize.cpp)
+  (auto-vectorisable SAXPY at `-O3`).
+- **Parallelism:** [`gccext_openmp_parallel_for`](features/gccext/openmp/gccext_openmp_parallel_for.cpp).
+- **Tooling:** [`gccext_diagnostic_pragma`](features/gccext/pragmas/gccext_diagnostic_pragma.cpp),
+  [`gccext_inline_asm`](features/gccext/codegen/gccext_inline_asm.cpp).
+- **Sanitizer interaction (clean):** [`gccext_no_sanitize_attribute`](features/gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp),
+  [`gccext_glibcxx_debug`](features/gccext/sanitize/integration/gccext_glibcxx_debug.cpp),
+  [`gccext_assume_under_sanitize`](features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp)
+  — how to opt-in, opt-out, and reason about runtime checks. Live under
   [features/gccext/sanitize/integration/](features/gccext/sanitize/integration/).
-- **Sanitizer trips (deliberate UB):** `gccext_asan_*`, `gccext_ubsan_*`,
-  `gccext_tsan_*`, `gccext_lsan_*` — each one is gated on a matching
-  `REQUIRES_SANITIZER` and asserts expected sanitizer report text instead of
-  accepting any failure. Run with
+- **Sanitizer trips (deliberate UB):** `gccext_asan_*` (in
+  [sanitize/asan/](features/gccext/sanitize/asan/)), `gccext_ubsan_*` (in
+  [sanitize/ubsan/](features/gccext/sanitize/ubsan/)), `gccext_tsan_*` (in
+  [sanitize/tsan/](features/gccext/sanitize/tsan/)), `gccext_lsan_*` (in
+  [sanitize/leak/](features/gccext/sanitize/leak/)) — each one is gated on a
+  matching `REQUIRES_SANITIZER` and asserts expected sanitizer report text
+  instead of accepting any failure. Run with
   `./scripts/podman-dev.sh 15 sanitize=undefined,address` (or
   `sanitize=thread`).
-- **Static analyzer (compile-only):** `gccext_analyzer_double_free`,
-  `gccext_analyzer_null_deref`, `gccext_analyzer_use_after_free` — show paths
-  that runtime sanitizers can miss. Need GCC 16 for usable C++ analyzer
-  support; CI runs them via `cmake -DGCC_FEATURE_ANALYZER=ON`.
+- **Static analyzer (compile-only):** [`gccext_analyzer_double_free`](features/gccext/analyzer/gccext_analyzer_double_free.cpp),
+  [`gccext_analyzer_null_deref`](features/gccext/analyzer/gccext_analyzer_null_deref.cpp),
+  [`gccext_analyzer_use_after_free`](features/gccext/analyzer/gccext_analyzer_use_after_free.cpp)
+  — show paths that runtime sanitizers can miss. Need GCC 16 for usable C++
+  analyzer support; CI runs them via `cmake -DGCC_FEATURE_ANALYZER=ON`.
 
 Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/README.md), [builtins/](features/gccext/builtins/README.md), [codegen/](features/gccext/codegen/README.md), [openmp/](features/gccext/openmp/README.md), [pragmas/](features/gccext/pragmas/README.md), [sanitize/](features/gccext/sanitize/README.md), [analyzer/](features/gccext/analyzer/README.md).
 
@@ -414,25 +540,38 @@ Most C++26 entries run as normal tests on the GCC version that ships them
 (`MIN_GCC 15`/`16`); only the ones flagged `EXPERIMENTAL` may fail without
 breaking CI.
 
-- **Language:** `cpp26_pack_indexing`, `cpp26_delete_reason`,
-  `cpp26_static_assert_messages`, `cpp26_contracts_basic` (experimental).
-- **Library:** `cpp26_saturation_arith`, `cpp26_span_at`,
-  `cpp26_text_encoding`.
-- **Reflection:** `cpp26_reflection_basic` (GCC 16, `-freflection`).
+- **Language:** [`cpp26_pack_indexing`](features/std/cpp26/cpp26_pack_indexing.cpp),
+  [`cpp26_delete_reason`](features/std/cpp26/cpp26_delete_reason.cpp),
+  [`cpp26_static_assert_messages`](features/std/cpp26/cpp26_static_assert_messages.cpp),
+  [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp)
+  (experimental).
+- **Library:** [`cpp26_saturation_arith`](features/std/cpp26/cpp26_saturation_arith.cpp),
+  [`cpp26_span_at`](features/std/cpp26/cpp26_span_at.cpp),
+  [`cpp26_text_encoding`](features/std/cpp26/cpp26_text_encoding.cpp).
+- **Reflection:** [`cpp26_reflection_basic`](features/std/cpp26/cpp26_reflection_basic.cpp)
+  (GCC 16, `-freflection`).
 
-Per-release smoke tests: `gcc13_libstdcxx_format`, `gcc14_libstdcxx_ranges_to`
-+ `gcc14_libstdcxx_print_exp`, `gcc15_default_print`,
-`gcc16_cpp26_features_default`. The narrative version of "what each release
-shipped" is in [docs/gcc-changelogs.md](docs/gcc-changelogs.md).
+Per-release smoke tests: [`gcc13_libstdcxx_format`](features/gcc/gcc13/gcc13_libstdcxx_format.cpp),
+[`gcc14_libstdcxx_ranges_to`](features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp)
++ [`gcc14_libstdcxx_print_exp`](features/gcc/gcc14/gcc14_libstdcxx_print_exp.cpp),
+[`gcc15_default_print`](features/gcc/gcc15/gcc15_default_print.cpp),
+[`gcc16_cpp26_features_default`](features/gcc/gcc16/gcc16_cpp26_features_default.cpp).
+The narrative version of "what each release shipped" is in
+[docs/gcc-changelogs.md](docs/gcc-changelogs.md).
 
-Toolchain *defaults* get their own bucket: `gccdef_dialect` (what you get
+Toolchain *defaults* get their own bucket:
+[`gccdef_dialect`](features/gcc/defaults/gccdef_dialect.cpp) (what you get
 with no `-std` — changed at GCC 15 for C and GCC 16 for C++),
-`gccdef_fp_contract` (`-ffp-contract=fast` is always on), and
-`gccdef_pie_default` (upstream vs distro packaging). Each release bucket also
-carries one demo of a diagnostic that release introduced (`ctest -L
-gcc-diagnostics`): `-Wdangling-reference` (13), `-Wcalloc-transposed-args`
-(14), `-Wdeprecated-literal-operator` (15), `-Wc++26-compat` (16) — each
-compiled with `-Werror=<warning>` and asserting the exact diagnostic.
+[`gccdef_fp_contract`](features/gcc/defaults/gccdef_fp_contract.cpp)
+(`-ffp-contract=fast` is always on), and
+[`gccdef_pie_default`](features/gcc/defaults/gccdef_pie_default.cpp)
+(upstream vs distro packaging). Each release bucket also carries one demo of
+a diagnostic that release introduced (`ctest -L gcc-diagnostics`):
+[`gcc13_warn_dangling_reference`](features/gcc/gcc13/gcc13_warn_dangling_reference.cpp),
+[`gcc14_warn_calloc_transposed`](features/gcc/gcc14/gcc14_warn_calloc_transposed.cpp),
+[`gcc15_warn_deprecated_literal_operator`](features/gcc/gcc15/gcc15_warn_deprecated_literal_operator.cpp),
+[`gcc16_warn_cpp26_compat`](features/gcc/gcc16/gcc16_warn_cpp26_compat.cpp)
+— each compiled with `-Werror=<warning>` and asserting the exact diagnostic.
 Measured details in [docs/default-changes.md](docs/default-changes.md).
 
 Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [features/gcc/gcc13/README.md](features/gcc/gcc13/README.md), [features/gcc/gcc14/README.md](features/gcc/gcc14/README.md), [features/gcc/gcc15/README.md](features/gcc/gcc15/README.md), [features/gcc/gcc16/README.md](features/gcc/gcc16/README.md).
