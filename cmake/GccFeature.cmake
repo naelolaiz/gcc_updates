@@ -332,6 +332,67 @@ function(gcc_feature_readme_indexes)
         endif()
     endforeach()
 
+    # Cross-bucket topic index (features/TOPICS.md): every topic label with
+    # its examples from ALL buckets, e.g. 'threading' from C++11 to C++20.
+    set(_all_topics "")
+    foreach(_dir IN LISTS _dirs)
+        get_property(_names GLOBAL PROPERTY "GCC_FEATURE_INDEX_${_dir}")
+        list(SORT _names)
+        string(REPLACE "features/" "" _bucket "${_dir}")
+        foreach(_name IN LISTS _names)
+            get_property(_meta GLOBAL PROPERTY "GCC_FEATURE_META_${_name}")
+            list(GET _meta 0 _std)
+            list(GET _meta 1 _min_gcc)
+            list(GET _meta 2 _topic)
+            if(NOT _topic IN_LIST _all_topics)
+                list(APPEND _all_topics "${_topic}")
+                set_property(GLOBAL PROPERTY "GCC_FEATURE_TOPIC_ROWS_${_topic}" "")
+            endif()
+            set_property(GLOBAL APPEND PROPERTY "GCC_FEATURE_TOPIC_ROWS_${_topic}"
+                         "${_bucket}|${_name}|${_std}|${_min_gcc}")
+        endforeach()
+    endforeach()
+    list(SORT _all_topics)
+    list(LENGTH _all_topics _n_topics)
+
+    set(_tcontent "# Topic index\n\n")
+    string(APPEND _tcontent
+        "_All ${_n_topics} topics across every bucket, generated from"
+        " `gcc_feature_test()` metadata; regenerate with"
+        " `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest"
+        " labels: `ctest -L threading` runs one topic everywhere._\n")
+    string(APPEND _tcontent "\n## Topics\n\n")
+    foreach(_topic IN LISTS _all_topics)
+        string(APPEND _tcontent "- [${_topic}](#${_topic})\n")
+    endforeach()
+    foreach(_topic IN LISTS _all_topics)
+        string(APPEND _tcontent "\n## ${_topic}\n\n")
+        string(APPEND _tcontent "| Example | Bucket | std | min-gcc |\n")
+        string(APPEND _tcontent "| ------- | ------ | --- | ------- |\n")
+        get_property(_rows GLOBAL PROPERTY "GCC_FEATURE_TOPIC_ROWS_${_topic}")
+        foreach(_row IN LISTS _rows)
+            string(REPLACE "|" ";" _fields "${_row}")
+            list(GET _fields 0 _bucket)
+            list(GET _fields 1 _name)
+            list(GET _fields 2 _std)
+            list(GET _fields 3 _min_gcc)
+            string(APPEND _tcontent
+                "| [${_name}.cpp](${_bucket}/${_name}.cpp) | ${_bucket} | ${_std} | ${_min_gcc} |\n")
+        endforeach()
+    endforeach()
+
+    if(GCC_FEATURE_README STREQUAL "write")
+        file(WRITE "${GCC_FEATURE_README_OUT}/features/TOPICS.md" "${_tcontent}")
+    else()
+        set(_texisting "")
+        if(EXISTS "${CMAKE_SOURCE_DIR}/features/TOPICS.md")
+            file(READ "${CMAKE_SOURCE_DIR}/features/TOPICS.md" _texisting)
+        endif()
+        if(NOT _texisting STREQUAL _tcontent)
+            list(APPEND _stale "  - features/TOPICS.md")
+        endif()
+    endif()
+
     if(_stale)
         list(JOIN _stale "\n" _stale_text)
         message(FATAL_ERROR

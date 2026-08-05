@@ -18,6 +18,7 @@ exercises GCC 16 via `debian:unstable-slim` + apt.)
 
 ```
 features/                          # all examples (single .cpp each)
+  TOPICS.md                        # cross-bucket topic index (generated)
   support/demo.hpp                 # tiny stdout helper + DEMO_ASSERT for readable demos
   std/                             # C++ standard library + language features
     cpp11/cpp11_*.cpp              # foundation
@@ -58,6 +59,7 @@ docs/
   compiler-flags.md           # default and per-file flag reference
   sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
+  evolution.md                # one concept traced across standards (constexpr, lambdas, …)
 .github/workflows/
   ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
 ```
@@ -245,7 +247,11 @@ so this concern is purely informational.
 The examples are independent — each `.cpp` is self-contained — but if you're
 walking through them as a structured tour, this is the order I'd suggest. Each
 step links to the per-bucket index that lists every example for that standard,
-grouped by topic.
+grouped by topic. Two cross-cutting entry points complement this path:
+[docs/evolution.md](docs/evolution.md) traces single concepts (constexpr,
+lambdas, ranges, concurrency, …) across all standards, and
+[features/TOPICS.md](features/TOPICS.md) lists every topic label with its
+examples from every bucket.
 
 ### 1. Foundation (C++11)
 
