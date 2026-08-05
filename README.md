@@ -49,7 +49,7 @@ cmake/
   GccFeature.cmake             # gcc_feature_test() function and registration validation
   expect_failure.cmake         # command runner for expected failures with diagnostic regexes
 features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per .cpp in the bucket
-features/<bucket>/README.md     # per-bucket index (manual, hand-edited)
+features/<bucket>/README.md     # per-bucket index (generated; CI fails if stale)
 scripts/
   podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
 containers/
@@ -234,9 +234,11 @@ so this concern is purely informational.
    to that folder's `CMakeLists.txt`. See
    [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 5. Run `./scripts/podman-dev.sh <ver>` to verify locally.
-6. Update the bucket's `features/<bucket>/README.md` index by hand if you
-   want it to list your new example. (Auto-generation from CMake target
-   properties may come later.)
+6. Run `./scripts/podman-dev.sh <ver> readme` to regenerate the bucket's
+   `README.md` index. Every configure validates the indexes against the
+   registered metadata (`-DGCC_FEATURE_README=check`, the default), so CI
+   fails if this step is skipped. The index title (the H1 line) is the only
+   hand-written part and is preserved across regenerations.
 
 ## Suggested reference path
 

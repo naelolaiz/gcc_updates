@@ -11,7 +11,9 @@ The tree is split three ways:
 | [`gccext/`](gccext/) | GCC extensions that aren't in any C++ standard: attributes, builtins, OpenMP, vector_size types, target multi-versioning, diagnostic pragmas, inline asm. | "How do I use this GCC-specific feature?" |
 
 Each leaf folder has its own `README.md` index listing examples grouped by
-topic. The narrative version of "what each release shipped" lives in
+topic, generated from the `gcc_feature_test()` metadata and each file's
+`// description:` line (`./scripts/podman-dev.sh <ver> readme` regenerates;
+every configure checks them for drift). The narrative version of "what each release shipped" lives in
 [../docs/gcc-changelogs.md](../docs/gcc-changelogs.md). The flag reference is
 in [../docs/compiler-flags.md](../docs/compiler-flags.md).
 
