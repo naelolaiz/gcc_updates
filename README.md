@@ -315,11 +315,11 @@ Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 This is where the language genuinely changed shape.
 
 - **Concepts & templates / metaprogramming:** `cpp20_concepts_intro`,
-  `cpp20_concepts_requires_expr`, `cpp20_ctad_alias`,
-  `cpp20_ctad_aggregates`, `cpp20_nttp_class`, `cpp20_explicit_bool`,
-  `cpp20_type_identity`.
+  `cpp20_concepts_requires_expr`, `cpp20_abbreviated_templates`,
+  `cpp20_ctad_alias`, `cpp20_ctad_aggregates`, `cpp20_nttp_class`,
+  `cpp20_explicit_bool`, `cpp20_type_identity`.
 - **Ranges & views:** `cpp20_ranges_algorithms`, `cpp20_ranges_views`,
-  `cpp20_views_keys_values`.
+  `cpp20_views_keys_values`, `cpp20_views_split`.
 - **Coroutines:** `cpp20_coroutine_generator` (read after concepts; this is the
   hardest single feature in C++20).
 - **Concurrency (the *big* upgrade):** `cpp20_jthread`, `cpp20_stop_token`,
@@ -330,9 +330,10 @@ This is where the language genuinely changed shape.
   `cpp20_source_location`, `cpp20_numbers`, `cpp20_chrono_calendar`,
   `cpp20_erase_if`, `cpp20_lerp_midpoint`, `cpp20_ssize`,
   `cpp20_string_starts_ends`, `cpp20_map_contains`, `cpp20_to_address`,
-  `cpp20_endian`.
-- **Language:** `cpp20_consteval`, `cpp20_spaceship`,
-  `cpp20_designated_init`, `cpp20_lambdas`.
+  `cpp20_endian`, `cpp20_bind_front`, `cpp20_cmp_utilities`.
+- **Language:** `cpp20_consteval`, `cpp20_constinit`, `cpp20_spaceship`,
+  `cpp20_designated_init`, `cpp20_lambdas`, `cpp20_using_enum`,
+  `cpp20_is_constant_evaluated`.
 
 Full index: [features/std/cpp20/README.md](features/std/cpp20/README.md).
 
