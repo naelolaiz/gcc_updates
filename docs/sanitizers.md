@@ -78,9 +78,11 @@ Multiple checks can be listed: `[[gnu::no_sanitize("address", "undefined")]]`.
   `-Wanalyzer-*` diagnostics (path-sensitive) instead of trapping at runtime,
   so it catches paths an actual test input may never reach. The
   [../features/gccext/analyzer/](../features/gccext/analyzer/) bucket has
-  three demos (use-after-`delete`, conditional double-`delete`,
-  path-sensitive null deref); CI's `analyze` job runs them on GCC 16
-  via `cmake -DGCC_FEATURE_ANALYZER=ON` (compile-only). For ad-hoc runs:
+  four demos (use-after-free, conditional double-free, a lost allocation, and
+  path-sensitive null dereference). CI's `analyze` job compiles them at `-O0`
+  on GCC 16 and requires each declared `-Wanalyzer-*` category to appear;
+  this is a checked test, not merely a diagnostic left in the build log. For
+  ad-hoc runs:
   `./scripts/podman-dev.sh 16 analyzer`.
 
 ## Runtime knobs

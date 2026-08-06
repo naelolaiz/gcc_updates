@@ -1,5 +1,8 @@
 // description: 'nullptr' has its own type std::nullptr_t and isn't ambiguous between integer and pointer overloads.
 // reference: https://en.cppreference.com/w/cpp/language/nullptr
+// why: A null pointer literal should select pointer overloads without also behaving like integer zero.
+// before: NULL or 0 could call an integer overload unexpectedly.
+// pitfall: nullptr converts to pointer and bool types, but it is not itself a pointer object.
 
 #include "support/demo.hpp"
 #include <cassert>

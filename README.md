@@ -1,23 +1,23 @@
 # gcc_updates
 
 A structured, CI-tested workspace serving as a reference for the C++11 / C++14 /
-C++17 / C++20 / C++23 / (experimental) C++26 standard library and tracking what
+C++17 / C++20 / C++23 / C++26 language and standard library, and tracking what
 each new GCC release ships.
 
-Every example under [features/](features/) is a single-file program registered
-as one `gcc_feature_test()` call in its folder's `CMakeLists.txt`. CMake +
-CTest drive the build and run; the function macro lives in
+Every example under [features/](features/) is registered by one
+`gcc_feature_test()` call in its folder's `CMakeLists.txt`; almost all are
+single-file programs, with one explicit module interface/importer pair. CMake
+and CTest drive the build and run; the function macro lives in
 [cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the full suite four
 times on GCC 13/14/15/16 plus three more runs on GCC 15/16 under UBSan+ASan,
 TSan, and `-fanalyzer` — so correctness, runtime UB, data races, and
-compile-time path analysis are all covered per push. (The `gcc:16` Docker
-image isn't published yet; the GCC 16 jobs use `debian:unstable-slim` + apt
-until it lands.)
+compile-time path analysis are all covered per push. The matching official
+`gcc:N` image is used for every compiler lane, including GCC 16.
 
 ## Layout
 
 ```
-features/                          # all examples (single .cpp each)
+features/                          # example sources (usually one .cpp each)
   TOPICS.md                        # cross-bucket topic index (generated)
   support/demo.hpp                 # tiny stdout helper + DEMO_ASSERT for readable demos
   std/                             # C++ standard library + language features
@@ -26,7 +26,7 @@ features/                          # all examples (single .cpp each)
     cpp17/cpp17_*.cpp
     cpp20/cpp20_*.cpp
     cpp23/cpp23_*.cpp
-    cpp26/cpp26_*.cpp              # experimental C++26 (failures don't break CI)
+    cpp26/cpp26_*.cpp              # C++26 positives, negative diagnostics, and compile-only probes
   gccext/                          # GCC extensions, grouped by topic
     attributes/gccext_*.cpp        # [[gnu::*]], target_clones, packed, etc.
     builtins/gccext_*.cpp          # __builtin_*, vector_size types
@@ -39,7 +39,7 @@ features/                          # all examples (single .cpp each)
       ubsan/gccext_ubsan_*.cpp     # deliberate UBSan trips (signed overflow, null deref, shift UB)
       tsan/gccext_tsan_*.cpp       # deliberate data race
       leak/gccext_lsan_*.cpp       # deliberate leak
-    analyzer/gccext_analyzer_*.cpp # compile-time -fanalyzer demos (UAF/null-deref/double-delete)
+    analyzer/gccext_analyzer_*.cpp # compile-time -fanalyzer demos (leak/UAF/null/double-free)
   gcc/                             # release-notes smoke tests, one per version
     defaults/gccdef_*.cpp          # toolchain defaults: -std dialect, fp-contract, PIE
     gcc13/gcc13_*.cpp
@@ -50,20 +50,25 @@ CMakeLists.txt                 # top-level: discovers all features/<bucket>/ sub
 cmake/
   GccFeature.cmake             # gcc_feature_test() function and registration validation
   expect_failure.cmake         # command runner for expected failures with diagnostic regexes
-features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per .cpp in the bucket
+  expect_command.cmake         # successful compile/runtime output assertions
+  run_module_example.cmake     # ordered module interface/importer build + execution
+features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per registered example
 features/<bucket>/README.md     # per-bucket index (generated; CI fails if stale)
 scripts/
   podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
 containers/
   gcc.Containerfile           # FROM gcc:${GCC_VERSION} + cmake + libtbb-dev
 docs/
+  reference-paths.md           # short routes through the exhaustive catalog
+  example-style.md             # content and proof standard for examples
+  coverage.md                  # coverage.yml schema and status meanings
   compiler-flags.md           # default and per-file flag reference
   sanitizers.md               # what -DGCC_FEATURE_SANITIZE=… adds, runtime knobs
   gcc-changelogs.md           # curated per-release notes (GCC 13 → 16)
   evolution.md                # one concept traced across standards (constexpr, lambdas, …)
   default-changes.md          # measured default-flag/dialect changes between GCC releases
 .github/workflows/
-  ci.yml                      # gcc 13/14/15 matrix + ubsan+asan + tsan + analyzer jobs
+  ci.yml                      # gcc 13/14/15/16 matrix + ubsan+asan + tsan + analyzer jobs
 ```
 
 ## How each file gets compiled
@@ -71,7 +76,7 @@ docs/
 Every example is built with this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/<bucket>/bin
+g++ -std=$STD -Wall -Wextra -Wpedantic -Werror -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/<bucket>/bin
 ```
 
 `$STD` is the `STD` argument of the example's `gcc_feature_test()` call.
@@ -85,12 +90,16 @@ build by hand inside a container.
 
 ## Anatomy of one example
 
-Each `.cpp` is plain code with a `description` and `reference` comment block;
-the build metadata lives in the folder's `CMakeLists.txt`:
+Each new example starts with the five context comments described in
+[docs/example-style.md](docs/example-style.md); build metadata lives in the
+folder's `CMakeLists.txt`:
 
 ```cpp
 // description: std::ranges::to converts a range to a container in one expression.
 // reference: https://en.cppreference.com/w/cpp/ranges/to
+// why: A lazy range pipeline sometimes needs to become an owning container.
+// before: Callers copied the range through an iterator-pair constructor.
+// pitfall: Conversion materializes the pipeline and allocates container storage.
 
 #include <ranges>
 #include <vector>
@@ -115,7 +124,10 @@ gcc_feature_test(cpp23_ranges_to  STD c++23  MIN_GCC 14  TOPIC ranges)
 Required keyword args: `STD`, `MIN_GCC`, `TOPIC`. Optional: `MAX_GCC`,
 `MIN_LIBSTDCXX`, `MAX_LIBSTDCXX`, `EXTRA_LIBS`, `EXTRA_COMPILE_FLAGS`,
 `REQUIRES_SANITIZER`, `SKIP_SANITIZER`, `REQUIRES_ANALYZER`, `WILL_FAIL`,
-`EXPECT_OUTPUT`, `EXPERIMENTAL`, `EXPECT_ERROR`. See
+`EXPECT_OUTPUT`, `EXPECT_RUN_OUTPUT`, `EXPECT_COMPILE_OUTPUT`, `COMPILE_ONLY`,
+`MODULE_INTERFACE`, `EXPERIMENTAL`, `EXPECT_ERROR`, `ALLOW_WARNINGS`, `TAGS`,
+`STATUS`, `ARCH`, `FEATURE_MACRO`, `PROPOSAL`, `PREREQUISITES`, and
+`SKIP_REASON`. See
 [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 Programs return `0` on success; runtime checks use `DEMO_ASSERT(...)`.
 
@@ -144,26 +156,25 @@ persists across runs.
 ./scripts/podman-dev.sh 15 sanitize=address,undefined
 ./scripts/podman-dev.sh 15 sanitize=thread
 ./scripts/podman-dev.sh 16 analyzer
+./scripts/podman-dev.sh 16 -- -L essential
 ```
 
 The image is built once per GCC version and cached.
 
 ## Running in CI
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) defines five jobs. Each
-default and sanitizer job runs inside the official `gcc:N` Docker image
+[.github/workflows/ci.yml](.github/workflows/ci.yml) defines four jobs. Every
+compiler and sanitizer job runs inside the official `gcc:N` Docker image
 (Debian-based, upstream gcc-N + matching upstream libstdc++-N). The same image
 is what `scripts/podman-dev.sh` builds locally, so behaviour is bit-identical
-between local and CI for those jobs. The GCC 16 jobs use
-`debian:unstable-slim` + apt `g++-16` until Docker Hub publishes `gcc:16`.
+between local and CI for those jobs.
 
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
-| `gcc-{13,14,15}` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N |
-| `gcc-16 (debian unstable)` | same, with apt `g++-16` in `debian:unstable-slim` | every test with `MIN_GCC` ≤ 16 — the only job that executes the `MIN_GCC 16` examples (mdspan, start_lifetime_as, reflection, gcc16 smoke) |
+| `gcc-{13,14,15,16}` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N; GCC 16 also proves modules, contracts, reflection, and the newest library examples |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
-| `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `debian:unstable-slim` with `g++-16` installed from apt | `REQUIRES_ANALYZER` compile-only demos |
+| `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `gcc:16`; CTest compiles each example at `-O0` and matches its diagnostic category | `REQUIRES_ANALYZER` compile-only demos |
 
 Each CTest run uses `--verbose` so the example output remains visible in the
 log. Tests gated out by version / sanitizer / analyzer requirements are not
@@ -192,11 +203,10 @@ their language counterparts. Notably, per cppreference:
 |---------|-------------------------|
 | `std::ranges::fold_*`, `find_last*`, `contains`/`contains_subrange` | 13 |
 | `std::stacktrace` (linked via `-lstdc++exp`) | 14 |
-| `std::ranges::starts_with` / `ends_with` | 16 |
+| `std::mdspan`, `std::start_lifetime_as`, `std::ranges::starts_with` / `ends_with` | 16 |
 
-These are also in `<algorithm>` (not `<ranges>`); forgetting that
-include is the most common reason a `ranges::xxx` algorithm appears
-"missing".
+The ranges algorithms in the table are declared in `<algorithm>` (not
+`<ranges>`); forgetting that include is a common reason one appears missing.
 
 #### Runtime ABI: forward-compatible, not backward-compatible
 
@@ -228,12 +238,13 @@ so this concern is purely informational.
 
 ## Adding a new example
 
-1. Drop a single `.cpp` under [features/](features/) in the right subfolder:
+1. Drop a `.cpp` under [features/](features/) in the right subfolder (a module
+   example may also have one interface `.cpp` named by `MODULE_INTERFACE`):
    `features/std/cppNN/`, `features/gcc/gccNN/`, or
    `features/gccext/<topic>/`. Filename must start with the bucket prefix
    (`cpp11_`, `cpp20_`, `gcc14_`, `gccext_`, …).
-2. Add a `// description:` and `// reference:` comment block at the top of
-   the `.cpp` file (no machine-readable header needed any more).
+2. Add the five context comments from [docs/example-style.md](docs/example-style.md):
+   `description`, `reference`, `why`, `before`, and `pitfall`.
 3. Write `int main()` that asserts what should hold, returns 0 on success.
 4. Add a `gcc_feature_test(<name> STD c++NN MIN_GCC N TOPIC <topic>)` line
    to that folder's `CMakeLists.txt`. See
@@ -243,12 +254,36 @@ so this concern is purely informational.
    `README.md` index. Every configure validates the indexes against the
    registered metadata (`-DGCC_FEATURE_README=check`, the default), so CI
    fails if this step is skipped. The index title (the H1 line) is the only
-   hand-written part and is preserved across regenerations.
+   hand-written part and is preserved across regenerations. Configure also
+   checks every relative link in the repo's markdown (hand-written docs
+   included), so renaming or removing an example fails fast instead of
+   leaving dead links.
 
-## Suggested reference path
+## Reference tracks
 
-The examples are independent — each `.cpp` is self-contained — but if you're
-walking through them as a structured tour, this is the order I'd suggest. Each
+Start with [docs/reference-paths.md](docs/reference-paths.md). It provides a
+24-example essential route, a C++17-to-C++23 migration route, a GCC safety
+route, and a C++26 frontier route. The required content/test format for new
+examples is documented in [docs/example-style.md](docs/example-style.md).
+
+The exhaustive machine-readable inventory is [coverage.yml](coverage.yml);
+[docs/coverage.md](docs/coverage.md) explains its statuses and how intentional
+gaps are recorded.
+
+Command shortcuts:
+
+```bash
+./scripts/podman-dev.sh 16 list
+./scripts/podman-dev.sh 16 show cpp23_expected
+./scripts/podman-dev.sh 16 run cpp23_expected
+./scripts/podman-dev.sh 16 -- -L essential
+```
+
+## Full reference catalog
+
+Most examples are independent and self-contained; the modules example is an
+intentional interface/importer pair. If you're walking through them as a
+structured tour, this is the order I'd suggest. Each
 step links to the per-bucket index that lists every example for that standard,
 grouped by topic. Two cross-cutting entry points complement this path:
 [docs/evolution.md](docs/evolution.md) traces single concepts (constexpr,
@@ -527,6 +562,7 @@ implemented via the same machinery as `__builtin_expect`, etc.
   `./scripts/podman-dev.sh 15 sanitize=undefined,address` (or
   `sanitize=thread`).
 - **Static analyzer (compile-only):** [`gccext_analyzer_double_free`](features/gccext/analyzer/gccext_analyzer_double_free.cpp),
+  [`gccext_analyzer_leak`](features/gccext/analyzer/gccext_analyzer_leak.cpp),
   [`gccext_analyzer_null_deref`](features/gccext/analyzer/gccext_analyzer_null_deref.cpp),
   [`gccext_analyzer_use_after_free`](features/gccext/analyzer/gccext_analyzer_use_after_free.cpp)
   — show paths that runtime sanitizers can miss. Need GCC 16 for usable C++
@@ -534,18 +570,28 @@ implemented via the same machinery as `__builtin_expect`, etc.
 
 Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/README.md), [builtins/](features/gccext/builtins/README.md), [codegen/](features/gccext/codegen/README.md), [openmp/](features/gccext/openmp/README.md), [pragmas/](features/gccext/pragmas/README.md), [sanitize/](features/gccext/sanitize/README.md), [analyzer/](features/gccext/analyzer/README.md).
 
-### 6. Edge — experimental C++26 + per-release smoke tests
+### 6. Edge — C++26 frontier + per-release smoke tests
 
-Most C++26 entries run as normal tests on the GCC version that ships them
-(`MIN_GCC 15`/`16`); only the ones flagged `EXPERIMENTAL` may fail without
-breaking CI.
+Every C++26 entry has an explicit proof mode and a version gate. Supported
+features run normally; negative examples must fail with a matched diagnostic;
+the one header-only snapshot is marked `COMPILE_ONLY` with its limitation in
+`coverage.yml`. Unsupported facilities remain visible as known gaps.
 
 - **Language:** [`cpp26_pack_indexing`](features/std/cpp26/cpp26_pack_indexing.cpp),
   [`cpp26_delete_reason`](features/std/cpp26/cpp26_delete_reason.cpp),
+  [`cpp26_expansion_statements`](features/std/cpp26/cpp26_expansion_statements.cpp),
+  [`cpp26_structured_binding_pack`](features/std/cpp26/cpp26_structured_binding_pack.cpp),
+  [`cpp26_constexpr_exceptions`](features/std/cpp26/cpp26_constexpr_exceptions.cpp),
   [`cpp26_static_assert_messages`](features/std/cpp26/cpp26_static_assert_messages.cpp),
-  [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp)
-  (experimental).
+  [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp).
 - **Library:** [`cpp26_saturation_arith`](features/std/cpp26/cpp26_saturation_arith.cpp),
+  [`cpp26_inplace_vector`](features/std/cpp26/cpp26_inplace_vector.cpp),
+  [`cpp26_optional_ref`](features/std/cpp26/cpp26_optional_ref.cpp),
+  [`cpp26_function_wrappers`](features/std/cpp26/cpp26_function_wrappers.cpp),
+  [`cpp26_indirect_polymorphic`](features/std/cpp26/cpp26_indirect_polymorphic.cpp),
+  [`cpp26_simd`](features/std/cpp26/cpp26_simd.cpp),
+  [`cpp26_submdspan`](features/std/cpp26/cpp26_submdspan.cpp),
+  [`cpp26_philox_engine`](features/std/cpp26/cpp26_philox_engine.cpp),
   [`cpp26_span_at`](features/std/cpp26/cpp26_span_at.cpp),
   [`cpp26_text_encoding`](features/std/cpp26/cpp26_text_encoding.cpp).
 - **Reflection:** [`cpp26_reflection_basic`](features/std/cpp26/cpp26_reflection_basic.cpp)
@@ -584,5 +630,6 @@ Full indexes: [features/std/cpp26/README.md](features/std/cpp26/README.md), [fea
   `CMakeLists.txt` carries the build metadata.
 - **One toolchain source (official `gcc:N` Docker image)** for both local
   podman and CI means there is exactly one place a version pin can drift.
-- **`EXPERIMENTAL` keyword** lets C++26 / cutting-edge GCC features live in
-  the same matrix without making every PR red whenever a feature breaks.
+- **Explicit proof modes** distinguish runtime behavior, compile-time
+  diagnostics, compiler reports, modules, and compile-only availability. A
+  feature cannot pass by silently falling back to a no-op.

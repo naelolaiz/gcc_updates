@@ -1,5 +1,8 @@
 // description: Lazy view composition with views::filter, views::transform and views::take using the | pipe.
 // reference: https://en.cppreference.com/w/cpp/ranges
+// why: Sequence transformations can be composed without allocating each intermediate result.
+// before: Algorithms required iterator pairs and explicit temporary containers between stages.
+// pitfall: Views are lazy and often non-owning, so source mutation and lifetime affect later iteration.
 
 #include "support/demo.hpp"
 #include <cassert>

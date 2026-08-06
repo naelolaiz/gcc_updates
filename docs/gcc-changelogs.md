@@ -86,8 +86,6 @@ Source: <https://gcc.gnu.org/gcc-13/changes.html>
   [features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp](../features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp).
 - **`std::generator`** (C++23) — coroutine-backed lazy generator. See
   [features/std/cpp23/cpp23_generator.cpp](../features/std/cpp23/cpp23_generator.cpp).
-- **`std::mdspan`** (C++23) — non-owning multi-dimensional view. See
-  [features/std/cpp23/cpp23_mdspan.cpp](../features/std/cpp23/cpp23_mdspan.cpp).
 - **`std::print` / `std::println`** (C++23) — formatted stdout output, but the
   implementation was still in the *experimental* library on GCC 14
   (`-lstdc++exp`). See
@@ -130,11 +128,12 @@ Source: <https://gcc.gnu.org/gcc-14/changes.html>
 
 ### Front-end / language
 
-- About two-thirds of C++26 features available with `-std=c++26`.
 - Default C standard bumped to **C23**.
 - COBOL front-end added.
-- More C++26 paper implementations: contracts framework progress, parts of
-  reflection (P2996) appearing behind switches.
+- C++26 additions include pack indexing and deleted functions with a reason —
+  see [cpp26_pack_indexing.cpp](../features/std/cpp26/cpp26_pack_indexing.cpp)
+  and [cpp26_delete_reason.cpp](../features/std/cpp26/cpp26_delete_reason.cpp).
+- `constexpr`-generated strings are accepted in inline assembler statements.
 
 ### libstdc++
 
@@ -172,14 +171,30 @@ Source: <https://gcc.gnu.org/gcc-15/changes.html>
 
 ### Front-end / language
 
-- More C++26 maturation: `std::execution` sender/receiver async framework,
-  contracts machinery, additional reflection bits.
+- The default C++ dialect changes from `gnu++17` to **`gnu++20`**. The
+  [default dialect smoke test](../features/gcc/defaults/gccdef_dialect.cpp)
+  measures this without passing `-std=`.
+- C++20 modules remain experimental behind `-fmodules`, but the repository now
+  proves interface compilation, import, link, and execution in
+  [cpp20_modules_basic.cpp](../features/std/cpp20/cpp20_modules_basic.cpp).
+- C++26 reflection (P2996R13) ships behind `-freflection`; expansion
+  statements, structured-binding packs, constexpr exceptions, contracts, and
+  erroneous reads of uninitialized values are also covered by executable or
+  diagnostic tests under [features/std/cpp26/](../features/std/cpp26/).
 - Algol 68 front-end added.
 
 ### libstdc++
 
-- Continued ranges / views polish.
-- Most C++26 library headers usable.
+- Strict `-std=c++NN` modes now classify `__int128` as integral; see
+  [gcc16_int128_type_traits.cpp](../features/gcc/gcc16/gcc16_int128_type_traits.cpp).
+- Newly testable facilities include `std::mdspan`, `std::ranges::shift_left`,
+  `allocate_at_least`, `inplace_vector`, `optional<T&>`, `copyable_function`,
+  `function_ref`, `indirect`, `polymorphic`, `submdspan`, `philox_engine`, and
+  the C++26 `simd` API. Their individual GCC and libstdc++ gates are recorded
+  in [coverage.yml](../coverage.yml).
+- `<debugging>` is present in the GCC 16 headers used here, but its runtime
+  symbol is not exported by the tested snapshot; that entry is deliberately
+  marked `compile-only` instead of being reported as a runnable example.
 
 ### Optimization
 
@@ -207,8 +222,10 @@ Source: <https://gcc.gnu.org/gcc-16/changes.html>
 |--------------------------------------------------------------------------------------|
 | [features/gcc/gcc13/gcc13_libstdcxx_format.cpp](../features/gcc/gcc13/gcc13_libstdcxx_format.cpp)        |
 | [features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp](../features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp)  |
+| [features/gcc/gcc14/gcc14_hardened_bundle.cpp](../features/gcc/gcc14/gcc14_hardened_bundle.cpp)          |
 | [features/gcc/gcc15/gcc15_default_print.cpp](../features/gcc/gcc15/gcc15_default_print.cpp)              |
 | [features/gcc/gcc16/gcc16_cpp26_features_default.cpp](../features/gcc/gcc16/gcc16_cpp26_features_default.cpp) |
+| [features/gcc/gcc16/gcc16_int128_type_traits.cpp](../features/gcc/gcc16/gcc16_int128_type_traits.cpp)    |
 
 For non-version-specific GCC features that are *always* there (attributes,
 builtins, OpenMP, vector_size types, target multi-versioning, etc.), browse
@@ -223,26 +240,21 @@ the [gccext index](../features/gccext/README.md). The per-topic indexes
 list the examples whose build metadata is declared in each folder's
 `CMakeLists.txt`.
 
-## What's intentionally *not* benchmarked here
+## How non-runtime claims are proved
 
 A few classes of compiler features can't be exercised through this repo's
 "compile + run + assert output" harness:
 
-- **Auto-vectorization / instruction selection.** We can compile with `-O3`
-  and assert *correctness* (see
-  [features/gccext/codegen/gccext_autovectorize.cpp](../features/gccext/codegen/gccext_autovectorize.cpp)),
-  but verifying that a loop *actually* used `vfmadd231ps` requires reading
-  assembly or `-fopt-info-vec`. Use `cmake --build build --target
-  gccext_autovectorize --verbose` to grab the exact build line, then re-run it
-  locally with `-fopt-info-vec` or `objdump -d`.
+- **Auto-vectorization.** The autovectorization example separately proves
+  numerical correctness and matches GCC's `-fopt-info-vec-optimized` report
+  for `loop vectorized`. It is skipped under sanitizers because instrumentation
+  deliberately changes code-generation decisions.
 - **LTO / PGO** improve speed without changing observable behaviour. Add
   `-flto` to a build command to test it; correctness assertions still hold.
-- **`-fanalyzer` (the static analyzer)** emits warnings, not exit codes —
-  the harness can't `assert(...)` against a warning. The analyzer demos in
-  [../features/gccext/analyzer/](../features/gccext/analyzer/) work around
-  this by being **compile-only**: CI's `analyze` job builds them with
-  `-fanalyzer` on GCC 16, and the step log carries the diagnostic. Run the
-  analyzer lane locally with `./scripts/podman-dev.sh 16 analyzer`.
+- **`-fanalyzer` (the static analyzer)** emits warnings, not binaries. The
+  analyzer lane compiles each deliberate defect at `-O0 -fanalyzer` and fails
+  unless the expected `-Wanalyzer-*` category appears. Run it with
+  `./scripts/podman-dev.sh 16 analyzer`.
 - **Sanitizers** (`-fsanitize=address,undefined,thread`) abort at runtime
   on errors but don't change the *successful* path. The deliberate-trip demos
   under [../features/gccext/sanitize/](../features/gccext/sanitize/) get around

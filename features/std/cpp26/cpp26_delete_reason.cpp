@@ -1,5 +1,8 @@
 // description: = delete("reason") attaches an explanation to a deleted function; a caller's error message then says WHY it is deleted and what to use instead of a bare 'use of deleted function'.
 // reference: https://en.cppreference.com/w/cpp/language/function
+// why: A forbidden API can carry actionable replacement guidance into compiler output.
+// before: Users saw only that the selected function was deleted and had to find migration docs elsewhere.
+// pitfall: The reason is diagnostic text, not a runtime string or introspectable program value.
 
 #include "support/demo.hpp"
 #include <string_view>

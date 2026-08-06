@@ -8,7 +8,8 @@ gcc_feature_test(cpp17_ctad_basic           STD c++17  MIN_GCC 13  TOPIC templat
 gcc_feature_test(cpp17_filesystem           STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_fold_expressions     STD c++17  MIN_GCC 13  TOPIC templates)
 gcc_feature_test(cpp17_gcd_lcm_sample       STD c++17  MIN_GCC 13  TOPIC stl)
-gcc_feature_test(cpp17_if_constexpr         STD c++17  MIN_GCC 13  TOPIC templates)
+gcc_feature_test(cpp17_if_constexpr         STD c++17  MIN_GCC 13  TOPIC templates
+                 TAGS essential compile-time)
 gcc_feature_test(cpp17_init_statement       STD c++17  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp17_inline_variables     STD c++17  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp17_invoke_apply         STD c++17  MIN_GCC 13  TOPIC stl)
@@ -16,15 +17,22 @@ gcc_feature_test(cpp17_launder              STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_memory_resource      STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_nested_namespace     STD c++17  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp17_node_handles         STD c++17  MIN_GCC 13  TOPIC stl)
+gcc_feature_test(cpp17_nodiscard_diagnostic STD c++17  MIN_GCC 13  TOPIC language
+                 TAGS diagnostics attributes  STATUS negative
+                 EXPECT_ERROR "ignoring return value")
 gcc_feature_test(cpp17_not_fn_as_const      STD c++17  MIN_GCC 13  TOPIC stl)
-gcc_feature_test(cpp17_optional             STD c++17  MIN_GCC 13  TOPIC stl)
+gcc_feature_test(cpp17_optional             STD c++17  MIN_GCC 13  TOPIC stl
+                 TAGS essential error-handling value-types)
 gcc_feature_test(cpp17_parallel_algos       STD c++17  MIN_GCC 13  TOPIC stl
                  EXTRA_LIBS tbb)
 gcc_feature_test(cpp17_scoped_lock          STD c++17  MIN_GCC 13  TOPIC threading)
 gcc_feature_test(cpp17_searchers            STD c++17  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp17_shared_mutex         STD c++17  MIN_GCC 13  TOPIC threading)
 gcc_feature_test(cpp17_shared_ptr_array     STD c++17  MIN_GCC 13  TOPIC stl)
-gcc_feature_test(cpp17_string_view          STD c++17  MIN_GCC 13  TOPIC stl)
-gcc_feature_test(cpp17_structured_bindings  STD c++17  MIN_GCC 13  TOPIC language)
+gcc_feature_test(cpp17_string_view          STD c++17  MIN_GCC 13  TOPIC stl
+                 TAGS essential lifetimes views)
+gcc_feature_test(cpp17_structured_bindings  STD c++17  MIN_GCC 13  TOPIC language
+                 TAGS essential decomposition)
 gcc_feature_test(cpp17_type_trait_helpers   STD c++17  MIN_GCC 13  TOPIC templates)
-gcc_feature_test(cpp17_variant              STD c++17  MIN_GCC 13  TOPIC stl)
+gcc_feature_test(cpp17_variant              STD c++17  MIN_GCC 13  TOPIC stl
+                 TAGS essential value-types type-safety)

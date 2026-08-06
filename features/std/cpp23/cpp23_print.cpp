@@ -1,5 +1,8 @@
 // description: std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp.
 // reference: https://en.cppreference.com/w/cpp/io/print
+// why: Programs can emit type-safe formatted text without building a temporary string or stream chain.
+// before: Code used printf varargs, iostream insertion, or std::cout << std::format(...).
+// pitfall: GCC 14 keeps these symbols in libstdc++exp, while newer releases link them normally.
 
 #include "support/demo.hpp"
 #include <cassert>

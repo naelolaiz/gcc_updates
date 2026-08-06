@@ -1,5 +1,8 @@
 // description: std::ranges::to materialises a view (or any range) into a concrete container in one expression.
 // reference: https://en.cppreference.com/w/cpp/ranges/to
+// why: A lazy pipeline often needs one clear materialization point into owned storage.
+// before: Callers spelled iterator-pair constructors or copy loops at the end of a pipeline.
+// pitfall: Materialization allocates and applies the destination container's duplicate/order rules.
 
 #include "support/demo.hpp"
 #include <cassert>

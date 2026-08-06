@@ -8,6 +8,6 @@ _Folder: `features/gccext/pragmas/`. 1 topic(s). Generated from `gcc_feature_tes
 
 ## gcc-pragmas
 
-| File | std | min-gcc | Description |
-| ---- | --- | ------- | ----------- |
-| [gccext_diagnostic_pragma.cpp](gccext_diagnostic_pragma.cpp) | c++17 | 13 | '#pragma GCC diagnostic push/pop/ignored' silences a warning locally without -Wno-* polluting the rest of the file. |
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gccext_diagnostic_pragma.cpp](gccext_diagnostic_pragma.cpp) | c++17 | GCC >= 13 | covered | '#pragma GCC diagnostic push/pop/ignored' silences a warning locally without -Wno-* polluting the rest of the file. |

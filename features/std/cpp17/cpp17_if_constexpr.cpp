@@ -1,5 +1,8 @@
 // description: 'if constexpr' discards the unselected branch at compile time, enabling clean template specialization.
 // reference: https://en.cppreference.com/w/cpp/language/if#Constexpr_If
+// why: One template body can select valid operations for different type families.
+// before: SFINAE overloads or tag dispatch split the same algorithm across several functions.
+// pitfall: Code outside a template still must be well-formed even in a discarded branch.
 
 #include "support/demo.hpp"
 #include <cassert>

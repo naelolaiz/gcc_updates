@@ -34,4 +34,5 @@ add_subdirectory(features/std/cpp23)
 add_subdirectory(features/std/cpp26)
 
 gcc_feature_validate_registered_sources()
+gcc_feature_validate_doc_links()
 gcc_feature_readme_indexes()

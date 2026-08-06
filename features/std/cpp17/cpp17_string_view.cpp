@@ -1,5 +1,8 @@
 // description: std::string_view is a non-owning, copy-cheap view over a contiguous sequence of chars.
 // reference: https://en.cppreference.com/w/cpp/string/basic_string_view
+// why: Read-only text parameters and slices need not allocate or copy characters.
+// before: APIs accepted owning strings or fragile pointer-plus-length pairs.
+// pitfall: A string_view never extends the lifetime of the characters it observes.
 
 #include "support/demo.hpp"
 #include <cassert>

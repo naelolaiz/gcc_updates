@@ -1,5 +1,8 @@
 // description: std::expected<T,E> is a value-or-error type with monadic and_then / or_else / transform.
 // reference: https://en.cppreference.com/w/cpp/utility/expected
+// why: Recoverable failures can carry a typed error without exceptions or output parameters.
+// before: APIs used sentinel values, bool-plus-output pairs, or a custom result union.
+// pitfall: value() on an error throws; monadic operations preserve or transform the error path explicitly.
 
 #include "support/demo.hpp"
 #include <cassert>

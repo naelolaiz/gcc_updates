@@ -4,9 +4,6 @@ name: ci
 # (Debian-based, ships upstream gcc-N + matching upstream libstdc++-N). Build
 # environment matches scripts/podman-dev.sh so local and CI are bit-identical.
 #
-# The analyzer job is the one exception: Docker Hub does not publish `gcc:16`
-# yet, so it uses a slim Debian image with gcc-16 packages available from apt.
-#
 # Build is driven by CMake + CTest. See cmake/GccFeature.cmake for the
 # gcc_feature_test() function and registration validation.
 
@@ -29,9 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # gcc:16 not yet on Docker Hub (only 12-15 published as of this commit);
-        # add 16 back once https://hub.docker.com/_/gcc lists it.
-        gcc: [13, 14, 15]
+        gcc: [13, 14, 15, 16]
     container:
       image: gcc:${{ matrix.gcc }}
     steps:
@@ -124,76 +119,29 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
-  test-gcc16:
-    # Runs the NORMAL test suite on GCC 16. The matrix above stops at 15
-    # (Docker Hub has no `gcc:16` yet), and the analyzer job below only builds
-    # REQUIRES_ANALYZER demos -- without this job, MIN_GCC 16 examples
-    # (mdspan, start_lifetime_as, reflection, the gcc16 smoke test) would
-    # never execute in CI. Same apt-based toolchain as the analyzer job.
-    name: gcc-16 (debian unstable)
-    runs-on: ubuntu-latest
-    container:
-      image: debian:unstable-slim
-    steps:
-      - name: Install GCC 16 + cmake + libtbb
-        run: |
-          set -euo pipefail
-          apt-get update
-          apt-get install -y --no-install-recommends \
-              ca-certificates git gcc-16 g++-16 cmake make libtbb-dev
-          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
-          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
-          g++ --version
-          printf '#include <version>\n' | g++ -x c++ -E -dM - | grep _GLIBCXX_RELEASE || true
-
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Configure
-        run: cmake -S . -B build
-
-      - name: Build
-        run: |
-          echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
-          echo "::endgroup::"
-
-      - name: Test
-        run: ctest --test-dir build --verbose
-
   analyze:
     # Compile-time static analyzer. Distinct from runtime sanitizers:
     # -fanalyzer walks paths in the IR and emits -Wanalyzer-* warnings. GCC 16
     # is the first version where it is meaningfully usable on C++ (NRVO +
-    # initial exception support). Docker Hub does not publish `gcc:16` yet, so
-    # this job installs gcc-16 inside a slim Debian image that carries it.
+    # initial exception support). Tests assert the exact -Wanalyzer-* category.
     name: analyze (gcc-16, -fanalyzer)
     runs-on: ubuntu-latest
     container:
-      image: debian:unstable-slim
+      image: gcc:16
     steps:
-      - name: Install GCC 16 + cmake
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install cmake
         run: |
           set -euo pipefail
           apt-get update
-          apt-get install -y --no-install-recommends \
-              ca-certificates git gcc-16 g++-16 cmake make
-          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 100
-          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 100
+          apt-get install -y --no-install-recommends cmake
           g++ --version
           printf '#include <version>\n' | g++ -x c++ -E -dM - | grep _GLIBCXX_RELEASE || true
-
-      - name: Checkout
-        uses: actions/checkout@v6
 
       - name: Configure with -fanalyzer
         run: cmake -S . -B build -DGCC_FEATURE_ANALYZER=ON
 
-      - name: Build (compile-only — analyzer demos contain deliberate UB)
-        run: |
-          echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
-          echo "::endgroup::"
-
-      - name: Test
+      - name: Test diagnostics (compile-only)
         run: ctest --test-dir build --verbose

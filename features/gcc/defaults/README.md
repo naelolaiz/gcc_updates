@@ -8,8 +8,8 @@ _Folder: `features/gcc/defaults/`. 1 topic(s). Generated from `gcc_feature_test(
 
 ## gcc-defaults
 
-| File | std | min-gcc | Description |
-| ---- | --- | ------- | ----------- |
-| [gccdef_dialect.cpp](gccdef_dialect.cpp) | default | 13 | Compiled WITHOUT any -std flag to test the compiler's default dialect: gnu++17 on GCC 13-15, gnu++20 from GCC 16 -- code that relies on "whatever the compiler defaults to" changes meaning across releases. |
-| [gccdef_fp_contract.cpp](gccdef_fp_contract.cpp) | c++17 | 13 | -ffp-contract=fast is GCC's default in every release (13-16) and every dialect, even strict -std=c++NN: a*b+c may compile to one fused multiply-add, so results change when -march gains FMA -- not because you asked for fast-math. |
-| [gccdef_pie_default.cpp](gccdef_pie_default.cpp) | c++17 | 13 | Position-independent executables are a TOOLCHAIN default, not a language one: upstream gcc:N builds default to non-PIE while distro packages (like the Debian g++-16 CI uses) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you're in. |
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gccdef_dialect.cpp](gccdef_dialect.cpp) | default | GCC >= 13 | covered | Compiled WITHOUT any -std flag to test the compiler's default dialect: gnu++17 on GCC 13-15, gnu++20 from GCC 16 -- code that relies on "whatever the compiler defaults to" changes meaning across releases. |
+| [gccdef_fp_contract.cpp](gccdef_fp_contract.cpp) | c++17 | GCC >= 13 | covered | -ffp-contract=fast is GCC's default in every release (13-16) and every dialect, even strict -std=c++NN: a*b+c may compile to one fused multiply-add, so results change when -march gains FMA -- not because you asked for fast-math. |
+| [gccdef_pie_default.cpp](gccdef_pie_default.cpp) | c++17 | GCC >= 13 | covered | Position-independent executables are a TOOLCHAIN default, not a language one: upstream gcc:N builds default to non-PIE while distro packages (like the Debian g++-16 CI uses) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you're in. |

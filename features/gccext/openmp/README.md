@@ -8,6 +8,6 @@ _Folder: `features/gccext/openmp/`. 1 topic(s). Generated from `gcc_feature_test
 
 ## gcc-openmp
 
-| File | std | min-gcc | Description |
-| ---- | --- | ------- | ----------- |
-| [gccext_openmp_parallel_for.cpp](gccext_openmp_parallel_for.cpp) | c++17 | 13 | OpenMP #pragma omp parallel for parallelises a loop across threads via libgomp; -fopenmp both compiles and links. |
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gccext_openmp_parallel_for.cpp](gccext_openmp_parallel_for.cpp) | c++17 | GCC >= 13 | covered | OpenMP #pragma omp parallel for parallelises a loop across threads via libgomp; -fopenmp both compiles and links. |

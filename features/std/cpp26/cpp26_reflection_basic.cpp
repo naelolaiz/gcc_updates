@@ -1,26 +1,21 @@
-// description: C++26 static reflection (P2996). API is still settling -- file is experimental.
+// description: C++26 static reflection inspects a type's members at compile time and synthesizes a projected array without hand-written field enumeration.
 // reference: https://en.cppreference.com/w/cpp/meta
+// why: Generic code can derive structure from program declarations without macros or generated files.
+// before: Libraries used registration macros, tuples, or a separate code-generation step.
+// pitfall: GCC 16 requires -freflection, and reflected entities obey access-control context.
 
 #include "support/demo.hpp"
-#include <cassert>
-// The reflection header location and API spelling are subject to change.
-// This file demonstrates the SHAPE of expected usage; mark experimental.
-#if __has_include(<meta>)
-#  include <meta>
-#endif
+#include <meta>
 
 struct Point { int x; int y; };
 
 int main() {
     demo::title("C++26 reflection basic");
-#if __has_include(<meta>) && defined(__cpp_static_reflection)
     constexpr auto refl = ^^Point;
-    constexpr auto members = std::meta::nonstatic_data_members_of(refl);
-    static_assert(members.size() == 2);
-#else
-    // No reflection support in this build; treat as a soft-skip.
-    (void)0;
-#endif
+    // The query returns a temporary vector. Keep it inside one constant
+    // expression so its transient allocation is released before evaluation ends.
+    static_assert(std::meta::nonstatic_data_members_of(
+                      refl, std::meta::access_context::current()).size() == 2);
     demo::text("check", "static assertions passed");
     return 0;
 }
