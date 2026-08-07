@@ -19,13 +19,13 @@ expected sanitizer report text rather than accepting any failure.
 
 ```bash
 # UBSan + ASan (the default sanitizer profile in CI)
-./scripts/podman-dev.sh 15 sanitize=undefined,address
+./scripts/container-dev.sh 15 sanitize=undefined,address
 
 # TSan (separate, since it can't co-exist with ASan)
-./scripts/podman-dev.sh 15 sanitize=thread
+./scripts/container-dev.sh 15 sanitize=thread
 
 # Pure leak detection (lighter than full ASan)
-./scripts/podman-dev.sh 15 sanitize=leak
+./scripts/container-dev.sh 15 sanitize=leak
 ```
 
 The narrative reference is in [../../../docs/sanitizers.md](../../../docs/sanitizers.md).

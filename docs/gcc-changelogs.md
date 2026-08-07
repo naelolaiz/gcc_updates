@@ -254,7 +254,7 @@ A few classes of compiler features can't be exercised through this repo's
 - **`-fanalyzer` (the static analyzer)** emits warnings, not binaries. The
   analyzer lane compiles each deliberate defect at `-O0 -fanalyzer` and fails
   unless the expected `-Wanalyzer-*` category appears. Run it with
-  `./scripts/podman-dev.sh 16 analyzer`.
+  `./scripts/container-dev.sh 16 analyzer`.
 - **Sanitizers** (`-fsanitize=address,undefined,thread`) abort at runtime
   on errors but don't change the *successful* path. The deliberate-trip demos
   under [../features/gccext/sanitize/](../features/gccext/sanitize/) get around

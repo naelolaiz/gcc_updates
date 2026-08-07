@@ -2,7 +2,7 @@ name: ci
 
 # The default and sanitizer jobs run inside the official `gcc:N` Docker image
 # (Debian-based, ships upstream gcc-N + matching upstream libstdc++-N). Build
-# environment matches scripts/podman-dev.sh so local and CI are bit-identical.
+# environment matches scripts/container-dev.sh so local and CI are bit-identical.
 #
 # Build is driven by CMake + CTest. See cmake/GccFeature.cmake for the
 # gcc_feature_test() function and registration validation.
@@ -21,12 +21,22 @@ defaults:
 
 jobs:
   test:
-    name: gcc-${{ matrix.gcc }}
-    runs-on: ubuntu-latest
+    # Each GCC version runs on both architectures: amd64 on ubuntu-latest,
+    # arm64 on GitHub's free-for-public-repos ubuntu-24.04-arm runners. The
+    # official gcc:N images are multi-arch, so the same job body serves both;
+    # ARCH-gated examples register only on their matching lane.
+    name: gcc-${{ matrix.gcc }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         gcc: [13, 14, 15, 16]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     container:
       image: gcc:${{ matrix.gcc }}
     steps:

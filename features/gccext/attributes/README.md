@@ -1,6 +1,6 @@
 # GCC extensions: attributes
 
-_Folder: `features/gccext/attributes/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+_Folder: `features/gccext/attributes/`. 1 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
 
 ## Topics
 
@@ -17,5 +17,7 @@ _Folder: `features/gccext/attributes/`. 1 topic(s). Generated from `gcc_feature_
 | [gccext_attribute_packed.cpp](gccext_attribute_packed.cpp) | c++17 | GCC >= 13 | covered | __attribute__((packed)) removes padding between struct members; useful for binary protocols, but unaligned access can be slower. |
 | [gccext_attribute_pure_const.cpp](gccext_attribute_pure_const.cpp) | c++17 | GCC >= 13 | covered | [[gnu::pure]] = no side effects (may read globals); [[gnu::const]] = depends only on args. Both let the compiler eliminate redundant calls. |
 | [gccext_attribute_target.cpp](gccext_attribute_target.cpp) | c++17 | GCC >= 13 | covered | [[gnu::target("avx2")]] compiles ONE function with extra ISA flags; the rest of the TU stays at the default ISA. |
+| [gccext_attribute_target_aarch64.cpp](gccext_attribute_target_aarch64.cpp) | c++17 | GCC >= 13 | covered | [[gnu::target("arch=armv8-a+crc")]] is the AArch64 spelling of per-function ISA selection: ONE function gets extra architecture extensions while the rest of the TU stays at the default ISA. |
 | [gccext_likely_unlikely.cpp](gccext_likely_unlikely.cpp) | c++20 | GCC >= 13 | covered | [[likely]] and [[unlikely]] (C++20 standard) hint branch frequency to the optimizer; GCC implements them via __builtin_expect. |
 | [gccext_target_clones.cpp](gccext_target_clones.cpp) | c++17 | GCC >= 13 | covered | [[gnu::target_clones("default,avx2,avx512f")]] generates multiple versions; an IFUNC dispatches to the best at startup. |
+| [gccext_target_clones_aarch64.cpp](gccext_target_clones_aarch64.cpp) | c++17 | GCC >= 14 | covered | [[gnu::target_clones("default", "sve")]] works on AArch64 from GCC 14 (ACLE function multi-versioning): an IFUNC picks the SVE clone when the CPU has it, the default clone otherwise. |

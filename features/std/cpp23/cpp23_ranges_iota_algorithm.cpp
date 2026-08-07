@@ -2,6 +2,7 @@
 // reference: https://en.cppreference.com/w/cpp/algorithm/ranges/iota
 
 #include "support/demo.hpp"
+#include <algorithm>  // libstdc++ < 14.3 declares ranges::iota here, not <numeric>
 #include <cassert>
 #include <numeric>
 #include <ranges>

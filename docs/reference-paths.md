@@ -7,10 +7,10 @@ points.
 Shortcut commands, instead of writing CTest regexes by hand:
 
 ```bash
-./scripts/podman-dev.sh 16 list
-./scripts/podman-dev.sh 16 show cpp23_expected
-./scripts/podman-dev.sh 16 run cpp23_expected
-./scripts/podman-dev.sh 16 -- -L essential
+./scripts/container-dev.sh 16 list
+./scripts/container-dev.sh 16 show cpp23_expected
+./scripts/container-dev.sh 16 run cpp23_expected
+./scripts/container-dev.sh 16 -- -L essential
 ```
 
 ## Essential modern C++
@@ -63,7 +63,7 @@ Read these as before/after pairs:
 
 1. Start with [`gccext_diagnostic_pragma`](../features/gccext/pragmas/gccext_diagnostic_pragma.cpp).
 2. Run the compile-fail examples with
-   `./scripts/podman-dev.sh 16 -- -L diagnostics` and read the matched
+   `./scripts/container-dev.sh 16 -- -L diagnostics` and read the matched
    diagnostic, not only the pass/fail result.
 3. Compare ASan, UBSan, TSan, and `-fanalyzer` using
    [the sanitizer guide](sanitizers.md).

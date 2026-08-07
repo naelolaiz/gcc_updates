@@ -1,5 +1,6 @@
 // description: __builtin_cpu_supports("feature") tests a CPU capability at runtime (after __builtin_cpu_init) -- the manual dispatch mechanism underneath [[gnu::target_clones]]'s automatic IFUNC dispatch.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/x86-Built-in-Functions.html
+// note: x86-only through GCC 15; on AArch64 use [[gnu::target_clones]] (see gccext_target_clones_aarch64) or glibc getauxval(AT_HWCAP) for runtime dispatch.
 
 #include "support/demo.hpp"
 
