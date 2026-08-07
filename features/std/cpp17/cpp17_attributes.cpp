@@ -6,7 +6,9 @@
 
 [[nodiscard]] int parse_required(int x) { return x * 2; }
 
-[[nodiscard("you almost certainly want to check this status")]]
+// (C++20 adds [[nodiscard("reason")]] with a message; that spelling is not
+// valid C++17, so this demo keeps the plain form.)
+[[nodiscard]]
 int do_io() { return 0; }
 
 int classify(int x) {

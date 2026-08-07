@@ -12,7 +12,9 @@ and CTest drive the build and run; the function macro lives in
 times on GCC 13/14/15/16 plus three more runs on GCC 15/16 under UBSan+ASan,
 TSan, and `-fanalyzer` — so correctness, runtime UB, data races, and
 compile-time path analysis are all covered per push. The matching official
-`gcc:N` image is used for every compiler lane, including GCC 16.
+`gcc:N` image is used for every compiler lane, including GCC 16. A Clang 22
+cross-check lane compiles and runs every portable example against the same
+pinned libstdc++, proving they are standard C++ rather than GCC-isms.
 
 ## Layout
 
@@ -58,6 +60,7 @@ scripts/
   container-dev.sh            # local entrypoint (podman or docker + cmake + ctest)
 containers/
   gcc.Containerfile           # FROM gcc:${GCC_VERSION} + cmake + libtbb-dev
+  clang.Containerfile         # FROM gcc:16 + clang-22 (apt.llvm.org), same libstdc++
 docs/
   reference-paths.md           # short routes through the exhaustive catalog
   example-style.md             # content and proof standard for examples
@@ -68,7 +71,7 @@ docs/
   evolution.md                # one concept traced across standards (constexpr, lambdas, …)
   default-changes.md          # measured default-flag/dialect changes between GCC releases
 .github/workflows/
-  ci.yml                      # gcc 13/14/15/16 matrix + ubsan+asan + tsan + analyzer jobs
+  ci.yml                      # gcc 13/14/15/16 + clang-22 matrix + ubsan+asan + tsan + analyzer jobs
 ```
 
 ## How each file gets compiled
@@ -146,6 +149,7 @@ across runs. Podman is the default engine; pass `engine=docker` (or set
 ./scripts/container-dev.sh 14            # same, GCC 14
 ./scripts/container-dev.sh 15            # same, GCC 15
 ./scripts/container-dev.sh 16            # same, GCC 16
+./scripts/container-dev.sh clang22       # clang-22 cross-check lane
 
 # CTest filters (everything after `--` is forwarded as-is to ctest):
 ./scripts/container-dev.sh 15 -- -R cpp23_         # only tests matching cpp23_
@@ -185,8 +189,11 @@ between local and CI for those jobs.
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
 | `gcc-{13,14,15,16} ({amd64,arm64})` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version × architecture, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N, minus `ARCH`-gated examples of the other architecture; GCC 16 also proves modules, contracts, reflection, and the newest library examples |
+| `clang-22 ({amd64,arm64})` | `cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-22` in `gcc:16` + clang-22 from apt.llvm.org | every test not marked `GCC_ONLY` (and within its `MIN_CLANG`/libstdc++ gates), compiled with clang against the same upstream libstdc++ 16 the GCC 16 lane uses |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
+| `sanitize (clang-22, ubsan + asan + lsan)` | same `-DGCC_FEATURE_SANITIZE=undefined,address` configure, compiled by clang-22 against compiler-rt | the same demos proven under the upstream sanitizer runtimes |
+| `sanitize (clang-22, tsan)` | `-DGCC_FEATURE_SANITIZE=thread` under clang-22 | same as the gcc tsan lane, minus `GCC_ONLY` demos |
 | `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `gcc:16`; CTest compiles each example at `-O0` and matches its diagnostic category | `REQUIRES_ANALYZER` compile-only demos |
 
 Each CTest run uses `--verbose` so the example output remains visible in the
@@ -195,6 +202,21 @@ registered in that configure mode.
 
 See [docs/sanitizers.md](docs/sanitizers.md) for what each sanitizer adds to
 the build and how the deliberate-trip demos assert their expected report text.
+
+### The clang cross-check lane
+
+The `clang-22` jobs install clang from LLVM's own apt repository into the
+`gcc:16` image and point it at the image's `/usr/local` GCC installation, so
+clang compiles against the exact upstream libstdc++ 16 the GCC lanes use —
+only the front-end changes. Registrations control the lane with three
+keywords: `GCC_ONLY` excludes an example (GCC extensions, GCC-release smoke
+tests, and features no mainline clang implements yet, such as reflection or
+contracts), `MIN_CLANG <n>` sets a version floor, and
+`EXPECT_ERROR_GCC`/`EXPECT_ERROR_CLANG` split a negative example's expected
+diagnostic when the two compilers word it differently. Locally the same lane
+is `./scripts/container-dev.sh clang22`
+([containers/clang.Containerfile](containers/clang.Containerfile)).
+`coverage.yml` records the axis per example as `gcc_only` and `min_clang`.
 
 ### libstdc++ vs g++ — separate version axes
 
@@ -260,7 +282,8 @@ so this concern is purely informational.
    `description`, `reference`, `why`, `before`, and `pitfall`.
 3. Write `int main()` that asserts what should hold, returns 0 on success.
 4. Add a `gcc_feature_test(<name> STD c++NN MIN_GCC N TOPIC <topic>)` line
-   to that folder's `CMakeLists.txt`. See
+   to that folder's `CMakeLists.txt`. Mark it `GCC_ONLY` (or give it a
+   `MIN_CLANG`) if the clang lane cannot build it. See
    [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 5. Run `./scripts/container-dev.sh <ver>` to verify locally.
 6. Run `./scripts/container-dev.sh <ver> readme` to regenerate the bucket's

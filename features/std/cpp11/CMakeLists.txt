@@ -34,8 +34,10 @@ gcc_feature_test(cpp11_range_for            STD c++11  MIN_GCC 13  TOPIC languag
 gcc_feature_test(cpp11_ratio                STD c++11  MIN_GCC 13  TOPIC templates)
 gcc_feature_test(cpp11_raw_string           STD c++11  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp11_reference_wrapper    STD c++11  MIN_GCC 13  TOPIC stl)
+# -Wmaybe-uninitialized is a GCC-only warning (and a GCC-only false positive
+# in <regex>), so the workaround flag must not reach clang.
 gcc_feature_test(cpp11_regex                STD c++11  MIN_GCC 13  TOPIC stl
-                 EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized)
+                 GCC_EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized)
 gcc_feature_test(cpp11_rvalue_move          STD c++11  MIN_GCC 13  TOPIC language
                  TAGS essential ownership value-categories)
 gcc_feature_test(cpp11_scoped_enum          STD c++11  MIN_GCC 13  TOPIC language
@@ -56,7 +58,8 @@ gcc_feature_test(cpp11_uniform_init_narrowing_error
                  STD c++11  MIN_GCC 13  TOPIC language
                  TAGS diagnostics initialization  STATUS negative
                  PREREQUISITES cpp11_uniform_init
-                 EXPECT_ERROR "narrowing conversion")
+                 EXPECT_ERROR_GCC "narrowing conversion"
+                 EXPECT_ERROR_CLANG "cannot be narrowed to")
 gcc_feature_test(cpp11_unordered_map        STD c++11  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp11_user_defined_literal STD c++11  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp11_variadic_templates   STD c++11  MIN_GCC 13  TOPIC templates)

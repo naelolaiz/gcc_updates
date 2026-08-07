@@ -1,11 +1,13 @@
+# GCC_ONLY: Clang 22 has no -fcontracts (P2900 not implemented yet).
 gcc_feature_test(cpp26_contracts_basic         STD c++26  MIN_GCC 16  TOPIC language
                  TAGS contracts diagnostics
                  PROPOSAL P2900R14  FEATURE_MACRO __cpp_contracts
-                 EXTRA_COMPILE_FLAGS -fcontracts
+                 EXTRA_COMPILE_FLAGS -fcontracts  GCC_ONLY
                  PREREQUISITES cpp11_static_assert)
 
+# GCC_ONLY: Clang 22 does not implement P3068 (throw in constant evaluation).
 gcc_feature_test(cpp26_constexpr_exceptions    STD c++26  MIN_GCC 16  TOPIC language
-                 TAGS compile-time error-handling
+                 TAGS compile-time error-handling  GCC_ONLY
                  PROPOSAL P3068R5  PREREQUISITES cpp11_exception_ptr cpp14_relaxed_constexpr)
 
 gcc_feature_test(cpp26_debugging               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
@@ -22,8 +24,9 @@ gcc_feature_test(cpp26_delete_reason_diagnostic
                  PROPOSAL P2573R2  PREREQUISITES cpp26_delete_reason
                  EXPECT_ERROR "use parse_config.*length is tracked")
 
+# GCC_ONLY: Clang 22 does not implement P1306 ('template for').
 gcc_feature_test(cpp26_expansion_statements    STD c++26  MIN_GCC 16  TOPIC language
-                 TAGS templates compile-time
+                 TAGS templates compile-time  GCC_ONLY
                  PROPOSAL P1306R5  FEATURE_MACRO __cpp_expansion_statements
                  PREREQUISITES cpp11_variadic_templates)
 
@@ -37,9 +40,14 @@ gcc_feature_test(cpp26_indirect_polymorphic    STD c++26  MIN_GCC 16  MIN_LIBSTD
                  PROPOSAL P3019R14  FEATURE_MACRO __cpp_lib_indirect
                  PREREQUISITES cpp11_smart_ptrs)
 
+# -Wno-deprecated-declarations: libstdc++ 16's own <inplace_vector> uses
+# is_trivial_v, which the same release deprecates for C++26; clang reports
+# the use (attributed to the instantiation from user code) where GCC's
+# system-header suppression hides it.
 gcc_feature_test(cpp26_inplace_vector          STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
                  TOPIC stl  TAGS containers memory
                  PROPOSAL P0843R14  FEATURE_MACRO __cpp_lib_inplace_vector
+                 EXTRA_COMPILE_FLAGS -Wno-deprecated-declarations
                  PREREQUISITES cpp11_array)
 
 gcc_feature_test(cpp26_optional_ref            STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
@@ -51,17 +59,21 @@ gcc_feature_test(cpp26_pack_indexing           STD c++26  MIN_GCC 15  TOPIC lang
                  TAGS templates compile-time  PROPOSAL P2662R3
                  FEATURE_MACRO __cpp_pack_indexing  PREREQUISITES cpp11_variadic_templates)
 
+# GCC_ONLY: mainline Clang 22 has no P2996 reflection (only Bloomberg's
+# experimental clang-p2996 fork does) and no -freflection flag.
 gcc_feature_test(cpp26_reflection_basic        STD c++26  MIN_GCC 16  TOPIC templates
                  TAGS reflection compile-time  PROPOSAL P2996R13
-                 FEATURE_MACRO __cpp_impl_reflection
+                 FEATURE_MACRO __cpp_impl_reflection  GCC_ONLY
                  EXTRA_COMPILE_FLAGS -freflection)
 
 gcc_feature_test(cpp26_saturation_arith        STD c++26  MIN_GCC 14  TOPIC stl)
 
 # ARCH x86: libstdc++ 16 does not implement <simd> for aarch64 yet ('simd'
 # in namespace 'std' does not name a type); see coverage/gaps.yml.
+# GCC_ONLY: libstdc++ 16's <simd> is built on GCC vector builtins and does
+# not declare std::simd under clang either.
 gcc_feature_test(cpp26_simd                    STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
-                 TOPIC stl  TAGS numerics performance simd  ARCH x86
+                 TOPIC stl  TAGS numerics performance simd  ARCH x86  GCC_ONLY
                  PROPOSAL P1928R15  PREREQUISITES gccext_vector_extensions)
 
 gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 15  TOPIC stl)
@@ -82,7 +94,8 @@ gcc_feature_test(cpp26_uninitialized_diagnostic STD c++26  MIN_GCC 16  TOPIC lan
                  TAGS diagnostics safety  STATUS negative
                  PROPOSAL P2795R5
                  EXTRA_COMPILE_FLAGS -Werror=uninitialized
-                 EXPECT_ERROR "used uninitialized")
+                 EXPECT_ERROR_GCC "used uninitialized"
+                 EXPECT_ERROR_CLANG "uninitialized when used")
 
 gcc_feature_test(cpp26_philox_engine           STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
                  TOPIC stl  TAGS numerics random
