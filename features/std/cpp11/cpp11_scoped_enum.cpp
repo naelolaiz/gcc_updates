@@ -1,5 +1,8 @@
 // description: 'enum class' (scoped enums) don't leak names into the surrounding scope and don't implicitly convert to int.
 // reference: https://en.cppreference.com/w/cpp/language/enum
+// why: Distinct domains can reuse enumerator names without accidental integer mixing.
+// before: Unscoped enums injected names and converted implicitly to arithmetic types.
+// pitfall: Converting to the underlying integer now requires an explicit cast.
 
 #include "support/demo.hpp"
 #include <cassert>

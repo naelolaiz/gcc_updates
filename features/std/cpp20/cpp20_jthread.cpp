@@ -1,6 +1,9 @@
 // description: std::jthread auto-joins on destruction and supports cooperative cancellation via stop_token.
 // since: GCC 10 (jthread); fully usable across GCC 14/15/16.
 // reference: https://en.cppreference.com/w/cpp/thread/jthread
+// why: Thread lifetime and cancellation can follow RAII instead of depending on manual join paths.
+// before: std::thread required an explicit join or detach before every destruction path.
+// pitfall: A stop request is cooperative; work that never checks its token may still block destruction.
 
 #include "support/demo.hpp"
 #include <atomic>

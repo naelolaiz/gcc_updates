@@ -1,5 +1,8 @@
 // description: Brace-init {} works uniformly for aggregates, containers, and built-ins; rejects narrowing conversions.
 // reference: https://en.cppreference.com/w/cpp/language/list_initialization
+// why: One syntax initializes scalars, aggregates, and containers while rejecting silent narrowing.
+// before: Parentheses, assignment, and aggregate braces had different rules and failure modes.
+// pitfall: An initializer_list constructor can take priority over another seemingly better overload.
 
 #include "support/demo.hpp"
 #include <cassert>

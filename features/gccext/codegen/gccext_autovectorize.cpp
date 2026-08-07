@@ -1,5 +1,8 @@
-// description: A loop the auto-vectorizer should turn into SIMD at -O3. We can't easily ASSERT vectorization at runtime; use 'g++ -O3 -fopt-info-vec' (or this build) to confirm.
+// description: A SAXPY loop is checked twice: runtime assertions prove its result, and GCC's optimization report proves that -O3 vectorized it.
 // reference: https://gcc.gnu.org/projects/tree-ssa/vectorization.html
+// why: Correct scalar results alone do not prove that the optimizer emitted SIMD work.
+// before: Developers inspected assembly manually or assumed -O3 implied vectorization.
+// pitfall: Aliasing, control flow, target flags, and sanitizer instrumentation can block vectorization.
 
 #include "support/demo.hpp"
 #include <cassert>

@@ -5,10 +5,17 @@
 # Filter by name:  ctest -R cpp23_flat_map
 
 gcc_feature_test(cpp23_assume                       STD c++23  MIN_GCC 14  TOPIC language)
+gcc_feature_test(cpp23_allocate_at_least            STD c++23  MIN_GCC 16  TOPIC stl
+                 MIN_LIBSTDCXX 16  TAGS memory allocators
+                 FEATURE_MACRO __cpp_lib_allocate_at_least)
 gcc_feature_test(cpp23_auto_decay_copy              STD c++23  MIN_GCC 14  TOPIC language)
 gcc_feature_test(cpp23_byteswap                     STD c++23  MIN_GCC 14  TOPIC stl)
-gcc_feature_test(cpp23_deducing_this                STD c++23  MIN_GCC 14  TOPIC templates)
-gcc_feature_test(cpp23_expected                     STD c++23  MIN_GCC 14  TOPIC stl)
+gcc_feature_test(cpp23_deducing_this                STD c++23  MIN_GCC 14  TOPIC templates
+                 TAGS essential callables value-categories
+                 PREREQUISITES cpp11_rvalue_move)
+gcc_feature_test(cpp23_expected                     STD c++23  MIN_GCC 14  TOPIC stl
+                 TAGS essential error-handling value-types
+                 PREREQUISITES cpp17_optional)
 gcc_feature_test(cpp23_flat_map                     STD c++23  MIN_GCC 15  TOPIC stl)
 gcc_feature_test(cpp23_flat_set                     STD c++23  MIN_GCC 15  TOPIC stl)
 gcc_feature_test(cpp23_format_ranges                STD c++23  MIN_GCC 14  TOPIC stl
@@ -23,7 +30,9 @@ gcc_feature_test(cpp23_multidim_subscript           STD c++23  MIN_GCC 14  TOPIC
 gcc_feature_test(cpp23_optional_monadic             STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_out_ptr                      STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_print                        STD c++23  MIN_GCC 14  TOPIC stl
-                 EXTRA_LIBS stdc++exp)
+                 TAGS essential io format
+                 EXTRA_LIBS stdc++exp
+                 EXPECT_RUN_OUTPUT "hello from std::println")
 gcc_feature_test(cpp23_ranges_adjacent              STD c++23  MIN_GCC 14  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_cartesian_product     STD c++23  MIN_GCC 14  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_chunk_slide           STD c++23  MIN_GCC 14  TOPIC ranges)
@@ -34,9 +43,13 @@ gcc_feature_test(cpp23_ranges_fold                  STD c++23  MIN_GCC 14  TOPIC
                  MIN_LIBSTDCXX 13)
 gcc_feature_test(cpp23_ranges_iota_algorithm        STD c++23  MIN_GCC 14  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_join_with             STD c++23  MIN_GCC 14  TOPIC ranges)
+gcc_feature_test(cpp23_ranges_shift                 STD c++23  MIN_GCC 16  TOPIC ranges
+                 MIN_LIBSTDCXX 16  TAGS algorithms containers)
 gcc_feature_test(cpp23_ranges_starts_ends_contains  STD c++23  MIN_GCC 14  TOPIC ranges
                  MIN_LIBSTDCXX 16)
-gcc_feature_test(cpp23_ranges_to                    STD c++23  MIN_GCC 14  TOPIC ranges)
+gcc_feature_test(cpp23_ranges_to                    STD c++23  MIN_GCC 14  TOPIC ranges
+                 TAGS essential containers
+                 PREREQUISITES cpp20_ranges_views)
 gcc_feature_test(cpp23_ranges_zip                   STD c++23  MIN_GCC 14  TOPIC ranges)
 gcc_feature_test(cpp23_recursive_lambda             STD c++23  MIN_GCC 14  TOPIC templates)
 gcc_feature_test(cpp23_resize_and_overwrite         STD c++23  MIN_GCC 14  TOPIC stl)

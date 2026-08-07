@@ -1,5 +1,8 @@
 // description: Structured bindings: 'auto [a, b, c] = expr;' destructures arrays, tuples/pairs, and aggregates.
 // reference: https://en.cppreference.com/w/cpp/language/structured_binding
+// why: Code can name the parts of a returned aggregate directly at the use site.
+// before: Callers used std::get, .first/.second, or declared variables before std::tie.
+// pitfall: auto, auto&, and const auto& choose copy, mutable alias, and const alias semantics.
 
 #include "support/demo.hpp"
 #include <array>

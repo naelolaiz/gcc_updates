@@ -1,5 +1,8 @@
 // description: std::variant<Ts...> is a type-safe tagged union; std::visit dispatches on the active alternative.
 // reference: https://en.cppreference.com/w/cpp/utility/variant
+// why: One value can hold one of several known types while preserving which type is active.
+// before: Unions required a separate tag and manual construction, destruction, and dispatch.
+// pitfall: std::get<T> throws when T is not active; use holds_alternative, get_if, or visit.
 
 #include "support/demo.hpp"
 #include <cassert>

@@ -1,5 +1,8 @@
 // description: std::format provides Python-style typesafe formatting; std::format_to writes into an output iterator.
 // reference: https://en.cppreference.com/w/cpp/utility/format/format
+// why: Formatting can be readable and type-safe without stream state or C varargs.
+// before: Code composed iostream manipulators or passed unchecked arguments to printf.
+// pitfall: A compile-time format string rejects mismatched specifiers before execution.
 
 #include "support/demo.hpp"
 #include <cassert>

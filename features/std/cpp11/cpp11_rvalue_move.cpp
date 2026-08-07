@@ -1,5 +1,8 @@
 // description: Rvalue references && + std::move enable transferring resources without copying. std::forward preserves value category in templates.
 // reference: https://en.cppreference.com/w/cpp/utility/move
+// why: Resource-owning values can transfer storage instead of allocating and copying it.
+// before: Containers and return values either copied expensive state or used manual ownership protocols.
+// pitfall: std::move is only a cast; the moved-from object remains valid but its value is usually unspecified.
 
 #include "support/demo.hpp"
 #include <cassert>

@@ -1,5 +1,8 @@
 // description: std::span is a non-owning view over a contiguous sequence; cheap, type-erased over container kind.
 // reference: https://en.cppreference.com/w/cpp/container/span
+// why: Contiguous buffer APIs can carry length without owning or copying storage.
+// before: Functions accepted raw pointer-plus-size pairs whose relationship was only conventional.
+// pitfall: A span does not extend storage lifetime, and vector reallocation invalidates it.
 
 #include "support/demo.hpp"
 #include <array>

@@ -1,5 +1,8 @@
 // description: Defining and using concepts to constrain templates -- replaces SFINAE for most cases.
 // reference: https://en.cppreference.com/w/cpp/language/constraints
+// why: Template requirements become named interface conditions with focused diagnostics.
+// before: enable_if and detection idioms encoded participation indirectly.
+// pitfall: A syntactically satisfied concept cannot generally verify all semantic promises.
 
 #include "support/demo.hpp"
 #include <cassert>

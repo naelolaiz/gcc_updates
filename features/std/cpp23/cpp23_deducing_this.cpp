@@ -1,5 +1,8 @@
 // description: Explicit object parameter ('deducing this') replaces ref-qual overload sets and enables CRTP-without-CRTP.
 // reference: https://en.cppreference.com/w/cpp/language/member_functions#Explicit_object_parameter
+// why: One member definition can preserve whether its object is const, mutable, lvalue, or rvalue.
+// before: APIs repeated &, const&, &&, and const&& overloads or used CRTP helpers.
+// pitfall: An explicit-object member is not an ordinary implicit-this member and has different pointer syntax.
 
 #include "support/demo.hpp"
 #include <cassert>

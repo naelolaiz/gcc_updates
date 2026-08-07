@@ -1,5 +1,8 @@
 // description: std::optional<T> represents a value-or-nothing; use has_value(), value_or(), and emplace().
 // reference: https://en.cppreference.com/w/cpp/utility/optional
+// why: A function can represent absence without sentinel values or a separate output parameter.
+// before: APIs returned magic values, nullable owning pointers, or bool-plus-output pairs.
+// pitfall: Dereferencing a disengaged optional is undefined; value() instead throws bad_optional_access.
 
 #include "support/demo.hpp"
 #include <cassert>

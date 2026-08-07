@@ -1,5 +1,8 @@
 // description: Lambdas: anonymous callables with captures. [=]/[&]/[x]/[&x] cover the four common capture modes.
 // reference: https://en.cppreference.com/w/cpp/language/lambda
+// why: Small behavior can stay next to the algorithm or callback that consumes it.
+// before: Even a one-line operation required a named function object or free function.
+// pitfall: Reference captures must not outlive the objects they refer to.
 
 #include "support/demo.hpp"
 #include <algorithm>

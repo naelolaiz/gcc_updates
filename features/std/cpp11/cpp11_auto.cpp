@@ -1,5 +1,8 @@
 // description: 'auto' deduces a variable's type from its initializer; 'decltype' deduces the type of an expression without evaluating it.
 // reference: https://en.cppreference.com/w/cpp/language/auto
+// why: Code can express the value it wants without repeating long or implementation-specific types.
+// before: Iterator and expression-result types had to be spelled explicitly.
+// pitfall: auto follows template deduction rules, so top-level const and references may be dropped.
 
 #include "support/demo.hpp"
 #include <cassert>

@@ -8,6 +8,6 @@ _Folder: `features/gccext/sanitize/tsan/`. 1 topic(s). Generated from `gcc_featu
 
 ## gcc-sanitize
 
-| File | std | min-gcc | Description |
-| ---- | --- | ------- | ----------- |
-| [gccext_tsan_data_race.cpp](gccext_tsan_data_race.cpp) | c++17 | 13 | TSan demo: two threads writing the same plain int without synchronisation. Runs only under -fsanitize=thread; reports a data race. |
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gccext_tsan_data_race.cpp](gccext_tsan_data_race.cpp) | c++17 | GCC >= 13 | covered | TSan demo: two threads writing the same plain int without synchronisation. Runs only under -fsanitize=thread; reports a data race. |

@@ -1,5 +1,8 @@
 // description: Pack indexing: pack...[I] selects the I-th element of a parameter pack directly -- no recursive helpers or tuple detours to reach a single pack element.
 // reference: https://en.cppreference.com/w/cpp/language/pack_indexing
+// why: Generic code can select one pack element directly without recursive helpers or tuple conversion.
+// before: Libraries used tuple_element/get, overload tricks, or recursive template instantiation.
+// pitfall: The index must be a converted constant expression and remain within the pack bounds.
 
 #include "support/demo.hpp"
 #include <string>

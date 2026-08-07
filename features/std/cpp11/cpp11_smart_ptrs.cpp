@@ -1,5 +1,8 @@
 // description: unique_ptr (sole ownership) / shared_ptr (refcounted) / weak_ptr (non-owning observer); std::make_shared is the preferred construction.
 // reference: https://en.cppreference.com/w/cpp/memory/unique_ptr
+// why: Ownership and cleanup policy become visible in types and execute automatically through RAII.
+// before: Raw new/delete required every control-flow path to coordinate cleanup manually.
+// pitfall: A shared_ptr cycle keeps objects alive; use weak_ptr for a non-owning back edge.
 
 #include "support/demo.hpp"
 #include <cassert>

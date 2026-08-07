@@ -8,9 +8,9 @@ registered via one `gcc_feature_test()` call in its folder's `CMakeLists.txt`.
 ## Quick lookup: print the command for any example
 
 ```bash
-# Configure once, then dump the compile command for any target.
-cmake -S . -B build
-cmake --build build --target cpp23_print --verbose 2>&1 | grep g++
+# Read one example and its registration, then run it in the supported container.
+./scripts/podman-dev.sh 16 show cpp23_print
+./scripts/podman-dev.sh 16 run cpp23_print
 ```
 
 ## Default command
@@ -18,7 +18,7 @@ cmake --build build --target cpp23_print --verbose 2>&1 | grep g++
 Every example gets this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -O2 -pthread -Ifeatures \
+g++ -std=$STD -Wall -Wextra -Wpedantic -Werror -O2 -pthread -Ifeatures \
     features/<bucket>/<file>.cpp \
     $EXTRA_COMPILE_FLAGS \
     -o build/features/<bucket>/<file>
@@ -29,16 +29,19 @@ subfolder the example lives in.
 
 | Token        | Source                          | Why                                                                             |
 |--------------|---------------------------------|---------------------------------------------------------------------------------|
-| `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix and sanitizer jobs run in `gcc:N`, where `g++` is the default. The analyze job runs in `debian:unstable-slim` and installs `g++-16`, then points `g++` at it via `update-alternatives`. |
+| `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix, sanitizer, and analyzer jobs run in the official `gcc:N` image, where `g++` is the default. |
 | `-std=$STD`  | `STD` arg of `gcc_feature_test()` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`, or `default` (omit `-std` entirely — used by `features/gcc/defaults/` to observe the compiler's default dialect). |
-| `-Wall -Wextra -Wpedantic` | hard-coded default | Strict warnings — examples must compile clean.                                  |
+| `-Wall -Wextra -Wpedantic -Werror` | hard-coded default | Strict warnings — successful examples must compile clean. `WILL_FAIL` runtime probes and explicit `ALLOW_WARNINGS` registrations remove `-Werror`. |
 | `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes. **Sanitizer mode lowers this to `-O1`** to keep deliberate UB observable. |
 | `-pthread`   | hard-coded default              | Always on. No-op for non-threading code; required for `<thread>`, `<atomic>`'s wait/notify, semaphores, latches, etc. |
 | `-Ifeatures` | hard-coded default              | Lets examples include the shared readable-demo helper as `support/demo.hpp`.    |
 | `$EXTRA_COMPILE_FLAGS` | `EXTRA_COMPILE_FLAGS …` arg | File-specific flags (e.g. `-fopenmp`, `-D_GLIBCXX_DEBUG`, `-O3`). |
 
-The output binary lives in `build/features/<bucket>/<file>` (CMake's standard
-out-of-source build layout). `EXTRA_LIBS` gets added via
+For a normal runtime example, the output binary lives in
+`build/features/<bucket>/<file>` (CMake's standard out-of-source build
+layout). Diagnostic, compile-only, and module proof modes instead create their
+objects or temporary executable inside that bucket's build directory.
+`EXTRA_LIBS` gets added via
 `target_link_libraries(... PRIVATE …)` after the source file, e.g. `stdc++exp`
 for `std::stacktrace` or `tbb` for parallel STL.
 
@@ -49,10 +52,11 @@ for `std::stacktrace` or `tbb` for parallel STL.
 | `EXTRA_LIBS stdc++exp` | `std/cpp23/cpp23_print.cpp`, `std/cpp23/cpp23_stacktrace.cpp` | Links libstdc++exp (the *experimental* libstdc++ archive). Required on **GCC 14** for `std::print`/`std::println`/`std::stacktrace`. **GCC 15+** ships them in the main libstdc++ — see [gcc/gcc15/gcc15_default_print.cpp](../features/gcc/gcc15/gcc15_default_print.cpp). |
 | `EXTRA_LIBS tbb`    | `std/cpp17/cpp17_parallel_algos.cpp`                  | Links Intel TBB. Parallel STL execution policies (`std::execution::par`, `par_unseq`) are implemented on top of TBB on libstdc++. |
 | `EXTRA_COMPILE_FLAGS -fopenmp` | `gccext/openmp/gccext_openmp_parallel_for.cpp` | Enables OpenMP pragmas. The function automatically forwards `-fopenmp` to the link step too so libgomp is linked. |
-| `EXTRA_COMPILE_FLAGS -fcontracts` | `std/cpp26/cpp26_contracts_basic.cpp` | Enables C++26 contracts (currently fails to compile — `EXPERIMENTAL` + `EXPECT_ERROR` makes that the expected outcome). |
+| `EXTRA_COMPILE_FLAGS -fcontracts` | `std/cpp26/cpp26_contracts_basic.cpp` | Enables GCC 16's C++26 contracts implementation. The example supplies the program-replaceable violation handler and runs satisfied preconditions, postconditions, and `contract_assert`. |
 | `EXTRA_COMPILE_FLAGS -freflection` | `std/cpp26/cpp26_reflection_basic.cpp` | Enables C++26 static-reflection front-end (GCC 16+). |
 | `EXTRA_COMPILE_FLAGS -D_GLIBCXX_DEBUG` | `gccext/sanitize/integration/gccext_glibcxx_debug.cpp` | Turns on libstdc++ debug-mode containers + iterator checks. |
-| `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec=…` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and asks GCC to report which loops vectorised. |
+| `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec-optimized` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and requires a successful compiler report containing `loop vectorized`. Skipped in sanitizer modes because instrumentation changes this code-generation decision. |
+| `EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized` | `std/cpp11/cpp11_regex.cpp` | Keeps a GCC 15 libstdc++ `<regex>` false positive visible under sanitizer instrumentation without weakening other warnings. |
 
 ## How to read a `gcc_feature_test()` call
 
@@ -76,11 +80,23 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `EXTRA_COMPILE_FLAGS <flag…>` | no | Per-test compile flags (e.g. `-fopenmp`, `-D_GLIBCXX_DEBUG`). |
 | `REQUIRES_SANITIZER <san…>` | no | Test enabled only when `-DGCC_FEATURE_SANITIZE=` includes one of the listed sanitizers. |
 | `SKIP_SANITIZER <san…>` | no | Test disabled when active sanitizer matches (e.g. TSan + OpenMP is unsupported). |
-| `REQUIRES_ANALYZER` | no        | Test only enabled with `-DGCC_FEATURE_ANALYZER=ON`. Compile-only with `-fanalyzer` — binary not run. |
+| `REQUIRES_ANALYZER` | no        | Test only enabled with `-DGCC_FEATURE_ANALYZER=ON`. CTest compiles it at `-O0 -fanalyzer`; requires `EXPECT_COMPILE_OUTPUT`. |
 | `WILL_FAIL`         | no        | Runtime test is expected to fail; requires `EXPECT_OUTPUT` so unrelated failures do not pass. |
 | `EXPECT_OUTPUT <re>` | required with `WILL_FAIL` | Output regex that must match the expected sanitizer report text. |
+| `EXPECT_RUN_OUTPUT <re>` | no | Successful binary output must match the regex. |
+| `EXPECT_COMPILE_OUTPUT <re>` | no | A successful compiler invocation must emit a matching diagnostic/report. Used for analyzer and vectorizer claims. |
+| `COMPILE_ONLY` | no | The source must compile cleanly but is not linked or run. Use only when the current runtime does not yet export an implemented header API; explain that with `SKIP_REASON`. |
+| `MODULE_INTERFACE <file>` | no | Compiles the interface first, then the importer, links both objects, and runs the result. |
 | `EXPERIMENTAL`      | no        | Feature not yet supported by current GCC; combined with `EXPECT_ERROR`, the expected outcome is a compile failure. |
 | `EXPECT_ERROR <re>` | no (required by `EXPERIMENTAL`) | The test compiles only, must FAIL, and the regex must match the diagnostic. Also used standalone by the `gcc-diagnostics` demos, which pair it with `-Werror=<warning>` to assert a specific warning fires. |
+| `ALLOW_WARNINGS` | no | Removes baseline `-Werror`. Intended only when a warning is the behavior being asserted. |
+| `TAGS <tag…>` | no | Adds cross-cutting CTest labels in addition to `TOPIC`; `essential` is the curated 24-example path. |
+| `STATUS <status>` | no | Coverage result such as `covered`, `negative`, or `compile-only`. Usually inferred from the proof mode. |
+| `ARCH <arch>` | no | Portability constraint recorded in `coverage.yml`; defaults to `portable`. |
+| `FEATURE_MACRO <macro>` | no | Relevant SD-6 capability macro recorded in coverage metadata. |
+| `PROPOSAL <paper>` | no | WG21 paper identifier for proposal-level traceability. |
+| `PREREQUISITES <name…>` | no | Earlier examples that introduce the concepts this one builds on. |
+| `SKIP_REASON <text>` | no | Rationale for partial or compile-only coverage. |
 
 The libstdc++ release is detected at configure time by asking `g++` to
 preprocess a tiny translation unit that includes `<version>` and reports
