@@ -58,7 +58,7 @@ for `std::stacktrace` or `tbb` for parallel STL.
 | `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec-optimized` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and requires a successful compiler report containing `loop vectorized`. Skipped in sanitizer modes because instrumentation changes this code-generation decision. |
 | `GCC_EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized` | `std/cpp11/cpp11_regex.cpp` | Keeps a GCC 15 libstdc++ `<regex>` false positive visible under sanitizer instrumentation without weakening other warnings. `GCC_EXTRA_COMPILE_FLAGS` because clang has no `-Wmaybe-uninitialized` and would reject the flag. |
 | `EXTRA_COMPILE_FLAGS -mfma` | `gcc/defaults/gccdef_fp_contract.cpp` | Enables x86 FMA codegen so the default `-ffp-contract=fast` can fuse `a*b + c`. `ARCH x86`; the `_aarch64` twin needs no flag because FMA is baseline there. |
-| `EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target` | `gccext/attributes/gccext_target_clones_aarch64.cpp` | Silences GCC 15's experimental-FMV warning for AArch64 `target_clones` under `-Werror` (GCC 14 ignores the unknown `-Wno-` option). |
+| `GCC_EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target` | `gccext/attributes/gccext_target_clones_aarch64.cpp` | Silences GCC 15's experimental-FMV warning for AArch64 `target_clones` under `-Werror` (GCC 14 ignores the unknown `-Wno-` option). GCC-only: clang rejects the unknown option and its AArch64 FMV needs no suppression. |
 
 ## How to read a `gcc_feature_test()` call
 

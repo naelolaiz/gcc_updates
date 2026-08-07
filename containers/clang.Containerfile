@@ -21,6 +21,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       clang-${CLANG_VERSION} \
       libomp-${CLANG_VERSION}-dev \
+      libclang-rt-${CLANG_VERSION}-dev \
  && rm -rf /var/lib/apt/lists/* \
  # Clang's GCC-toolchain autodetection only scans /usr, so it would pair with
  # the Debian base's libstdc++ instead of the image's upstream one under

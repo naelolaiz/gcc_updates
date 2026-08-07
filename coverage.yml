@@ -775,9 +775,9 @@ examples:
     module_interface: null
     prerequisites: []
     extra_libs: []
-    extra_compile_flags:
+    extra_compile_flags: []
+    gcc_extra_compile_flags:
       - '-Wno-experimental-fmv-target'
-    gcc_extra_compile_flags: []
     requires_sanitizer: []
     skip_sanitizer:
       - 'thread'
@@ -1399,7 +1399,7 @@ examples:
     min_clang: null
     min_libstdcxx: null
     max_libstdcxx: null
-    gcc_only: false
+    gcc_only: true
     status: 'covered'
     architecture: 'portable'
     tags:

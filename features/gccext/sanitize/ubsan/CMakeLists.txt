@@ -6,9 +6,12 @@ gcc_feature_test(gccext_ubsan_divide_by_zero    STD c++17  MIN_GCC 13  TOPIC gcc
                  REQUIRES_SANITIZER undefined
                  EXTRA_COMPILE_FLAGS -fno-sanitize-recover=undefined
                  WILL_FAIL  EXPECT_OUTPUT "runtime error: division by zero")
+# GCC_ONLY: clang's -fsanitize=vptr dereferences the (null) vtable pointer
+# while checking and dies with a plain SEGV instead of reporting the
+# "member call on address" diagnostic GCC's instrumentation emits.
 gcc_feature_test(gccext_ubsan_invalid_vptr      STD c++17  MIN_GCC 13  TOPIC gcc-sanitize
                  TAGS object-model diagnostics
-                 REQUIRES_SANITIZER undefined
+                 REQUIRES_SANITIZER undefined  GCC_ONLY
                  EXTRA_COMPILE_FLAGS -fno-sanitize-recover=undefined
                  WILL_FAIL  EXPECT_OUTPUT "runtime error: member call on address")
 gcc_feature_test(gccext_ubsan_misaligned_access STD c++17  MIN_GCC 13  TOPIC gcc-sanitize

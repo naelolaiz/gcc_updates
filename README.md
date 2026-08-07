@@ -192,6 +192,8 @@ between local and CI for those jobs.
 | `clang-22 ({amd64,arm64})` | `cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-22` in `gcc:16` + clang-22 from apt.llvm.org | every test not marked `GCC_ONLY` (and within its `MIN_CLANG`/libstdc++ gates), compiled with clang against the same upstream libstdc++ 16 the GCC 16 lane uses |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
+| `sanitize (clang-22, ubsan + asan + lsan)` | same `-DGCC_FEATURE_SANITIZE=undefined,address` configure, compiled by clang-22 against compiler-rt | the same demos proven under the upstream sanitizer runtimes |
+| `sanitize (clang-22, tsan)` | `-DGCC_FEATURE_SANITIZE=thread` under clang-22 | same as the gcc tsan lane, minus `GCC_ONLY` demos |
 | `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `gcc:16`; CTest compiles each example at `-O0` and matches its diagnostic category | `REQUIRES_ANALYZER` compile-only demos |
 
 Each CTest run uses `--verbose` so the example output remains visible in the
