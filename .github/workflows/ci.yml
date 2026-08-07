@@ -64,6 +64,61 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
+  test-clang:
+    # Cross-check lane: the same gcc:16 image (so the same pinned upstream
+    # libstdc++ 16), with the clang-22 front-end from apt.llvm.org layered on
+    # top — only the compiler changes. Proves the portable examples are
+    # standard C++ rather than GCC-isms. Mirrors containers/clang.Containerfile;
+    # keep the two install recipes in sync.
+    name: clang-22 (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    container:
+      image: gcc:16
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install cmake + libtbb + clang-22
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends cmake libtbb-dev gnupg
+          curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | gpg --dearmor -o /usr/share/keyrings/llvm.gpg
+          . /etc/os-release
+          echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] https://apt.llvm.org/${VERSION_CODENAME}/ llvm-toolchain-${VERSION_CODENAME}-22 main" \
+            > /etc/apt/sources.list.d/llvm.list
+          apt-get update
+          apt-get install -y --no-install-recommends clang-22 libomp-22-dev
+          # Point clang at the image's /usr/local GCC toolchain; its
+          # autodetection only scans /usr and would pair with the Debian
+          # base's older libstdc++ otherwise.
+          echo "--gcc-install-dir=$(ls -d /usr/local/lib/gcc/*/*)" \
+            > /usr/lib/llvm-22/bin/clang++.cfg
+          clang++-22 --version
+          printf '#include <version>\n' | clang++-22 -x c++ -E -dM - | grep "_GLIBCXX_RELEASE " || true
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-22
+
+      - name: Build
+        run: |
+          echo "::group::Compile commands (verbose)"
+          cmake --build build --parallel --verbose
+          echo "::endgroup::"
+
+      - name: Test
+        run: ctest --test-dir build --verbose
+
   sanitize-ubsan-asan:
     # Re-build every example with -fsanitize=undefined,address.
     # The REQUIRES_SANITIZER undefined/address/leak demos

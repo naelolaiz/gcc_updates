@@ -11,13 +11,25 @@ set(GCC_FEATURE_README "check" CACHE STRING
 set(GCC_FEATURE_README_OUT "${CMAKE_SOURCE_DIR}" CACHE PATH
     "Output root for GCC_FEATURE_README=write (mirrors the features/ tree)")
 
-if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(FATAL_ERROR "This project requires GCC (got ${CMAKE_CXX_COMPILER_ID}).")
-endif()
-
+# GCC is the primary toolchain; Clang drives the cross-check lane, which
+# proves the portable examples are standard C++ rather than GCC-isms. The
+# clang lane pairs with the same upstream libstdc++ the GCC lanes use (see
+# containers/clang.Containerfile), so only the compiler front-end changes.
 string(REGEX MATCH "^([0-9]+)" _ "${CMAKE_CXX_COMPILER_VERSION}")
-set(GCC_MAJOR "${CMAKE_MATCH_1}")
-message(STATUS "GCC major version: ${GCC_MAJOR}")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(FEATURE_COMPILER "gcc")
+    set(GCC_MAJOR "${CMAKE_MATCH_1}")
+    message(STATUS "GCC major version: ${GCC_MAJOR}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(FEATURE_COMPILER "clang")
+    set(CLANG_MAJOR "${CMAKE_MATCH_1}")
+    message(STATUS "Clang major version: ${CLANG_MAJOR}")
+    if(GCC_FEATURE_ANALYZER)
+        message(FATAL_ERROR "-fanalyzer is GCC-only; run the analyzer mode under GCC.")
+    endif()
+else()
+    message(FATAL_ERROR "This project requires GCC or Clang (got ${CMAKE_CXX_COMPILER_ID}).")
+endif()
 
 # Architecture family the compiler targets, used to gate ARCH-restricted
 # examples. Probe the compiler rather than the host: it is the target triple,
@@ -91,9 +103,9 @@ endfunction()
 function(gcc_feature_test NAME)
     cmake_parse_arguments(
         ARG
-        "EXPERIMENTAL;REQUIRES_ANALYZER;WILL_FAIL;ALLOW_WARNINGS;COMPILE_ONLY"
-        "STD;MIN_GCC;MAX_GCC;MIN_LIBSTDCXX;MAX_LIBSTDCXX;TOPIC;EXPECT_ERROR;EXPECT_OUTPUT;EXPECT_COMPILE_OUTPUT;EXPECT_RUN_OUTPUT;STATUS;ARCH;FEATURE_MACRO;PROPOSAL;SKIP_REASON;MODULE_INTERFACE"
-        "EXTRA_LIBS;EXTRA_COMPILE_FLAGS;REQUIRES_SANITIZER;SKIP_SANITIZER;TAGS;PREREQUISITES"
+        "EXPERIMENTAL;REQUIRES_ANALYZER;WILL_FAIL;ALLOW_WARNINGS;COMPILE_ONLY;GCC_ONLY"
+        "STD;MIN_GCC;MAX_GCC;MIN_CLANG;MIN_LIBSTDCXX;MAX_LIBSTDCXX;TOPIC;EXPECT_ERROR;EXPECT_ERROR_GCC;EXPECT_ERROR_CLANG;EXPECT_OUTPUT;EXPECT_COMPILE_OUTPUT;EXPECT_RUN_OUTPUT;STATUS;ARCH;FEATURE_MACRO;PROPOSAL;SKIP_REASON;MODULE_INTERFACE"
+        "EXTRA_LIBS;EXTRA_COMPILE_FLAGS;GCC_EXTRA_COMPILE_FLAGS;REQUIRES_SANITIZER;SKIP_SANITIZER;TAGS;PREREQUISITES"
         ${ARGN}
     )
 
@@ -109,13 +121,41 @@ function(gcc_feature_test NAME)
         message(FATAL_ERROR "gcc_feature_test(${NAME}): duplicate example name")
     endif()
     set_property(GLOBAL APPEND PROPERTY GCC_FEATURE_NAMES "${NAME}")
+    if(ARG_GCC_ONLY AND ARG_MIN_CLANG)
+        message(FATAL_ERROR
+            "gcc_feature_test(${NAME}): GCC_ONLY and MIN_CLANG are mutually exclusive")
+    endif()
+    # Negative examples assert one regex per compiler when the diagnostic
+    # wording diverges: EXPECT_ERROR is the shared form, the _GCC/_CLANG pair
+    # the split form. Mixing the two, or giving only half the pair, is a
+    # registration error.
+    if(ARG_EXPECT_ERROR AND (ARG_EXPECT_ERROR_GCC OR ARG_EXPECT_ERROR_CLANG))
+        message(FATAL_ERROR
+            "gcc_feature_test(${NAME}): use either EXPECT_ERROR or the "
+            "EXPECT_ERROR_GCC/EXPECT_ERROR_CLANG pair, not both")
+    endif()
+    if((ARG_EXPECT_ERROR_GCC AND NOT ARG_EXPECT_ERROR_CLANG)
+       OR (ARG_EXPECT_ERROR_CLANG AND NOT ARG_EXPECT_ERROR_GCC))
+        message(FATAL_ERROR
+            "gcc_feature_test(${NAME}): EXPECT_ERROR_GCC and EXPECT_ERROR_CLANG "
+            "must be given together (use EXPECT_ERROR when one wording matches "
+            "both compilers, or GCC_ONLY when only GCC diagnoses it)")
+    endif()
+    set(_expect_error "${ARG_EXPECT_ERROR}")
+    if(NOT _expect_error)
+        if(FEATURE_COMPILER STREQUAL "clang")
+            set(_expect_error "${ARG_EXPECT_ERROR_CLANG}")
+        else()
+            set(_expect_error "${ARG_EXPECT_ERROR_GCC}")
+        endif()
+    endif()
     if(ARG_WILL_FAIL AND NOT ARG_EXPECT_OUTPUT)
         message(FATAL_ERROR "gcc_feature_test(${NAME}): WILL_FAIL requires EXPECT_OUTPUT <regex>")
     endif()
     if(ARG_EXPECT_OUTPUT AND NOT ARG_WILL_FAIL)
         message(FATAL_ERROR "gcc_feature_test(${NAME}): EXPECT_OUTPUT requires WILL_FAIL")
     endif()
-    if(ARG_EXPERIMENTAL AND NOT ARG_EXPECT_ERROR)
+    if(ARG_EXPERIMENTAL AND NOT _expect_error)
         message(FATAL_ERROR "gcc_feature_test(${NAME}): EXPERIMENTAL requires EXPECT_ERROR <regex>")
     endif()
     if(ARG_REQUIRES_ANALYZER AND NOT ARG_EXPECT_COMPILE_OUTPUT)
@@ -123,12 +163,12 @@ function(gcc_feature_test NAME)
             "gcc_feature_test(${NAME}): REQUIRES_ANALYZER requires EXPECT_COMPILE_OUTPUT <regex>"
         )
     endif()
-    if(ARG_MODULE_INTERFACE AND (ARG_EXPECT_ERROR OR ARG_REQUIRES_ANALYZER OR ARG_WILL_FAIL))
+    if(ARG_MODULE_INTERFACE AND (_expect_error OR ARG_REQUIRES_ANALYZER OR ARG_WILL_FAIL))
         message(FATAL_ERROR
             "gcc_feature_test(${NAME}): MODULE_INTERFACE cannot be combined with failure/analyzer modes"
         )
     endif()
-    if(ARG_COMPILE_ONLY AND (ARG_EXPECT_ERROR OR ARG_REQUIRES_ANALYZER OR ARG_WILL_FAIL
+    if(ARG_COMPILE_ONLY AND (_expect_error OR ARG_REQUIRES_ANALYZER OR ARG_WILL_FAIL
                              OR ARG_MODULE_INTERFACE OR ARG_EXPECT_RUN_OUTPUT))
         message(FATAL_ERROR
             "gcc_feature_test(${NAME}): COMPILE_ONLY cannot be combined with another proof mode"
@@ -176,7 +216,7 @@ function(gcc_feature_test NAME)
             set(ARG_STATUS "compile-only")
         elseif(ARG_EXPERIMENTAL)
             set(ARG_STATUS "expected-failure")
-        elseif(ARG_EXPECT_ERROR)
+        elseif(_expect_error)
             set(ARG_STATUS "negative")
         else()
             set(ARG_STATUS "covered")
@@ -199,12 +239,12 @@ function(gcc_feature_test NAME)
     set(_tags "${ARG_TOPIC}")
     list(APPEND _tags ${ARG_TAGS})
     list(REMOVE_DUPLICATES _tags)
-    foreach(_field STD MIN_GCC MAX_GCC MIN_LIBSTDCXX MAX_LIBSTDCXX TOPIC STATUS
-                   ARCH FEATURE_MACRO PROPOSAL SKIP_REASON MODULE_INTERFACE)
+    foreach(_field STD MIN_GCC MAX_GCC MIN_CLANG GCC_ONLY MIN_LIBSTDCXX MAX_LIBSTDCXX
+                   TOPIC STATUS ARCH FEATURE_MACRO PROPOSAL SKIP_REASON MODULE_INTERFACE)
         set_property(GLOBAL PROPERTY "GCC_FEATURE_META_${NAME}_${_field}" "${ARG_${_field}}")
     endforeach()
     foreach(_field TAGS PREREQUISITES EXTRA_LIBS EXTRA_COMPILE_FLAGS
-                   REQUIRES_SANITIZER SKIP_SANITIZER)
+                   GCC_EXTRA_COMPILE_FLAGS REQUIRES_SANITIZER SKIP_SANITIZER)
         set_property(GLOBAL PROPERTY "GCC_FEATURE_META_${NAME}_${_field}" "${ARG_${_field}}")
     endforeach()
     set_property(GLOBAL PROPERTY "GCC_FEATURE_META_${NAME}_TAGS" "${_tags}")
@@ -216,11 +256,25 @@ function(gcc_feature_test NAME)
         return()
     endif()
 
-    if(GCC_MAJOR LESS "${ARG_MIN_GCC}")
-        return()
-    endif()
-    if(ARG_MAX_GCC AND GCC_MAJOR GREATER "${ARG_MAX_GCC}")
-        return()
+    # Compiler gates. MIN_GCC/MAX_GCC only ever mean GCC releases, so under
+    # clang the gates are GCC_ONLY (inherently a GCC-ism, or not implemented
+    # by any clang yet) and MIN_CLANG (first clang major that supports it);
+    # the libstdc++ gates below apply to both compilers, since the clang lane
+    # uses the same library.
+    if(FEATURE_COMPILER STREQUAL "clang")
+        if(ARG_GCC_ONLY)
+            return()
+        endif()
+        if(ARG_MIN_CLANG AND CLANG_MAJOR LESS "${ARG_MIN_CLANG}")
+            return()
+        endif()
+    else()
+        if(GCC_MAJOR LESS "${ARG_MIN_GCC}")
+            return()
+        endif()
+        if(ARG_MAX_GCC AND GCC_MAJOR GREATER "${ARG_MAX_GCC}")
+            return()
+        endif()
     endif()
     if(ARG_MIN_LIBSTDCXX AND LIBSTDCXX_RELEASE AND LIBSTDCXX_RELEASE LESS "${ARG_MIN_LIBSTDCXX}")
         return()
@@ -256,6 +310,11 @@ function(gcc_feature_test NAME)
         set(_compile_flags ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
     else()
         set(_compile_flags -std=${ARG_STD} ${_gcc_feature_default_flags} ${ARG_EXTRA_COMPILE_FLAGS})
+    endif()
+    # GCC_EXTRA_COMPILE_FLAGS: flags clang does not know (e.g. a
+    # -W(no-)maybe-uninitialized workaround), applied only under GCC.
+    if(FEATURE_COMPILER STREQUAL "gcc" AND ARG_GCC_EXTRA_COMPILE_FLAGS)
+        list(APPEND _compile_flags ${ARG_GCC_EXTRA_COMPILE_FLAGS})
     endif()
     if(ARG_ALLOW_WARNINGS OR ARG_WILL_FAIL)
         # Deliberate runtime defects can also trigger a front-end warning;
@@ -307,7 +366,7 @@ function(gcc_feature_test NAME)
         return()
     endif()
 
-    if(ARG_EXPECT_ERROR)
+    if(_expect_error)
         list(REMOVE_ITEM _compile_flags -fdiagnostics-color=always)
         list(APPEND _compile_flags -fdiagnostics-color=never)
         set(_command
@@ -320,7 +379,7 @@ function(gcc_feature_test NAME)
             NAME ${NAME}
             COMMAND "${CMAKE_COMMAND}"
                     "-DEXPECT_FAILURE_COMMAND=${_command}"
-                    "-DEXPECT_FAILURE_REGEX=${ARG_EXPECT_ERROR}"
+                    "-DEXPECT_FAILURE_REGEX=${_expect_error}"
                     "-DEXPECT_FAILURE_KIND=compile"
                     -P "${_expect_failure_runner}"
         )
@@ -583,6 +642,8 @@ function(gcc_feature_readme_indexes)
                 _gcc_feature_meta(_std "${_name}" STD)
                 _gcc_feature_meta(_min_gcc "${_name}" MIN_GCC)
                 _gcc_feature_meta(_max_gcc "${_name}" MAX_GCC)
+                _gcc_feature_meta(_min_clang "${_name}" MIN_CLANG)
+                _gcc_feature_meta(_gcc_only "${_name}" GCC_ONLY)
                 _gcc_feature_meta(_min_lib "${_name}" MIN_LIBSTDCXX)
                 _gcc_feature_meta(_max_lib "${_name}" MAX_LIBSTDCXX)
                 _gcc_feature_meta(_entry_tags "${_name}" TAGS)
@@ -599,6 +660,11 @@ function(gcc_feature_readme_indexes)
                 set(_availability "GCC >= ${_min_gcc}")
                 if(_max_gcc)
                     string(APPEND _availability ", <= ${_max_gcc}")
+                endif()
+                if(_gcc_only)
+                    string(APPEND _availability " (GCC only)")
+                elseif(_min_clang)
+                    string(APPEND _availability "; Clang >= ${_min_clang}")
                 endif()
                 if(_min_lib)
                     string(APPEND _availability "; libstdc++ >= ${_min_lib}")
@@ -697,20 +763,22 @@ function(gcc_feature_readme_indexes)
     # that drives CTest; explicit gaps live in coverage/gaps.yml so absence is
     # never mistaken for accidental omission.
     set(_ycontent "# Generated by gcc_feature_readme_indexes(); do not edit directly.\n")
-    string(APPEND _ycontent "schema: 1\n")
+    string(APPEND _ycontent "schema: 2\n")
     string(APPEND _ycontent
-        "scope: 'C++11 through C++26 features supported or tracked by GCC 13 through 16'\n")
+        "scope: 'C++11 through C++26 features supported or tracked by GCC 13 through 16, "
+        "cross-checked with Clang 22 where portable'\n")
     string(APPEND _ycontent "examples:\n")
     foreach(_dir IN LISTS _dirs)
         get_property(_names GLOBAL PROPERTY "GCC_FEATURE_INDEX_${_dir}")
         list(SORT _names)
         foreach(_name IN LISTS _names)
-            foreach(_field STD MIN_GCC MAX_GCC MIN_LIBSTDCXX MAX_LIBSTDCXX STATUS
-                           ARCH FEATURE_MACRO PROPOSAL SKIP_REASON MODULE_INTERFACE)
+            foreach(_field STD MIN_GCC MAX_GCC MIN_CLANG GCC_ONLY MIN_LIBSTDCXX
+                           MAX_LIBSTDCXX STATUS ARCH FEATURE_MACRO PROPOSAL
+                           SKIP_REASON MODULE_INTERFACE)
                 _gcc_feature_meta(_${_field} "${_name}" ${_field})
             endforeach()
             foreach(_field TAGS PREREQUISITES EXTRA_LIBS EXTRA_COMPILE_FLAGS
-                           REQUIRES_SANITIZER SKIP_SANITIZER)
+                           GCC_EXTRA_COMPILE_FLAGS REQUIRES_SANITIZER SKIP_SANITIZER)
                 _gcc_feature_meta(_${_field} "${_name}" ${_field})
             endforeach()
 
@@ -728,7 +796,7 @@ function(gcc_feature_readme_indexes)
             string(APPEND _ycontent "    source: '${_dir}/${_name}.cpp'\n")
             string(APPEND _ycontent "    standard: '${_STD}'\n")
             string(APPEND _ycontent "    min_gcc: ${_MIN_GCC}\n")
-            foreach(_pair MAX_GCC MIN_LIBSTDCXX MAX_LIBSTDCXX)
+            foreach(_pair MAX_GCC MIN_CLANG MIN_LIBSTDCXX MAX_LIBSTDCXX)
                 string(TOLOWER "${_pair}" _key)
                 if(_${_pair})
                     string(APPEND _ycontent "    ${_key}: ${_${_pair}}\n")
@@ -736,6 +804,11 @@ function(gcc_feature_readme_indexes)
                     string(APPEND _ycontent "    ${_key}: null\n")
                 endif()
             endforeach()
+            if(_GCC_ONLY)
+                string(APPEND _ycontent "    gcc_only: true\n")
+            else()
+                string(APPEND _ycontent "    gcc_only: false\n")
+            endif()
             string(APPEND _ycontent "    status: '${_STATUS}'\n")
             string(APPEND _ycontent "    architecture: '${_ARCH}'\n")
             string(APPEND _ycontent "    tags:\n")
@@ -752,7 +825,7 @@ function(gcc_feature_readme_indexes)
                 endif()
             endforeach()
             foreach(_pair PREREQUISITES EXTRA_LIBS EXTRA_COMPILE_FLAGS
-                           REQUIRES_SANITIZER SKIP_SANITIZER)
+                           GCC_EXTRA_COMPILE_FLAGS REQUIRES_SANITIZER SKIP_SANITIZER)
                 string(TOLOWER "${_pair}" _key)
                 string(APPEND _ycontent "    ${_key}:")
                 if(_${_pair})

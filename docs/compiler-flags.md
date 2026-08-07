@@ -29,7 +29,7 @@ subfolder the example lives in.
 
 | Token        | Source                          | Why                                                                             |
 |--------------|---------------------------------|---------------------------------------------------------------------------------|
-| `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix, sanitizer, and analyzer jobs run in the official `gcc:N` image, where `g++` is the default. |
+| `g++`        | active toolchain                | The `g++` already on `$PATH` inside the container. Matrix, sanitizer, and analyzer jobs run in the official `gcc:N` image, where `g++` is the default. The clang cross-check lane passes `-DCMAKE_CXX_COMPILER=clang++-22` instead; every other token stays identical. |
 | `-std=$STD`  | `STD` arg of `gcc_feature_test()` | Selects C++ standard. Allowed: `c++11`, `c++14`, `c++17`, `c++20`, `c++23`, `c++26`, or `default` (omit `-std` entirely — used by `features/gcc/defaults/` to observe the compiler's default dialect). |
 | `-Wall -Wextra -Wpedantic -Werror` | hard-coded default | Strict warnings — successful examples must compile clean. `WILL_FAIL` runtime probes and explicit `ALLOW_WARNINGS` registrations remove `-Werror`. |
 | `-O2`        | hard-coded default              | Realistic optimisation level — catches subtle UB the inliner exposes. **Sanitizer mode lowers this to `-O1`** to keep deliberate UB observable. |
@@ -56,7 +56,7 @@ for `std::stacktrace` or `tbb` for parallel STL.
 | `EXTRA_COMPILE_FLAGS -freflection` | `std/cpp26/cpp26_reflection_basic.cpp` | Enables C++26 static-reflection front-end (GCC 16+). |
 | `EXTRA_COMPILE_FLAGS -D_GLIBCXX_DEBUG` | `gccext/sanitize/integration/gccext_glibcxx_debug.cpp` | Turns on libstdc++ debug-mode containers + iterator checks. |
 | `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec-optimized` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and requires a successful compiler report containing `loop vectorized`. Skipped in sanitizer modes because instrumentation changes this code-generation decision. |
-| `EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized` | `std/cpp11/cpp11_regex.cpp` | Keeps a GCC 15 libstdc++ `<regex>` false positive visible under sanitizer instrumentation without weakening other warnings. |
+| `GCC_EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized` | `std/cpp11/cpp11_regex.cpp` | Keeps a GCC 15 libstdc++ `<regex>` false positive visible under sanitizer instrumentation without weakening other warnings. `GCC_EXTRA_COMPILE_FLAGS` because clang has no `-Wmaybe-uninitialized` and would reject the flag. |
 | `EXTRA_COMPILE_FLAGS -mfma` | `gcc/defaults/gccdef_fp_contract.cpp` | Enables x86 FMA codegen so the default `-ffp-contract=fast` can fuse `a*b + c`. `ARCH x86`; the `_aarch64` twin needs no flag because FMA is baseline there. |
 | `EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target` | `gccext/attributes/gccext_target_clones_aarch64.cpp` | Silences GCC 15's experimental-FMV warning for AArch64 `target_clones` under `-Werror` (GCC 14 ignores the unknown `-Wno-` option). |
 
@@ -76,10 +76,13 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `MIN_GCC <n>`       | yes       | Tests on older GCC are not registered in that configure mode. |
 | `TOPIC <name>`      | yes       | Becomes the CTest label — filter with `ctest -L <topic>`. |
 | `MAX_GCC <n>`       | no        | Symmetric upper bound; useful for since-removed behaviour. |
+| `MIN_CLANG <n>`     | no        | First clang major that supports the example; older clang lanes skip it. `MIN_GCC`/`MAX_GCC` are ignored under clang. |
+| `GCC_ONLY`          | no        | Never registered in the clang lane: a GCC extension, a GCC-release premise, or a feature no mainline clang implements yet. Mutually exclusive with `MIN_CLANG`. |
 | `MIN_LIBSTDCXX <n>` | no        | Require `_GLIBCXX_RELEASE >= n`. Independent of `MIN_GCC`. |
 | `MAX_LIBSTDCXX <n>` | no        | Symmetric upper bound. |
 | `EXTRA_LIBS <lib…>` | no        | Linker libraries (without `-l`). Added via `target_link_libraries`. |
 | `EXTRA_COMPILE_FLAGS <flag…>` | no | Per-test compile flags (e.g. `-fopenmp`, `-D_GLIBCXX_DEBUG`). |
+| `GCC_EXTRA_COMPILE_FLAGS <flag…>` | no | Per-test compile flags applied only under GCC — for flags clang does not know. |
 | `REQUIRES_SANITIZER <san…>` | no | Test enabled only when `-DGCC_FEATURE_SANITIZE=` includes one of the listed sanitizers. |
 | `SKIP_SANITIZER <san…>` | no | Test disabled when active sanitizer matches (e.g. TSan + OpenMP is unsupported). |
 | `REQUIRES_ANALYZER` | no        | Test only enabled with `-DGCC_FEATURE_ANALYZER=ON`. CTest compiles it at `-O0 -fanalyzer`; requires `EXPECT_COMPILE_OUTPUT`. |
@@ -91,6 +94,7 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `MODULE_INTERFACE <file>` | no | Compiles the interface first, then the importer, links both objects, and runs the result. |
 | `EXPERIMENTAL`      | no        | Feature not yet supported by current GCC; combined with `EXPECT_ERROR`, the expected outcome is a compile failure. |
 | `EXPECT_ERROR <re>` | no (required by `EXPERIMENTAL`) | The test compiles only, must FAIL, and the regex must match the diagnostic. Also used standalone by the `gcc-diagnostics` demos, which pair it with `-Werror=<warning>` to assert a specific warning fires. |
+| `EXPECT_ERROR_GCC <re>` / `EXPECT_ERROR_CLANG <re>` | no | Split form of `EXPECT_ERROR` for when the two compilers word the same diagnostic differently; always given together, each lane asserts its own regex. |
 | `ALLOW_WARNINGS` | no | Removes baseline `-Werror`. Intended only when a warning is the behavior being asserted. |
 | `TAGS <tag…>` | no | Adds cross-cutting CTest labels in addition to `TOPIC`; `essential` is the curated 24-example path. |
 | `STATUS <status>` | no | Coverage result such as `covered`, `negative`, or `compile-only`. Usually inferred from the proof mode. |
@@ -114,6 +118,7 @@ toolchain), `MIN_LIBSTDCXX` gates are not enforced.
 ./scripts/container-dev.sh 15                            # verbose CTest by default
 ./scripts/container-dev.sh 15 -- -R cpp23_stacktrace     # one test, still verbose
 ./scripts/container-dev.sh 15 -- -j                      # parallel CTest when speed matters
+./scripts/container-dev.sh clang22                       # clang-22 cross-check lane
 ```
 
 The container is the only supported way to invoke the toolchain locally —
@@ -130,3 +135,6 @@ the host shell is off-limits for compilation.
    [../containers/gcc.Containerfile](../containers/gcc.Containerfile) and
    [../.github/workflows/ci.yml](../.github/workflows/ci.yml). They must
    stay in sync — both layer on top of the official `gcc:N` Docker image.
+   The clang lane has the same pairing:
+   [../containers/clang.Containerfile](../containers/clang.Containerfile)
+   mirrors the `clang-22` job's install step in ci.yml.

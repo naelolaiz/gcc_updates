@@ -73,7 +73,7 @@ _Folder: `features/std/cpp11/`. 13 topic(s). Generated from `gcc_feature_test()`
 | [cpp11_trailing_return.cpp](cpp11_trailing_return.cpp) | c++11 | GCC >= 13 | covered | Trailing return type 'auto f(...) -> T' enables decltype-based return types that need parameters in scope. |
 | [cpp11_uniform_init.cpp](cpp11_uniform_init.cpp) | c++11 | GCC >= 13 | covered | Brace-init {} works uniformly for aggregates, containers, and built-ins; rejects narrowing conversions. |
 | [cpp11_uniform_init_narrowing_error.cpp](cpp11_uniform_init_narrowing_error.cpp) | c++11 | GCC >= 13 | negative | Brace initialization rejects narrowing conversions at compile time; this negative example proves the diagnostic instead of leaving invalid code commented out. |
-| [cpp11_user_defined_literal.cpp](cpp11_user_defined_literal.cpp) | c++11 | GCC >= 13 | covered | User-defined literals: 'value_suffix' calls operator"" _suffix(value). User suffixes must start with an underscore. |
+| [cpp11_user_defined_literal.cpp](cpp11_user_defined_literal.cpp) | c++11 | GCC >= 13 | covered | User-defined literals: 'value_suffix' calls operator""_suffix(value). User suffixes must start with an underscore. |
 
 ## memory
 

@@ -60,7 +60,10 @@ gcc_feature_test(cpp23_stacktrace                   STD c++23  MIN_GCC 14  TOPIC
 gcc_feature_test(cpp23_start_lifetime_as            STD c++23  MIN_GCC 16  TOPIC stl
                  MIN_LIBSTDCXX 16)
 gcc_feature_test(cpp23_static_operator              STD c++23  MIN_GCC 14  TOPIC templates)
-gcc_feature_test(cpp23_stdfloat                     STD c++23  MIN_GCC 13  TOPIC stl)
+# GCC_ONLY: Clang 22 does not implement P1467 extended floating-point types
+# (no __STDCPP_FLOAT64_T__ etc.), so <stdfloat> declares nothing under clang.
+gcc_feature_test(cpp23_stdfloat                     STD c++23  MIN_GCC 13  TOPIC stl
+                 GCC_ONLY)
 gcc_feature_test(cpp23_string_contains              STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_to_underlying                STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_unreachable                  STD c++23  MIN_GCC 14  TOPIC stl)

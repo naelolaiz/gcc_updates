@@ -35,7 +35,7 @@ _Folder: `features/std/cpp20/`. 20 topic(s). Generated from `gcc_feature_test()`
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
+| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 (GCC only) | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
 
 ## cancellation
 
@@ -78,7 +78,7 @@ _Folder: `features/std/cpp20/`. 20 topic(s). Generated from `gcc_feature_test()`
 | [cpp20_concepts_intro.cpp](cpp20_concepts_intro.cpp) | c++20 | GCC >= 14 | covered | Defining and using concepts to constrain templates -- replaces SFINAE for most cases. |
 | [cpp20_format.cpp](cpp20_format.cpp) | c++20 | GCC >= 14 | covered | std::format provides Python-style typesafe formatting; std::format_to writes into an output iterator. |
 | [cpp20_jthread.cpp](cpp20_jthread.cpp) | c++20 | GCC >= 14 | covered | std::jthread auto-joins on destruction and supports cooperative cancellation via stop_token. |
-| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
+| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 (GCC only) | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
 | [cpp20_ranges_views.cpp](cpp20_ranges_views.cpp) | c++20 | GCC >= 14 | covered | Lazy view composition with views::filter, views::transform and views::take using the | pipe. |
 | [cpp20_span.cpp](cpp20_span.cpp) | c++20 | GCC >= 14 | covered | std::span is a non-owning view over a contiguous sequence; cheap, type-erased over container kind. |
 
@@ -116,7 +116,7 @@ _Folder: `features/std/cpp20/`. 20 topic(s). Generated from `gcc_feature_test()`
 | [cpp20_designated_init_order_error.cpp](cpp20_designated_init_order_error.cpp) | c++20 | GCC >= 14 | negative | C++20 designated initializers must follow declaration order; this negative example asserts that portability rule. |
 | [cpp20_is_constant_evaluated.cpp](cpp20_is_constant_evaluated.cpp) | c++20 | GCC >= 13 | covered | std::is_constant_evaluated() lets one constexpr function take a compile-time-safe path during constant evaluation and a faster/library path at runtime (C++23's 'if consteval' supersedes the pattern). |
 | [cpp20_lambdas.cpp](cpp20_lambdas.cpp) | c++20 | GCC >= 14 | covered | C++20 added template parameter lists on lambdas, default-construction, and capture of *this by value. |
-| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
+| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 (GCC only) | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
 | [cpp20_spaceship.cpp](cpp20_spaceship.cpp) | c++20 | GCC >= 14 | covered | operator<=> ("spaceship") generates the full set of relational operators from one declaration. |
 | [cpp20_using_enum.cpp](cpp20_using_enum.cpp) | c++20 | GCC >= 13 | covered | 'using enum' brings a scoped enum's enumerators into the current scope -- switch cases read 'red' instead of 'Color::red' without giving up enum class type safety. |
 
@@ -131,7 +131,7 @@ _Folder: `features/std/cpp20/`. 20 topic(s). Generated from `gcc_feature_test()`
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
+| [cpp20_modules_basic.cpp](cpp20_modules_basic.cpp) | c++20 | GCC >= 16 (GCC only) | covered | C++20 modules compile an interface before an importer; this two-file fixture proves export, import, link, and execution with GCC's modules implementation. |
 
 ## ranges
 

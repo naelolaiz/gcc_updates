@@ -44,7 +44,8 @@ static_assert(std::negation_v<std::is_pointer<int>>);
 
 // std::is_invocable / invoke_result_t replace the old result_of and answer
 // "can I call F with these args, and what's the return type?".
-auto add = [](int a, int b) { return a + b; };
+// [[maybe_unused]]: 'add' only ever appears inside decltype.
+[[maybe_unused]] auto add = [](int a, int b) { return a + b; };
 static_assert(std::is_invocable_v<decltype(add), int, int>);
 static_assert(!std::is_invocable_v<decltype(add), int, std::string>);
 static_assert(std::is_same_v<std::invoke_result_t<decltype(add), int, int>, int>);

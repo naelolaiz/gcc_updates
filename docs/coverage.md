@@ -20,6 +20,15 @@ Statuses have precise meanings:
 both; a library example is not advertised as usable merely because its
 front-end syntax compiles.
 
+Schema 2 adds the clang cross-check axis. Each entry carries `gcc_only`
+(true when the example is inherently a GCC-ism or no mainline clang
+implements the feature yet) and `min_clang` (the first clang major that
+supports it, `null` when any supported clang does). Examples with
+`gcc_only: false` build and run in the clang-22 CI lane against the same
+pinned libstdc++ the GCC lanes use, so the two fields describe the
+compiler front-end only — library availability stays with the
+`min_libstdcxx` axis.
+
 Coverage has no difficulty or course-progression axis. Entries are organized
 by standard, compiler and library availability, topic, and proof status so the
 inventory remains a reference rather than a sequence of lessons or exercises.

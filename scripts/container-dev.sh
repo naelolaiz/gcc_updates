@@ -11,6 +11,7 @@
 #   ./scripts/container-dev.sh                       # default gcc 15, run all tests
 #   ./scripts/container-dev.sh 14
 #   ./scripts/container-dev.sh 16
+#   ./scripts/container-dev.sh clang22               # clang-22 cross-check lane
 #
 #   # ctest filters / extra args (everything after a `--` is forwarded to ctest):
 #   ./scripts/container-dev.sh 15 -- -R cpp23_       # run tests matching cpp23_
@@ -44,13 +45,24 @@
 # locally — never run g++/cmake directly on the host.
 set -euo pipefail
 
-GCC_VERSION="${1:-15}"
+TOOLCHAIN="${1:-15}"
 shift || true
 
-case "${GCC_VERSION}" in
-    13|14|15|16) ;;
+case "${TOOLCHAIN}" in
+    13|14|15|16)
+        COMPILER=gcc
+        GCC_VERSION="${TOOLCHAIN}"
+        LANE="gcc${TOOLCHAIN}"
+        ;;
+    clang22)
+        # Cross-check lane: clang front-end over the gcc:16 image's pinned
+        # libstdc++ (see containers/clang.Containerfile).
+        COMPILER=clang
+        CLANG_VERSION="${TOOLCHAIN#clang}"
+        LANE="${TOOLCHAIN}"
+        ;;
     *)
-        echo "error: unsupported GCC version '${GCC_VERSION}' (expected 13|14|15|16)" >&2
+        echo "error: unsupported toolchain '${TOOLCHAIN}' (expected 13|14|15|16|clang22)" >&2
         exit 2
         ;;
 esac
@@ -133,8 +145,14 @@ if [ -n "${ARCH}" ]; then
     ARCH_SUFFIX="-$(printf '%s' "${ARCH}" | tr '/' '-')"
 fi
 
-TAG="localhost/gcc-updates:gcc${GCC_VERSION}${ARCH_SUFFIX}"
-BUILD_VOL="gcc-updates-build-gcc${GCC_VERSION}${ARCH_SUFFIX}"
+TAG="localhost/gcc-updates:${LANE}${ARCH_SUFFIX}"
+BUILD_VOL="gcc-updates-build-${LANE}${ARCH_SUFFIX}"
+
+# The clang lane picks its compiler explicitly; gcc lanes use the image default.
+CMAKE_COMPILER_ARGS=()
+if [ "${COMPILER}" = clang ]; then
+    CMAKE_COMPILER_ARGS=("-DCMAKE_CXX_COMPILER=clang++-${CLANG_VERSION}")
+fi
 
 if [ "${ACTION}" = show ]; then
     # No mapfile: macOS ships bash 3.2, which lacks it.
@@ -169,12 +187,21 @@ fi
 # `image exists` is podman-only; `image inspect` works on both engines.
 if ! "${ENGINE}" image inspect "${TAG}" >/dev/null 2>&1; then
     echo "==> building ${TAG} (one-time, ~2-3 min)"
-    "${ENGINE}" build \
-        ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
-        --build-arg="GCC_VERSION=${GCC_VERSION}" \
-        -f "${REPO_ROOT}/containers/gcc.Containerfile" \
-        -t "${TAG}" \
-        "${REPO_ROOT}"
+    if [ "${COMPILER}" = clang ]; then
+        "${ENGINE}" build \
+            ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
+            --build-arg="CLANG_VERSION=${CLANG_VERSION}" \
+            -f "${REPO_ROOT}/containers/clang.Containerfile" \
+            -t "${TAG}" \
+            "${REPO_ROOT}"
+    else
+        "${ENGINE}" build \
+            ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
+            --build-arg="GCC_VERSION=${GCC_VERSION}" \
+            -f "${REPO_ROOT}/containers/gcc.Containerfile" \
+            -t "${TAG}" \
+            "${REPO_ROOT}"
+    fi
 fi
 
 if [ "${README_MODE}" -eq 1 ]; then
@@ -188,6 +215,7 @@ if [ "${README_MODE}" -eq 1 ]; then
         -v "${OUT_DIR}:/readme-out:${OUT_OPTS}" \
         -w /work \
         "${TAG}" cmake -S /work -B /build \
+        ${CMAKE_COMPILER_ARGS[@]:+"${CMAKE_COMPILER_ARGS[@]}"} \
         -DGCC_FEATURE_README=write -DGCC_FEATURE_README_OUT=/readme-out \
         -DGCC_FEATURE_ANALYZER=OFF -DGCC_FEATURE_SANITIZE=
     cp -R "${OUT_DIR}/features/." "${REPO_ROOT}/features/"
@@ -212,6 +240,7 @@ echo "==> configuring (cmake -S /work -B /build ${CMAKE_ARGS[*]:-})"
 # The ${arr[@]:+…} form keeps bash 3.2 (macOS) from treating the empty
 # array as unbound under `set -u`.
 run cmake -S /work -B /build \
+    ${CMAKE_COMPILER_ARGS[@]:+"${CMAKE_COMPILER_ARGS[@]}"} \
     -DGCC_FEATURE_README=check \
     -DGCC_FEATURE_ANALYZER=OFF \
     -DGCC_FEATURE_SANITIZE= \
