@@ -55,7 +55,7 @@ cmake/
 features/<bucket>/CMakeLists.txt  # one gcc_feature_test() call per registered example
 features/<bucket>/README.md     # per-bucket index (generated; CI fails if stale)
 scripts/
-  podman-dev.sh               # local entrypoint (uses podman + cmake + ctest)
+  container-dev.sh            # local entrypoint (podman or docker + cmake + ctest)
 containers/
   gcc.Containerfile           # FROM gcc:${GCC_VERSION} + cmake + libtbb-dev
 docs/
@@ -131,47 +131,60 @@ Required keyword args: `STD`, `MIN_GCC`, `TOPIC`. Optional: `MAX_GCC`,
 [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
 Programs return `0` on success; runtime checks use `DEMO_ASSERT(...)`.
 
-## Running locally (podman)
+## Running locally (podman or docker)
 
 This repo never invokes the host's `g++`/`cmake` directly. Local runs go
-through [scripts/podman-dev.sh](scripts/podman-dev.sh), which builds a small
-image from [containers/gcc.Containerfile](containers/gcc.Containerfile) (the
-official `gcc:N` Docker image + `cmake` + `libtbb-dev`), then runs cmake +
-ctest inside it. The build directory lives in a named podman volume, so it
-persists across runs.
+through [scripts/container-dev.sh](scripts/container-dev.sh), which builds a
+small image from [containers/gcc.Containerfile](containers/gcc.Containerfile)
+(the official `gcc:N` Docker image + `cmake` + `libtbb-dev`), then runs cmake +
+ctest inside it. The build directory lives in a named volume, so it persists
+across runs. Podman is the default engine; pass `engine=docker` (or set
+`CONTAINER_ENGINE=docker`) to use docker instead.
 
 ```bash
-./scripts/podman-dev.sh 13            # build + run all GCC-13-eligible tests
-./scripts/podman-dev.sh 14            # same, GCC 14
-./scripts/podman-dev.sh 15            # same, GCC 15
-./scripts/podman-dev.sh 16            # same, GCC 16
+./scripts/container-dev.sh 13            # build + run all GCC-13-eligible tests
+./scripts/container-dev.sh 14            # same, GCC 14
+./scripts/container-dev.sh 15            # same, GCC 15
+./scripts/container-dev.sh 16            # same, GCC 16
 
 # CTest filters (everything after `--` is forwarded as-is to ctest):
-./scripts/podman-dev.sh 15 -- -R cpp23_         # only tests matching cpp23_
-./scripts/podman-dev.sh 15 -- -L threading      # only the 'threading' topic
-./scripts/podman-dev.sh 15 -- -j                # parallel CTest when speed matters
-./scripts/podman-dev.sh 15 -- -N                # list tests, don't run
+./scripts/container-dev.sh 15 -- -R cpp23_         # only tests matching cpp23_
+./scripts/container-dev.sh 15 -- -L threading      # only the 'threading' topic
+./scripts/container-dev.sh 15 -- -j                # parallel CTest when speed matters
+./scripts/container-dev.sh 15 -- -N                # list tests, don't run
+
+# Engine / architecture selection:
+./scripts/container-dev.sh 15 engine=docker        # docker instead of podman
+./scripts/container-dev.sh 15 arch=arm64           # emulate linux/arm64
 
 # Sanitizer / analyzer modes:
-./scripts/podman-dev.sh 15 sanitize=address,undefined
-./scripts/podman-dev.sh 15 sanitize=thread
-./scripts/podman-dev.sh 16 analyzer
-./scripts/podman-dev.sh 16 -- -L essential
+./scripts/container-dev.sh 15 sanitize=address,undefined
+./scripts/container-dev.sh 15 sanitize=thread
+./scripts/container-dev.sh 16 analyzer
+./scripts/container-dev.sh 16 -- -L essential
 ```
 
-The image is built once per GCC version and cached.
+The image is built once per GCC version (and per emulated arch) and cached.
+`arch=` defaults to the host's native architecture; emulating another one
+needs qemu binfmt support in the engine (Docker Desktop and podman machine
+ship it). Architecture-specific examples (`ARCH x86` / `ARCH aarch64` in
+their `gcc_feature_test()` registration, e.g. the `-mfma` and `avx2` demos
+and their `*_aarch64` twins) are only registered when the compiler targets
+that architecture; everything else is portable.
 
 ## Running in CI
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) defines four jobs. Every
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs the compiler matrix
+on both amd64 (`ubuntu-latest`) and arm64 (`ubuntu-24.04-arm`), plus sanitizer
+and analyzer jobs on amd64. Every
 compiler and sanitizer job runs inside the official `gcc:N` Docker image
 (Debian-based, upstream gcc-N + matching upstream libstdc++-N). The same image
-is what `scripts/podman-dev.sh` builds locally, so behaviour is bit-identical
+is what `scripts/container-dev.sh` builds locally, so behaviour is bit-identical
 between local and CI for those jobs.
 
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
-| `gcc-{13,14,15,16}` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N; GCC 16 also proves modules, contracts, reflection, and the newest library examples |
+| `gcc-{13,14,15,16} ({amd64,arm64})` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version × architecture, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N, minus `ARCH`-gated examples of the other architecture; GCC 16 also proves modules, contracts, reflection, and the newest library examples |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
 | `analyze (gcc-16, -fanalyzer)` | `cmake -DGCC_FEATURE_ANALYZER=ON` in `gcc:16`; CTest compiles each example at `-O0` and matches its diagnostic category | `REQUIRES_ANALYZER` compile-only demos |
@@ -249,8 +262,8 @@ so this concern is purely informational.
 4. Add a `gcc_feature_test(<name> STD c++NN MIN_GCC N TOPIC <topic>)` line
    to that folder's `CMakeLists.txt`. See
    [cmake/GccFeature.cmake](cmake/GccFeature.cmake) for the full grammar.
-5. Run `./scripts/podman-dev.sh <ver>` to verify locally.
-6. Run `./scripts/podman-dev.sh <ver> readme` to regenerate the bucket's
+5. Run `./scripts/container-dev.sh <ver>` to verify locally.
+6. Run `./scripts/container-dev.sh <ver> readme` to regenerate the bucket's
    `README.md` index. Every configure validates the indexes against the
    registered metadata (`-DGCC_FEATURE_README=check`, the default), so CI
    fails if this step is skipped. The index title (the H1 line) is the only
@@ -273,10 +286,10 @@ gaps are recorded.
 Command shortcuts:
 
 ```bash
-./scripts/podman-dev.sh 16 list
-./scripts/podman-dev.sh 16 show cpp23_expected
-./scripts/podman-dev.sh 16 run cpp23_expected
-./scripts/podman-dev.sh 16 -- -L essential
+./scripts/container-dev.sh 16 list
+./scripts/container-dev.sh 16 show cpp23_expected
+./scripts/container-dev.sh 16 run cpp23_expected
+./scripts/container-dev.sh 16 -- -L essential
 ```
 
 ## Full reference catalog
@@ -530,14 +543,16 @@ implemented via the same machinery as `__builtin_expect`, etc.
   [`gccext_attribute_constructor`](features/gccext/attributes/gccext_attribute_constructor.cpp)
   (pre-main/post-main hooks),
   [`gccext_attribute_target`](features/gccext/attributes/gccext_attribute_target.cpp)
-  (per-function ISA selection),
+  (per-function ISA selection; x86 — AArch64 twin
+  [`gccext_attribute_target_aarch64`](features/gccext/attributes/gccext_attribute_target_aarch64.cpp)),
   [`gccext_target_clones`](features/gccext/attributes/gccext_target_clones.cpp)
-  (multi-version + IFUNC dispatch).
+  (multi-version + IFUNC dispatch; x86 — AArch64 twin
+  [`gccext_target_clones_aarch64`](features/gccext/attributes/gccext_target_clones_aarch64.cpp)).
 - **Builtins:** [`gccext_builtin_expect`](features/gccext/builtins/gccext_builtin_expect.cpp),
   [`gccext_builtin_constant_p`](features/gccext/builtins/gccext_builtin_constant_p.cpp),
   [`gccext_builtin_assume_aligned`](features/gccext/builtins/gccext_builtin_assume_aligned.cpp),
   [`gccext_builtin_cpu_supports`](features/gccext/builtins/gccext_builtin_cpu_supports.cpp)
-  (manual runtime dispatch),
+  (manual runtime dispatch; x86-only — AArch64 dispatches via `target_clones`),
   [`gccext_builtin_prefetch`](features/gccext/builtins/gccext_builtin_prefetch.cpp),
   [`gccext_int128`](features/gccext/builtins/gccext_int128.cpp).
 - **Vectorization / SIMD:** [`gccext_vector_extensions`](features/gccext/builtins/gccext_vector_extensions.cpp)
@@ -559,7 +574,7 @@ implemented via the same machinery as `__builtin_expect`, etc.
   [sanitize/leak/](features/gccext/sanitize/leak/)) — each one is gated on a
   matching `REQUIRES_SANITIZER` and asserts expected sanitizer report text
   instead of accepting any failure. Run with
-  `./scripts/podman-dev.sh 15 sanitize=undefined,address` (or
+  `./scripts/container-dev.sh 15 sanitize=undefined,address` (or
   `sanitize=thread`).
 - **Static analyzer (compile-only):** [`gccext_analyzer_double_free`](features/gccext/analyzer/gccext_analyzer_double_free.cpp),
   [`gccext_analyzer_leak`](features/gccext/analyzer/gccext_analyzer_leak.cpp),
@@ -609,7 +624,8 @@ Toolchain *defaults* get their own bucket:
 [`gccdef_dialect`](features/gcc/defaults/gccdef_dialect.cpp) (what you get
 with no `-std` — changed at GCC 15 for C and GCC 16 for C++),
 [`gccdef_fp_contract`](features/gcc/defaults/gccdef_fp_contract.cpp)
-(`-ffp-contract=fast` is always on), and
+(`-ffp-contract=fast` is always on; AArch64 twin
+[`gccdef_fp_contract_aarch64`](features/gcc/defaults/gccdef_fp_contract_aarch64.cpp)), and
 [`gccdef_pie_default`](features/gcc/defaults/gccdef_pie_default.cpp)
 (upstream vs distro packaging). Each release bucket also carries one demo of
 a diagnostic that release introduced (`ctest -L gcc-diagnostics`):

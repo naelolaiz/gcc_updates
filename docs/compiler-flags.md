@@ -9,8 +9,8 @@ registered via one `gcc_feature_test()` call in its folder's `CMakeLists.txt`.
 
 ```bash
 # Read one example and its registration, then run it in the supported container.
-./scripts/podman-dev.sh 16 show cpp23_print
-./scripts/podman-dev.sh 16 run cpp23_print
+./scripts/container-dev.sh 16 show cpp23_print
+./scripts/container-dev.sh 16 run cpp23_print
 ```
 
 ## Default command
@@ -57,6 +57,8 @@ for `std::stacktrace` or `tbb` for parallel STL.
 | `EXTRA_COMPILE_FLAGS -D_GLIBCXX_DEBUG` | `gccext/sanitize/integration/gccext_glibcxx_debug.cpp` | Turns on libstdc++ debug-mode containers + iterator checks. |
 | `EXTRA_COMPILE_FLAGS -O3 -fopt-info-vec-optimized` | `gccext/codegen/gccext_autovectorize.cpp` | Bumps optimisation and requires a successful compiler report containing `loop vectorized`. Skipped in sanitizer modes because instrumentation changes this code-generation decision. |
 | `EXTRA_COMPILE_FLAGS -Wno-error=maybe-uninitialized` | `std/cpp11/cpp11_regex.cpp` | Keeps a GCC 15 libstdc++ `<regex>` false positive visible under sanitizer instrumentation without weakening other warnings. |
+| `EXTRA_COMPILE_FLAGS -mfma` | `gcc/defaults/gccdef_fp_contract.cpp` | Enables x86 FMA codegen so the default `-ffp-contract=fast` can fuse `a*b + c`. `ARCH x86`; the `_aarch64` twin needs no flag because FMA is baseline there. |
+| `EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target` | `gccext/attributes/gccext_target_clones_aarch64.cpp` | Silences GCC 15's experimental-FMV warning for AArch64 `target_clones` under `-Werror` (GCC 14 ignores the unknown `-Wno-` option). |
 
 ## How to read a `gcc_feature_test()` call
 
@@ -92,7 +94,7 @@ gcc_feature_test(cpp23_stacktrace  STD c++23  MIN_GCC 14  TOPIC stl
 | `ALLOW_WARNINGS` | no | Removes baseline `-Werror`. Intended only when a warning is the behavior being asserted. |
 | `TAGS <tag…>` | no | Adds cross-cutting CTest labels in addition to `TOPIC`; `essential` is the curated 24-example path. |
 | `STATUS <status>` | no | Coverage result such as `covered`, `negative`, or `compile-only`. Usually inferred from the proof mode. |
-| `ARCH <arch>` | no | Portability constraint recorded in `coverage.yml`; defaults to `portable`. |
+| `ARCH <arch>` | no | Target-architecture constraint (`portable`, `x86`, or `aarch64`); on a non-matching compiler target the example is skipped at configure time. Recorded in `coverage.yml`; defaults to `portable`. |
 | `FEATURE_MACRO <macro>` | no | Relevant SD-6 capability macro recorded in coverage metadata. |
 | `PROPOSAL <paper>` | no | WG21 paper identifier for proposal-level traceability. |
 | `PREREQUISITES <name…>` | no | Earlier examples that introduce the concepts this one builds on. |
@@ -108,10 +110,10 @@ toolchain), `MIN_LIBSTDCXX` gates are not enforced.
 
 ```bash
 # Build everything (or one target) inside the container. Working tree is
-# read-only; the build directory lives in a podman named volume.
-./scripts/podman-dev.sh 15                            # verbose CTest by default
-./scripts/podman-dev.sh 15 -- -R cpp23_stacktrace     # one test, still verbose
-./scripts/podman-dev.sh 15 -- -j                      # parallel CTest when speed matters
+# read-only; the build directory lives in a named container volume.
+./scripts/container-dev.sh 15                            # verbose CTest by default
+./scripts/container-dev.sh 15 -- -R cpp23_stacktrace     # one test, still verbose
+./scripts/container-dev.sh 15 -- -j                      # parallel CTest when speed matters
 ```
 
 The container is the only supported way to invoke the toolchain locally —

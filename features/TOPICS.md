@@ -1,6 +1,6 @@
 # Topic index
 
-_All 59 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
+_All 59 topics across every bucket, generated from `gcc_feature_test()` metadata; regenerate with `./scripts/container-dev.sh <ver> readme`. Topics double as CTest labels: `ctest -L threading` runs one topic everywhere._
 
 ## Topics
 
@@ -264,8 +264,10 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [gccext_attribute_packed.cpp](gccext/attributes/gccext_attribute_packed.cpp) | gccext/attributes | c++17 | >= 13 | — |
 | [gccext_attribute_pure_const.cpp](gccext/attributes/gccext_attribute_pure_const.cpp) | gccext/attributes | c++17 | >= 13 | — |
 | [gccext_attribute_target.cpp](gccext/attributes/gccext_attribute_target.cpp) | gccext/attributes | c++17 | >= 13 | — |
+| [gccext_attribute_target_aarch64.cpp](gccext/attributes/gccext_attribute_target_aarch64.cpp) | gccext/attributes | c++17 | >= 13 | — |
 | [gccext_likely_unlikely.cpp](gccext/attributes/gccext_likely_unlikely.cpp) | gccext/attributes | c++20 | >= 13 | — |
 | [gccext_target_clones.cpp](gccext/attributes/gccext_target_clones.cpp) | gccext/attributes | c++17 | >= 13 | — |
+| [gccext_target_clones_aarch64.cpp](gccext/attributes/gccext_target_clones_aarch64.cpp) | gccext/attributes | c++17 | >= 14 | — |
 
 ## gcc-builtins
 
@@ -292,6 +294,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | ------- | ------ | --- | --- | --------- |
 | [gccdef_dialect.cpp](gcc/defaults/gccdef_dialect.cpp) | gcc/defaults | default | >= 13 | — |
 | [gccdef_fp_contract.cpp](gcc/defaults/gccdef_fp_contract.cpp) | gcc/defaults | c++17 | >= 13 | — |
+| [gccdef_fp_contract_aarch64.cpp](gcc/defaults/gccdef_fp_contract_aarch64.cpp) | gcc/defaults | c++17 | >= 13 | — |
 | [gccdef_pie_default.cpp](gcc/defaults/gccdef_pie_default.cpp) | gcc/defaults | c++17 | >= 13 | — |
 
 ## gcc-diagnostics

@@ -1,6 +1,6 @@
 # GCC extensions: codegen (auto-vectorisation, inline asm)
 
-_Folder: `features/gccext/codegen/`. 5 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/podman-dev.sh <ver> readme`._
+_Folder: `features/gccext/codegen/`. 5 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
 
 ## Topics
 

@@ -19,6 +19,24 @@ string(REGEX MATCH "^([0-9]+)" _ "${CMAKE_CXX_COMPILER_VERSION}")
 set(GCC_MAJOR "${CMAKE_MATCH_1}")
 message(STATUS "GCC major version: ${GCC_MAJOR}")
 
+# Architecture family the compiler targets, used to gate ARCH-restricted
+# examples. Probe the compiler rather than the host: it is the target triple,
+# not uname, that decides whether e.g. -mfma or target("avx2") is valid.
+execute_process(
+    COMMAND "${CMAKE_CXX_COMPILER}" -dumpmachine
+    OUTPUT_VARIABLE _gcc_machine
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+if(_gcc_machine MATCHES "^(x86_64|i[3-6]86)")
+    set(GCC_TARGET_ARCH "x86")
+elseif(_gcc_machine MATCHES "^(aarch64|arm64)")
+    set(GCC_TARGET_ARCH "aarch64")
+else()
+    string(REGEX MATCH "^[^-]+" GCC_TARGET_ARCH "${_gcc_machine}")
+endif()
+message(STATUS "GCC target: ${_gcc_machine} (arch family: ${GCC_TARGET_ARCH})")
+
 if(NOT DEFINED LIBSTDCXX_RELEASE)
     file(WRITE "${CMAKE_BINARY_DIR}/libstdcxx_probe.cpp" "#include <version>\n")
     execute_process(
@@ -172,6 +190,12 @@ function(gcc_feature_test NAME)
     if(NOT ARG_ARCH)
         set(ARG_ARCH "portable")
     endif()
+    if(NOT ARG_ARCH MATCHES "^(portable|x86|aarch64)$")
+        message(FATAL_ERROR
+            "gcc_feature_test(${NAME}): unsupported ARCH '${ARG_ARCH}' "
+            "(expected portable, x86, or aarch64)"
+        )
+    endif()
     set(_tags "${ARG_TOPIC}")
     list(APPEND _tags ${ARG_TAGS})
     list(REMOVE_DUPLICATES _tags)
@@ -184,6 +208,13 @@ function(gcc_feature_test NAME)
         set_property(GLOBAL PROPERTY "GCC_FEATURE_META_${NAME}_${_field}" "${ARG_${_field}}")
     endforeach()
     set_property(GLOBAL PROPERTY "GCC_FEATURE_META_${NAME}_TAGS" "${_tags}")
+
+    # ARCH gates AFTER the metadata recording above, like the version gates
+    # below: the generated indexes list every example on every architecture,
+    # only the test registration is skipped on a non-matching target.
+    if(NOT ARG_ARCH STREQUAL "portable" AND NOT ARG_ARCH STREQUAL GCC_TARGET_ARCH)
+        return()
+    endif()
 
     if(GCC_MAJOR LESS "${ARG_MIN_GCC}")
         return()
@@ -538,7 +569,7 @@ function(gcc_feature_readme_indexes)
         string(APPEND _content
             "_Folder: `${_dir}/`. ${_topic_count} topic(s). Generated from"
             " `gcc_feature_test()` metadata and each file's `// description:`"
-            " line; regenerate with `./scripts/podman-dev.sh <ver> readme`._\n")
+            " line; regenerate with `./scripts/container-dev.sh <ver> readme`._\n")
         string(APPEND _content "\n## Topics\n\n")
         foreach(_topic IN LISTS _topics)
             string(APPEND _content "- [${_topic}](#${_topic})\n")
@@ -627,7 +658,7 @@ function(gcc_feature_readme_indexes)
     string(APPEND _tcontent
         "_All ${_n_topics} topics across every bucket, generated from"
         " `gcc_feature_test()` metadata; regenerate with"
-        " `./scripts/podman-dev.sh <ver> readme`. Topics double as CTest"
+        " `./scripts/container-dev.sh <ver> readme`. Topics double as CTest"
         " labels: `ctest -L threading` runs one topic everywhere._\n")
     string(APPEND _tcontent "\n## Topics\n\n")
     foreach(_topic IN LISTS _all_topics)
@@ -763,7 +794,7 @@ function(gcc_feature_readme_indexes)
         list(JOIN _stale "\n" _stale_text)
         message(FATAL_ERROR
             "Stale README index(es):\n${_stale_text}\n"
-            "Regenerate with ./scripts/podman-dev.sh <gcc-ver> readme "
+            "Regenerate with ./scripts/container-dev.sh <gcc-ver> readme "
             "(cmake -DGCC_FEATURE_README=write under the hood).")
     endif()
 endfunction()

@@ -6,8 +6,8 @@ latent UB / leak / data race in an example is caught the same day it lands.
 ## TL;DR
 
 ```bash
-# Locally: re-build everything under UBSan + ASan via podman.
-./scripts/podman-dev.sh 15 sanitize=undefined,address
+# Locally: re-build everything under UBSan + ASan in the container.
+./scripts/container-dev.sh 15 sanitize=undefined,address
 
 # CI does the equivalent on a dedicated job (see .github/workflows/ci.yml).
 ```
@@ -83,7 +83,7 @@ Multiple checks can be listed: `[[gnu::no_sanitize("address", "undefined")]]`.
   on GCC 16 and requires each declared `-Wanalyzer-*` category to appear;
   this is a checked test, not merely a diagnostic left in the build log. For
   ad-hoc runs:
-  `./scripts/podman-dev.sh 16 analyzer`.
+  `./scripts/container-dev.sh 16 analyzer`.
 
 ## Runtime knobs
 
