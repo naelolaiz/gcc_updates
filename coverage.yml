@@ -5998,7 +5998,7 @@ examples:
     min_libstdcxx: 16
     max_libstdcxx: null
     status: 'covered'
-    architecture: 'portable'
+    architecture: 'x86'
     tags:
       - 'stl'
       - 'numerics'
@@ -6177,6 +6177,10 @@ known_gaps:
     area: 'GCC extension'
     status: 'out-of-scope-for-host-only-ci'
     rationale: 'Requires stable accelerator hardware and runtime availability.'
+  - id: 'aarch64-std-simd'
+    area: 'C++26 library'
+    status: 'unsupported-by-libstdc++-16-aarch64'
+    rationale: 'libstdc++ 16 ships <simd> for x86 only; cpp26_simd is ARCH x86 until the AArch64 implementation lands.'
   - id: 'aarch64-builtin-cpu-supports'
     area: 'GCC builtin'
     status: 'unsupported-by-gcc-15-aarch64'

@@ -58,8 +58,10 @@ gcc_feature_test(cpp26_reflection_basic        STD c++26  MIN_GCC 16  TOPIC temp
 
 gcc_feature_test(cpp26_saturation_arith        STD c++26  MIN_GCC 14  TOPIC stl)
 
+# ARCH x86: libstdc++ 16 does not implement <simd> for aarch64 yet ('simd'
+# in namespace 'std' does not name a type); see coverage/gaps.yml.
 gcc_feature_test(cpp26_simd                    STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
-                 TOPIC stl  TAGS numerics performance simd
+                 TOPIC stl  TAGS numerics performance simd  ARCH x86
                  PROPOSAL P1928R15  PREREQUISITES gccext_vector_extensions)
 
 gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 15  TOPIC stl)
