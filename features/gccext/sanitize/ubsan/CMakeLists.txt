@@ -6,10 +6,12 @@ gcc_feature_test(gccext_ubsan_divide_by_zero    STD c++17  MIN_GCC 13  TOPIC gcc
                  REQUIRES_SANITIZER undefined
                  EXTRA_COMPILE_FLAGS -fno-sanitize-recover=undefined
                  WILL_FAIL  EXPECT_OUTPUT "runtime error: division by zero")
+# vptr is named in the no-recover list because clang keeps it outside its
+# undefined group (gcc_feature_test() enables the check there explicitly).
 gcc_feature_test(gccext_ubsan_invalid_vptr      STD c++17  MIN_GCC 13  TOPIC gcc-sanitize
                  TAGS object-model diagnostics
                  REQUIRES_SANITIZER undefined
-                 EXTRA_COMPILE_FLAGS -fno-sanitize-recover=undefined
+                 EXTRA_COMPILE_FLAGS -fno-sanitize-recover=undefined,vptr
                  WILL_FAIL  EXPECT_OUTPUT "runtime error: member call on address")
 gcc_feature_test(gccext_ubsan_misaligned_access STD c++17  MIN_GCC 13  TOPIC gcc-sanitize
                  TAGS memory-safety diagnostics

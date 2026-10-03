@@ -29,7 +29,8 @@ gcc_feature_test(cpp20_designated_init_order_error
                  STD c++20  MIN_GCC 14  TOPIC language
                  TAGS diagnostics initialization  STATUS negative
                  PREREQUISITES cpp20_designated_init
-                 EXPECT_ERROR "designator order")
+                 EXPECT_ERROR_GCC "designator order"
+                 EXPECT_ERROR_CLANG "designators to be specified in declaration order")
 gcc_feature_test(cpp20_endian                 STD c++20  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp20_erase_if               STD c++20  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp20_explicit_bool          STD c++20  MIN_GCC 14  TOPIC templates)
@@ -43,10 +44,13 @@ gcc_feature_test(cpp20_lambdas                STD c++20  MIN_GCC 14  TOPIC langu
 gcc_feature_test(cpp20_latch                  STD c++20  MIN_GCC 14  TOPIC threading)
 gcc_feature_test(cpp20_lerp_midpoint          STD c++20  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp20_map_contains           STD c++20  MIN_GCC 14  TOPIC stl)
+# GCC_ONLY: the module fixture drives GCC's single-pass -fmodules flow;
+# clang needs a separate --precompile step producing a .pcm.
 gcc_feature_test(cpp20_modules_basic           STD c++20  MIN_GCC 16  TOPIC language
                  TAGS essential modules build-system  STATUS covered
                  PROPOSAL P1103R3  FEATURE_MACRO __cpp_modules
                  MODULE_INTERFACE cpp20_modules_math.cpp
+                 GCC_ONLY
                  EXTRA_COMPILE_FLAGS -fmodules)
 gcc_feature_test(cpp20_nttp_class             STD c++20  MIN_GCC 14  TOPIC templates)
 gcc_feature_test(cpp20_numbers                STD c++20  MIN_GCC 14  TOPIC stl)
