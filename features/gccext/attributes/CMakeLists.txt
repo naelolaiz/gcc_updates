@@ -16,7 +16,9 @@ gcc_feature_test(gccext_target_clones         STD c++17  MIN_GCC 13  TOPIC gcc-a
                  ARCH x86  SKIP_SANITIZER thread)
 # AArch64 FMV landed in GCC 14; -Wno-experimental-fmv-target silences the
 # GCC 15+ experimental warning under -Werror (GCC 14 ignores the option).
+# GCC_EXTRA_COMPILE_FLAGS: clang rejects the unknown -Wno- option, and its
+# aarch64 FMV needs no suppression.
 gcc_feature_test(gccext_target_clones_aarch64 STD c++17  MIN_GCC 14  TOPIC gcc-attributes
                  ARCH aarch64
-                 EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target
+                 GCC_EXTRA_COMPILE_FLAGS -Wno-experimental-fmv-target
                  SKIP_SANITIZER thread)

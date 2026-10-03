@@ -9,8 +9,22 @@ latent UB / leak / data race in an example is caught the same day it lands.
 # Locally: re-build everything under UBSan + ASan in the container.
 ./scripts/container-dev.sh 15 sanitize=undefined,address
 
-# CI does the equivalent on a dedicated job (see .github/workflows/ci.yml).
+# Same proofs under clang's compiler-rt runtimes (the upstream original;
+# GCC's libsanitizer is a port of it):
+./scripts/container-dev.sh clang23 sanitize=undefined,address
+./scripts/container-dev.sh clang23 sanitize=thread
+
+# CI does the equivalent on dedicated jobs (see .github/workflows/ci.yml).
 ```
+
+CI runs each sanitizer combination twice: once under GCC 15 (libsanitizer)
+and once under clang 23 (compiler-rt), so a deliberate-trip demo must produce
+its declared report under both instrumentations. One difference is evened out
+by the build: GCC's `-fsanitize=undefined` includes the `vptr` check, while
+clang keeps it outside its `undefined` group, so `gcc_feature_test()` adds
+`-fsanitize=vptr` under clang whenever `undefined` is active. That is what lets
+[gccext_ubsan_invalid_vptr](../features/gccext/sanitize/ubsan/gccext_ubsan_invalid_vptr.cpp)
+produce the same report under both compilers.
 
 If any example aborts with a sanitizer report, that run fails. Examples are
 expected to be sanitizer-clean; if a deliberate UB demo is needed, opt out

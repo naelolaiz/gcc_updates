@@ -32,7 +32,8 @@ int main() {
     for (int i = 0; i < 100; ++i) v.push_back(i);
     DEMO_ASSERT(v.front() == 0 && v.back() == 99);
 
-    // The three standard upstream resources are observable / swappable.
-    DEMO_ASSERT(std::pmr::get_default_resource() != nullptr);
+    // The three standard upstream resources are observable / swappable;
+    // until someone calls set_default_resource, the default is new_delete.
+    DEMO_ASSERT(std::pmr::get_default_resource() == std::pmr::new_delete_resource());
     return 0;
 }

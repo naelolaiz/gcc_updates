@@ -1,12 +1,14 @@
-// description: User-defined literals: 'value_suffix' calls operator"" _suffix(value). User suffixes must start with an underscore.
+// description: User-defined literals: 'value_suffix' calls operator""_suffix(value). User suffixes must start with an underscore.
 // reference: https://en.cppreference.com/w/cpp/language/user_literal
 
 #include "support/demo.hpp"
 #include <cassert>
 #include <cstddef>
 
-constexpr long double operator"" _km (long double v) { return v * 1000.0L; }
-constexpr long double operator"" _mi (long double v) { return v * 1609.344L; }
+// No space before the suffix: 'operator"" _km' is deprecated since C++23
+// (see gcc15_warn_deprecated_literal_operator).
+constexpr long double operator""_km(long double v) { return v * 1000.0L; }
+constexpr long double operator""_mi(long double v) { return v * 1609.344L; }
 
 // String-literal UDL: signature is (const char*, size_t). C++11 constexpr
 // forbids loops, so we recurse instead.
@@ -14,7 +16,7 @@ constexpr unsigned long long _bin_impl(const char* s, std::size_t n,
                                         unsigned long long acc) {
     return n == 0 ? acc : _bin_impl(s + 1, n - 1, acc * 2 + (*s - '0'));
 }
-constexpr unsigned long long operator"" _bin(const char* s, std::size_t n) {
+constexpr unsigned long long operator""_bin(const char* s, std::size_t n) {
     return _bin_impl(s, n, 0);
 }
 
