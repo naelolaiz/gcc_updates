@@ -43,6 +43,7 @@ _Folder: `features/std/cpp23/`. 16 topic(s). Generated from `gcc_feature_test()`
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
+| [cpp23_ranges_from_range.cpp](cpp23_ranges_from_range.cpp) | c++23 | GCC >= 15; libstdc++ >= 15 | covered | C++23 containers construct from any range with std::from_range and grow with append_range / insert_range / assign_range -- whole ranges go in without an iterator pair. |
 | [cpp23_ranges_shift.cpp](cpp23_ranges_shift.cpp) | c++23 | GCC >= 16; libstdc++ >= 16 | covered | std::ranges::shift_left and shift_right move elements within a range and return the subrange containing the useful result. |
 | [cpp23_ranges_to.cpp](cpp23_ranges_to.cpp) | c++23 | GCC >= 14 | covered | std::ranges::to materialises a view (or any range) into a concrete container in one expression. |
 
@@ -64,20 +65,20 @@ _Folder: `features/std/cpp23/`. 16 topic(s). Generated from `gcc_feature_test()`
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp23_deducing_this.cpp](cpp23_deducing_this.cpp) | c++23 | GCC >= 14 | covered | Explicit object parameter ('deducing this') replaces ref-qual overload sets and enables CRTP-without-CRTP. |
 | [cpp23_expected.cpp](cpp23_expected.cpp) | c++23 | GCC >= 13 | covered | std::expected<T,E> is a value-or-error type with monadic and_then / or_else / transform. |
-| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
+| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write std::format-style output directly to stdout or any FILE*. |
 | [cpp23_ranges_to.cpp](cpp23_ranges_to.cpp) | c++23 | GCC >= 14 | covered | std::ranges::to materialises a view (or any range) into a concrete container in one expression. |
 
 ## format
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
+| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write std::format-style output directly to stdout or any FILE*. |
 
 ## io
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
+| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write std::format-style output directly to stdout or any FILE*. |
 
 ## language
 
@@ -104,6 +105,7 @@ _Folder: `features/std/cpp23/`. 16 topic(s). Generated from `gcc_feature_test()`
 | [cpp23_ranges_enumerate.cpp](cpp23_ranges_enumerate.cpp) | c++23 | GCC >= 13 | covered | views::enumerate yields (index, value) pairs -- the standard equivalent of Python's enumerate(). |
 | [cpp23_ranges_find_last.cpp](cpp23_ranges_find_last.cpp) | c++23 | GCC >= 13; libstdc++ >= 13 | covered | ranges::find_last / find_last_if / find_last_if_not return the LAST matching position; previously you reversed first. |
 | [cpp23_ranges_fold.cpp](cpp23_ranges_fold.cpp) | c++23 | GCC >= 13; libstdc++ >= 13 | covered | ranges::fold_left / fold_right / fold_left_first replace std::accumulate; concept-checked, projection-aware. |
+| [cpp23_ranges_from_range.cpp](cpp23_ranges_from_range.cpp) | c++23 | GCC >= 15; libstdc++ >= 15 | covered | C++23 containers construct from any range with std::from_range and grow with append_range / insert_range / assign_range -- whole ranges go in without an iterator pair. |
 | [cpp23_ranges_iota_algorithm.cpp](cpp23_ranges_iota_algorithm.cpp) | c++23 | GCC >= 14 | covered | std::ranges::iota (the algorithm, not the view) fills a range with sequentially increasing values; concept-checked. |
 | [cpp23_ranges_join_with.cpp](cpp23_ranges_join_with.cpp) | c++23 | GCC >= 13 | covered | views::join_with flattens a range-of-ranges with a separator (single element OR a range). |
 | [cpp23_ranges_shift.cpp](cpp23_ranges_shift.cpp) | c++23 | GCC >= 16; libstdc++ >= 16 | covered | std::ranges::shift_left and shift_right move elements within a range and return the subrange containing the useful result. |
@@ -124,14 +126,14 @@ _Folder: `features/std/cpp23/`. 16 topic(s). Generated from `gcc_feature_test()`
 | [cpp23_expected.cpp](cpp23_expected.cpp) | c++23 | GCC >= 13 | covered | std::expected<T,E> is a value-or-error type with monadic and_then / or_else / transform. |
 | [cpp23_flat_map.cpp](cpp23_flat_map.cpp) | c++23 | GCC >= 15 | covered | std::flat_map keeps two parallel sorted vectors instead of a tree -- cache-friendly, lookup O(log n), insert O(n). |
 | [cpp23_flat_set.cpp](cpp23_flat_set.cpp) | c++23 | GCC >= 15 | covered | std::flat_set is the set-shaped counterpart of flat_map: sorted contiguous storage instead of an RB tree. |
-| [cpp23_format_ranges.cpp](cpp23_format_ranges.cpp) | c++23 | GCC >= 14; libstdc++ >= 15 | covered | C++23 made every range formattable by std::format -- pass any container/view through "{}", customise per-element with the nested format spec "{::}", or pick join_with for a custom separator. |
+| [cpp23_format_ranges.cpp](cpp23_format_ranges.cpp) | c++23 | GCC >= 14; libstdc++ >= 15 | covered | C++23 made every range formattable by std::format -- pass any container/view through "{}", customise each element with the nested format spec "{::}", or drop the brackets with "{:n}". |
 | [cpp23_forward_like.cpp](cpp23_forward_like.cpp) | c++23 | GCC >= 14 | covered | std::forward_like<Self>(x) returns x with the cv-qualification AND value category of Self -- the cleanest way to forward an inner member from a deducing-this method without writing four overloads. |
 | [cpp23_invoke_r.cpp](cpp23_invoke_r.cpp) | c++23 | GCC >= 13 | covered | std::invoke_r<R>(f, args...) is std::invoke with the result converted to R -- pin the return type in generic code (widen int to double, or discard via R=void) without casting at every call site. |
 | [cpp23_mdspan.cpp](cpp23_mdspan.cpp) | c++23 | GCC >= 16 | covered | std::mdspan is a non-owning view over multi-dimensional contiguous data; supports static and dynamic extents. |
 | [cpp23_move_only_function.cpp](cpp23_move_only_function.cpp) | c++23 | GCC >= 13 | covered | std::move_only_function is std::function but for move-only callables (e.g. unique_ptr captures, std::packaged_task-style ownership). |
 | [cpp23_optional_monadic.cpp](cpp23_optional_monadic.cpp) | c++23 | GCC >= 13 | covered | std::optional gained monadic ops (and_then / transform / or_else) -- chain fallible computations cleanly. |
 | [cpp23_out_ptr.cpp](cpp23_out_ptr.cpp) | c++23 | GCC >= 14 | covered | std::out_ptr / std::inout_ptr adapt smart pointers to legacy 'T**' APIs without manual reset() dancing. |
-| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp. |
+| [cpp23_print.cpp](cpp23_print.cpp) | c++23 | GCC >= 14 | covered | std::print / std::println write std::format-style output directly to stdout or any FILE*. |
 | [cpp23_resize_and_overwrite.cpp](cpp23_resize_and_overwrite.cpp) | c++23 | GCC >= 13 | covered | std::string::resize_and_overwrite gives you an uninitialized buffer of N bytes, then trusts your callback to size it down. |
 | [cpp23_spanstream.cpp](cpp23_spanstream.cpp) | c++23 | GCC >= 13 | covered | <spanstream> wraps a std::span as the buffer for an iostream -- ispanstream / ospanstream / spanstream do the same job as stringstream but with no allocation, no copy, and no implicit lifetime ownership. |
 | [cpp23_stacktrace.cpp](cpp23_stacktrace.cpp) | c++23 | GCC >= 14; libstdc++ >= 14 | covered | std::stacktrace captures and pretty-prints the current call stack; symbol names depend on debuginfo. |

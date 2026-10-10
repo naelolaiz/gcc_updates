@@ -72,8 +72,14 @@ Read these as before/after pairs:
 
 ## C++26 frontier
 
-Use GCC 16. Begin with small vocabulary additions (`inplace_vector`,
-`function_ref`, `optional<T&>`), then `simd`, contracts, and reflection. Check
+Use GCC 16. Begin with small vocabulary additions
+([`inplace_vector`](../features/std/cpp26/cpp26_inplace_vector.cpp),
+[`function_ref`](../features/std/cpp26/cpp26_function_wrappers.cpp),
+[`optional<T&>`](../features/std/cpp26/cpp26_optional_ref.cpp)), then
+[`simd`](../features/std/cpp26/cpp26_simd.cpp),
+[contracts](../features/std/cpp26/cpp26_contracts_basic.cpp),
+[expansion statements](../features/std/cpp26/cpp26_expansion_statements.cpp),
+and [reflection](../features/std/cpp26/cpp26_reflection_basic.cpp). Check
 [coverage.yml](../coverage.yml) before assuming that an absent feature was
 forgotten; unsupported and intentionally out-of-scope work is recorded there.
 

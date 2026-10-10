@@ -1,5 +1,5 @@
 # Release smoke tests prove what the gcc:15 toolchain ships; GCC_ONLY by premise.
-gcc_feature_test(gcc15_default_print  STD c++23  MIN_GCC 15  TOPIC gcc-release
+gcc_feature_test(gcc15_libstdcxx_print_ranges  STD c++23  MIN_GCC 15  TOPIC gcc-release
                  GCC_ONLY)
 
 # New-in-GCC-15 diagnostic: compile-only, must fail with the expected text.

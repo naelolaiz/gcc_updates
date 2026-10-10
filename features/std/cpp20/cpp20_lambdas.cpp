@@ -1,4 +1,4 @@
-// description: C++20 added template parameter lists on lambdas, default-construction, and capture of *this by value.
+// description: C++20 added template parameter lists on lambdas, default-constructible and assignable captureless lambdas, and the explicit [=, this] capture (implicitly capturing this through [=] is deprecated).
 // reference: https://en.cppreference.com/w/cpp/language/lambda
 
 #include "support/demo.hpp"
@@ -9,8 +9,17 @@
 struct Counter {
     int n = 0;
     auto bump_by_value_self() {
-        // Capture *this by VALUE: lambda owns a copy of Counter, safe even if 'this' dies.
+        // [*this] (C++17) copies the object: the lambda owns a Counter and
+        // stays safe even if the original dies.
         return [*this](int x) mutable {
+            n += x;
+            return n;
+        };
+    }
+    auto bump_through_this() {
+        // C++20 spells the by-reference capture of this explicitly next to
+        // '='; relying on [=] to capture this implicitly is deprecated.
+        return [=, this](int x) {
             n += x;
             return n;
         };
@@ -38,6 +47,11 @@ int main() {
     c.n = 9999;                  // doesn't affect the captured copy
     DEMO_ASSERT(fn(5) == 15);
     DEMO_ASSERT(fn(2) == 17);
+
+    // [=, this] writes through to the live object.
+    auto through = c.bump_through_this();
+    DEMO_ASSERT(through(1) == 10000);
+    DEMO_ASSERT(c.n == 10000);
 
     return 0;
 }

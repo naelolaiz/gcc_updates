@@ -1,6 +1,6 @@
 # C++26 (experimental) examples
 
-_Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
+_Folder: `features/std/cpp26/`. 22 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
 
 ## Topics
 
@@ -17,6 +17,7 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 - [ownership](#ownership)
 - [performance](#performance)
 - [random](#random)
+- [ranges](#ranges)
 - [reflection](#reflection)
 - [safety](#safety)
 - [simd](#simd)
@@ -37,9 +38,10 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp26_constexpr_exceptions.cpp](cpp26_constexpr_exceptions.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 permits exceptions during constant evaluation when the exception and its copies are destroyed before evaluation completes. |
+| [cpp26_embed.cpp](cpp26_embed.cpp) | c++26 | GCC >= 15 (GCC only) | covered | #embed pastes a file's bytes into the program at compile time as a comma-separated list of integers, so binary resources need no external generator. |
 | [cpp26_expansion_statements.cpp](cpp26_expansion_statements.cpp) | c++26 | GCC >= 16; Clang >= 23 | covered | Expansion statements use template for to instantiate a statement once per compile-time element, preserving each element's distinct type or value. |
 | [cpp26_pack_indexing.cpp](cpp26_pack_indexing.cpp) | c++26 | GCC >= 15 | covered | Pack indexing: pack...[I] selects the I-th element of a parameter pack directly -- no recursive helpers or tuple detours to reach a single pack element. |
-| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection inspects a type's members at compile time and synthesizes a projected array without hand-written field enumeration. |
+| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection enumerates a type's data members at compile time, so one generic loop can read every field without hand-written field lists. |
 | [cpp26_structured_binding_pack.cpp](cpp26_structured_binding_pack.cpp) | c++26 | GCC >= 16 | covered | A structured binding can introduce a pack, turning a tuple-like object into named pack elements without std::apply or index_sequence. |
 
 ## containers
@@ -60,7 +62,7 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp26_contracts_basic.cpp](cpp26_contracts_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 contracts attach checked preconditions and postconditions to a function; GCC 16 implements the adopted P2900 syntax. |
-| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | compile-only | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
+| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
 | [cpp26_delete_reason.cpp](cpp26_delete_reason.cpp) | c++26 | GCC >= 15 | covered | = delete("reason") attaches an explanation to a deleted function; a caller's error message then says WHY it is deleted and what to use instead of a bare 'use of deleted function'. |
 | [cpp26_delete_reason_diagnostic.cpp](cpp26_delete_reason_diagnostic.cpp) | c++26 | GCC >= 15 | negative | Calling a function deleted with a reason must fail and surface the author-provided migration guidance in the compiler diagnostic. |
 | [cpp26_uninitialized_diagnostic.cpp](cpp26_uninitialized_diagnostic.cpp) | c++26 | GCC >= 16 | negative | C++26 classifies an ordinary uninitialized read as erroneous behavior; GCC diagnoses this example and CI requires that diagnostic. |
@@ -80,6 +82,7 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | [cpp26_contracts_basic.cpp](cpp26_contracts_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 contracts attach checked preconditions and postconditions to a function; GCC 16 implements the adopted P2900 syntax. |
 | [cpp26_delete_reason.cpp](cpp26_delete_reason.cpp) | c++26 | GCC >= 15 | covered | = delete("reason") attaches an explanation to a deleted function; a caller's error message then says WHY it is deleted and what to use instead of a bare 'use of deleted function'. |
 | [cpp26_delete_reason_diagnostic.cpp](cpp26_delete_reason_diagnostic.cpp) | c++26 | GCC >= 15 | negative | Calling a function deleted with a reason must fail and surface the author-provided migration guidance in the compiler diagnostic. |
+| [cpp26_embed.cpp](cpp26_embed.cpp) | c++26 | GCC >= 15 (GCC only) | covered | #embed pastes a file's bytes into the program at compile time as a comma-separated list of integers, so binary resources need no external generator. |
 | [cpp26_expansion_statements.cpp](cpp26_expansion_statements.cpp) | c++26 | GCC >= 16; Clang >= 23 | covered | Expansion statements use template for to instantiate a statement once per compile-time element, preserving each element's distinct type or value. |
 | [cpp26_pack_indexing.cpp](cpp26_pack_indexing.cpp) | c++26 | GCC >= 15 | covered | Pack indexing: pack...[I] selects the I-th element of a parameter pack directly -- no recursive helpers or tuple detours to reach a single pack element. |
 | [cpp26_static_assert_messages.cpp](cpp26_static_assert_messages.cpp) | c++26 | GCC >= 14 | covered | static_assert accepts a constexpr string-like object (anything with constexpr size()/data()) as its message -- diagnostics can be computed instead of being string literals. |
@@ -126,11 +129,17 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp26_philox_engine.cpp](cpp26_philox_engine.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::philox4x32 is a counter-based random engine with reproducible streams and inexpensive independent subsequences for parallel workloads. |
 
+## ranges
+
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [cpp26_views_concat.cpp](cpp26_views_concat.cpp) | c++26 | GCC >= 15; libstdc++ >= 15 | covered | std::views::concat presents several ranges as one sequence without copying them, and stays writable when every input is. |
+
 ## reflection
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection inspects a type's members at compile time and synthesizes a projected array without hand-written field enumeration. |
+| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection enumerates a type's data members at compile time, so one generic loop can read every field without hand-written field lists. |
 
 ## safety
 
@@ -148,7 +157,7 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | compile-only | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
+| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
 | [cpp26_function_wrappers.cpp](cpp26_function_wrappers.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::copyable_function owns a copyable type-erased callable while std::function_ref is a lightweight non-owning view of a callable. |
 | [cpp26_indirect_polymorphic.cpp](cpp26_indirect_polymorphic.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::indirect gives heap-backed values deep-copy semantics; std::polymorphic extends that model to copyable polymorphic class hierarchies. |
 | [cpp26_inplace_vector.cpp](cpp26_inplace_vector.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::inplace_vector is a vector-like contiguous container whose maximum capacity and storage are part of the object, so growth never allocates. |
@@ -166,14 +175,14 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp26_expansion_statements.cpp](cpp26_expansion_statements.cpp) | c++26 | GCC >= 16; Clang >= 23 | covered | Expansion statements use template for to instantiate a statement once per compile-time element, preserving each element's distinct type or value. |
 | [cpp26_pack_indexing.cpp](cpp26_pack_indexing.cpp) | c++26 | GCC >= 15 | covered | Pack indexing: pack...[I] selects the I-th element of a parameter pack directly -- no recursive helpers or tuple detours to reach a single pack element. |
-| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection inspects a type's members at compile time and synthesizes a projected array without hand-written field enumeration. |
+| [cpp26_reflection_basic.cpp](cpp26_reflection_basic.cpp) | c++26 | GCC >= 16 (GCC only) | covered | C++26 static reflection enumerates a type's data members at compile time, so one generic loop can read every field without hand-written field lists. |
 | [cpp26_structured_binding_pack.cpp](cpp26_structured_binding_pack.cpp) | c++26 | GCC >= 16 | covered | A structured binding can introduce a pack, turning a tuple-like object into named pack elements without std::apply or index_sequence. |
 
 ## tooling
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | compile-only | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
+| [cpp26_debugging.cpp](cpp26_debugging.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | <debugging> provides a portable query for debugger presence and standardized breakpoint operations. |
 
 ## value-types
 
@@ -187,3 +196,4 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [cpp26_submdspan.cpp](cpp26_submdspan.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::submdspan creates a lower-dimensional or sliced mdspan while preserving the mapping and accessor needed to view the original storage. |
+| [cpp26_views_concat.cpp](cpp26_views_concat.cpp) | c++26 | GCC >= 15; libstdc++ >= 15 | covered | std::views::concat presents several ranges as one sequence without copying them, and stays writable when every input is. |

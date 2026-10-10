@@ -10,4 +10,4 @@ listing examples grouped by topic.
 | [`cpp17/`](cpp17/) | std::optional, variant, any, string_view, filesystem, structured bindings, if constexpr, fold expressions, parallel STL, attributes, byte. | Quality-of-life features layered on C++11/14. |
 | [`cpp20/`](cpp20/) | Concepts, ranges/views, coroutines, the full `<thread>` upgrade (jthread, semaphores, latch, barrier, syncstream), format, span, bit ops, etc. | The biggest single jump in modern C++. |
 | [`cpp23/`](cpp23/) | std::expected, mdspan, print, generator, stacktrace, flat_map; deducing this; lots of new ranges/views; library polish. | Smoothing C++20's edges plus headline items. |
-| [`cpp26/`](cpp26/) | Saturation arithmetic, contracts, static reflection; some entries are experimental or GCC-version gated. | Tracking what GCC 14+ has of C++26 already. |
+| [`cpp26/`](cpp26/) | Static reflection, contracts, expansion statements, pack indexing; `inplace_vector`, `optional<T&>`, `function_ref`, `indirect`/`polymorphic`, `simd`, saturation arithmetic. Every entry is GCC-version gated. | Tracking what GCC 14+ has of C++26 already. |

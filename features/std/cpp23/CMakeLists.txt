@@ -31,7 +31,6 @@ gcc_feature_test(cpp23_optional_monadic             STD c++23  MIN_GCC 13  TOPIC
 gcc_feature_test(cpp23_out_ptr                      STD c++23  MIN_GCC 14  TOPIC stl)
 gcc_feature_test(cpp23_print                        STD c++23  MIN_GCC 14  TOPIC stl
                  TAGS essential io format
-                 EXTRA_LIBS stdc++exp
                  EXPECT_RUN_OUTPUT "hello from std::println")
 gcc_feature_test(cpp23_ranges_adjacent              STD c++23  MIN_GCC 13  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_cartesian_product     STD c++23  MIN_GCC 13  TOPIC ranges)
@@ -41,6 +40,10 @@ gcc_feature_test(cpp23_ranges_find_last             STD c++23  MIN_GCC 13  TOPIC
                  MIN_LIBSTDCXX 13)
 gcc_feature_test(cpp23_ranges_fold                  STD c++23  MIN_GCC 13  TOPIC ranges
                  MIN_LIBSTDCXX 13)
+gcc_feature_test(cpp23_ranges_from_range            STD c++23  MIN_GCC 15  TOPIC ranges
+                 MIN_LIBSTDCXX 15  TAGS containers
+                 PROPOSAL P1206R7  FEATURE_MACRO __cpp_lib_containers_ranges
+                 PREREQUISITES cpp23_ranges_to)
 gcc_feature_test(cpp23_ranges_iota_algorithm        STD c++23  MIN_GCC 14  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_join_with             STD c++23  MIN_GCC 13  TOPIC ranges)
 gcc_feature_test(cpp23_ranges_shift                 STD c++23  MIN_GCC 16  TOPIC ranges

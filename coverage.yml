@@ -110,7 +110,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html'
-    description: 'Position-independent executables are a TOOLCHAIN default, not a language one: upstream gcc:N builds default to non-PIE while distro packages (like the Debian g++-16 CI uses) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you''re in.'
+    description: 'Position-independent executables are a TOOLCHAIN default, not a language one: the upstream builds in the official gcc:N images CI uses default to non-PIE, while distro packages (Debian''s and Ubuntu''s g++) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you''re in.'
   - name: 'gcc13_libstdcxx_format'
     source: 'features/gcc/gcc13/gcc13_libstdcxx_format.cpp'
     standard: 'c++20'
@@ -190,8 +190,8 @@ examples:
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/gcc-14/changes.html'
     description: 'GCC 14 introduced -fhardened as an umbrella for production hardening flags; this test proves that stack protection and fortified libc calls are enabled.'
-  - name: 'gcc14_libstdcxx_print_exp'
-    source: 'features/gcc/gcc14/gcc14_libstdcxx_print_exp.cpp'
+  - name: 'gcc14_libstdcxx_print'
+    source: 'features/gcc/gcc14/gcc14_libstdcxx_print.cpp'
     standard: 'c++23'
     min_gcc: 14
     max_gcc: null
@@ -208,14 +208,13 @@ examples:
     skip_reason: null
     module_interface: null
     prerequisites: []
-    extra_libs:
-      - 'stdc++exp'
+    extra_libs: []
     extra_compile_flags: []
     gcc_extra_compile_flags: []
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/gcc-14/changes.html'
-    description: 'GCC 14 first shipped std::print/std::println in libstdc++, still in the experimental library -- linking -lstdc++exp is required (GCC 15 later moved it into the main library; see gcc15_default_print).'
+    description: 'GCC 14 first shipped std::print/std::println in libstdc++; on Linux and other POSIX targets they link with default flags (only Windows needs -lstdc++exp, for Unicode console output).'
   - name: 'gcc14_libstdcxx_ranges_to'
     source: 'features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp'
     standard: 'c++23'
@@ -267,8 +266,8 @@ examples:
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/onlinedocs/gcc-14.1.0/gcc/Warning-Options.html'
     description: 'GCC 14 introduced -Wcalloc-transposed-args: calloc(sizeof(T), n) has the arguments backwards (element count first, element size second). Built with -Werror=calloc-transposed-args; CTest asserts the diagnostic fires.'
-  - name: 'gcc15_default_print'
-    source: 'features/gcc/gcc15/gcc15_default_print.cpp'
+  - name: 'gcc15_libstdcxx_print_ranges'
+    source: 'features/gcc/gcc15/gcc15_libstdcxx_print_ranges.cpp'
     standard: 'c++23'
     min_gcc: 15
     max_gcc: null
@@ -291,7 +290,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/gcc-15/changes.html'
-    description: 'GCC 15 promoted std::print/std::println from libstdc++exp into the main libstdc++ -- no extra link flags needed.'
+    description: 'GCC 15''s libstdc++ formats ranges and tuples (P2286R8, P2585R1), so std::println("{}", v) prints [1, 2, 3] directly -- GCC 14 rejected it because std::vector had no std::formatter.'
   - name: 'gcc15_warn_deprecated_literal_operator'
     source: 'features/gcc/gcc15/gcc15_warn_deprecated_literal_operator.cpp'
     standard: 'c++23'
@@ -4679,7 +4678,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://en.cppreference.com/w/cpp/language/lambda'
-    description: 'C++20 added template parameter lists on lambdas, default-construction, and capture of *this by value.'
+    description: 'C++20 added template parameter lists on lambdas, default-constructible and assignable captureless lambdas, and the explicit [=, this] capture (implicitly capturing this through [=] is deprecated).'
   - name: 'cpp20_latch'
     source: 'features/std/cpp20/cpp20_latch.cpp'
     standard: 'c++20'
@@ -5453,7 +5452,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://en.cppreference.com/w/cpp/utility/format/range_formatter'
-    description: 'C++23 made every range formattable by std::format -- pass any container/view through "{}", customise per-element with the nested format spec "{::}", or pick join_with for a custom separator.'
+    description: 'C++23 made every range formattable by std::format -- pass any container/view through "{}", customise each element with the nested format spec "{::}", or drop the brackets with "{:n}".'
   - name: 'cpp23_forward_like'
     source: 'features/std/cpp23/cpp23_forward_like.cpp'
     standard: 'c++23'
@@ -5700,14 +5699,13 @@ examples:
     skip_reason: null
     module_interface: null
     prerequisites: []
-    extra_libs:
-      - 'stdc++exp'
+    extra_libs: []
     extra_compile_flags: []
     gcc_extra_compile_flags: []
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://en.cppreference.com/w/cpp/io/print'
-    description: 'std::print / std::println write directly to stdout using std::format syntax. On GCC 14 the impl lives in libstdc++exp.'
+    description: 'std::print / std::println write std::format-style output directly to stdout or any FILE*.'
   - name: 'cpp23_ranges_adjacent'
     source: 'features/std/cpp23/cpp23_ranges_adjacent.cpp'
     standard: 'c++23'
@@ -5858,6 +5856,33 @@ examples:
     skip_sanitizer: []
     reference: 'https://en.cppreference.com/w/cpp/algorithm/ranges/fold_left'
     description: 'ranges::fold_left / fold_right / fold_left_first replace std::accumulate; concept-checked, projection-aware.'
+  - name: 'cpp23_ranges_from_range'
+    source: 'features/std/cpp23/cpp23_ranges_from_range.cpp'
+    standard: 'c++23'
+    min_gcc: 15
+    max_gcc: null
+    min_clang: null
+    min_libstdcxx: 15
+    max_libstdcxx: null
+    gcc_only: false
+    status: 'covered'
+    architecture: 'portable'
+    tags:
+      - 'ranges'
+      - 'containers'
+    feature_macro: '__cpp_lib_containers_ranges'
+    proposal: 'P1206R7'
+    skip_reason: null
+    module_interface: null
+    prerequisites:
+      - 'cpp23_ranges_to'
+    extra_libs: []
+    extra_compile_flags: []
+    gcc_extra_compile_flags: []
+    requires_sanitizer: []
+    skip_sanitizer: []
+    reference: 'https://en.cppreference.com/w/cpp/ranges/from_range'
+    description: 'C++23 containers construct from any range with std::from_range and grow with append_range / insert_range / assign_range -- whole ranges go in without an iterator pair.'
   - name: 'cpp23_ranges_iota_algorithm'
     source: 'features/std/cpp23/cpp23_ranges_iota_algorithm.cpp'
     standard: 'c++23'
@@ -6456,7 +6481,7 @@ examples:
     min_libstdcxx: 16
     max_libstdcxx: null
     gcc_only: false
-    status: 'compile-only'
+    status: 'covered'
     architecture: 'portable'
     tags:
       - 'stl'
@@ -6464,10 +6489,11 @@ examples:
       - 'tooling'
     feature_macro: '__cpp_lib_debugging'
     proposal: 'P2546R5'
-    skip_reason: 'GCC 16 headers declare the API, but this runtime snapshot does not yet export is_debugger_present'
+    skip_reason: null
     module_interface: null
     prerequisites: []
-    extra_libs: []
+    extra_libs:
+      - 'stdc++exp'
     extra_compile_flags: []
     gcc_extra_compile_flags: []
     requires_sanitizer: []
@@ -6527,6 +6553,32 @@ examples:
     skip_sanitizer: []
     reference: 'https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2573r2.html'
     description: 'Calling a function deleted with a reason must fail and surface the author-provided migration guidance in the compiler diagnostic.'
+  - name: 'cpp26_embed'
+    source: 'features/std/cpp26/cpp26_embed.cpp'
+    standard: 'c++26'
+    min_gcc: 15
+    max_gcc: null
+    min_clang: null
+    min_libstdcxx: null
+    max_libstdcxx: null
+    gcc_only: true
+    status: 'covered'
+    architecture: 'portable'
+    tags:
+      - 'language'
+      - 'compile-time'
+    feature_macro: '__cpp_pp_embed'
+    proposal: 'P1967R14'
+    skip_reason: null
+    module_interface: null
+    prerequisites: []
+    extra_libs: []
+    extra_compile_flags: []
+    gcc_extra_compile_flags: []
+    requires_sanitizer: []
+    skip_sanitizer: []
+    reference: 'https://en.cppreference.com/w/cpp/preprocessor/embed'
+    description: '#embed pastes a file''s bytes into the program at compile time as a comma-separated list of integers, so binary resources need no external generator.'
   - name: 'cpp26_expansion_statements'
     source: 'features/std/cpp26/cpp26_expansion_statements.cpp'
     standard: 'c++26'
@@ -6746,7 +6798,8 @@ examples:
     proposal: 'P2996R13'
     skip_reason: null
     module_interface: null
-    prerequisites: []
+    prerequisites:
+      - 'cpp26_expansion_statements'
     extra_libs: []
     extra_compile_flags:
       - '-freflection'
@@ -6754,7 +6807,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://en.cppreference.com/w/cpp/meta'
-    description: 'C++26 static reflection inspects a type''s members at compile time and synthesizes a projected array without hand-written field enumeration.'
+    description: 'C++26 static reflection enumerates a type''s data members at compile time, so one generic loop can read every field without hand-written field lists.'
   - name: 'cpp26_saturation_arith'
     source: 'features/std/cpp26/cpp26_saturation_arith.cpp'
     standard: 'c++26'
@@ -6971,6 +7024,33 @@ examples:
     skip_sanitizer: []
     reference: 'https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2795r5.html'
     description: 'C++26 classifies an ordinary uninitialized read as erroneous behavior; GCC diagnoses this example and CI requires that diagnostic.'
+  - name: 'cpp26_views_concat'
+    source: 'features/std/cpp26/cpp26_views_concat.cpp'
+    standard: 'c++26'
+    min_gcc: 15
+    max_gcc: null
+    min_clang: null
+    min_libstdcxx: 15
+    max_libstdcxx: null
+    gcc_only: false
+    status: 'covered'
+    architecture: 'portable'
+    tags:
+      - 'ranges'
+      - 'views'
+    feature_macro: '__cpp_lib_ranges_concat'
+    proposal: 'P2542R8'
+    skip_reason: null
+    module_interface: null
+    prerequisites:
+      - 'cpp20_ranges_views'
+    extra_libs: []
+    extra_compile_flags: []
+    gcc_extra_compile_flags: []
+    requires_sanitizer: []
+    skip_sanitizer: []
+    reference: 'https://en.cppreference.com/w/cpp/ranges/concat_view'
+    description: 'std::views::concat presents several ranges as one sequence without copying them, and stays writable when every input is.'
 known_gaps:
   - id: 'cxx26-hazard-pointers-and-rcu'
     area: 'C++26 library'
