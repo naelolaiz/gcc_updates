@@ -2,7 +2,7 @@
 // reference: https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Modules.html
 // why: Modules replace repeated textual inclusion with an explicit compiled interface.
 // before: A header declaration plus a separately compiled implementation file.
-// pitfall: GCC 16 module support remains experimental and requires -fmodules.
+// pitfall: GCC module support (this fixture passes from GCC 15) remains experimental and requires -fmodules.
 
 import cpp20_modules_math;
 

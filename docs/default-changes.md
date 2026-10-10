@@ -2,7 +2,7 @@
 
 What changes between GCC releases when you pass **no** flags (or only `-O2`)?
 Everything below was measured inside the same containers CI uses — the
-official `gcc:{13,14,15}` images plus Debian unstable's `g++-16` — with
+official `gcc:{13,14,15,16}` images — with
 `g++ -E -dM` for predefined macros and `g++ -O2 -Q --help=optimizers` /
 `--help=common` diffs for flag defaults. Runnable companions live in
 [features/gcc/defaults/](../features/gcc/defaults/).
@@ -69,9 +69,9 @@ churn on your side.
 
 ## Packaging defaults ≠ upstream defaults
 
-The official `gcc:N` images are upstream builds: **non-PIE** by default.
-Debian's `g++-16` package (what the CI gcc-16 and analyzer jobs use)
-enables **`-fPIE`/`-fPIC` by default** as part of distro hardening. Same
+The official `gcc:N` images that every CI job uses are upstream builds:
+**non-PIE** by default. Distro packages such as Debian's and Ubuntu's `g++`
+enable **`-fPIE`/`-fPIC` by default** as part of distro hardening. Same
 compiler version, different binaries out of the box.
 
 Demo: [gccdef_pie_default.cpp](../features/gcc/defaults/gccdef_pie_default.cpp)

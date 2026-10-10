@@ -8,11 +8,12 @@ Every example under [features/](features/) is registered by one
 `gcc_feature_test()` call in its folder's `CMakeLists.txt`; almost all are
 single-file programs, with one explicit module interface/importer pair. CMake
 and CTest drive the build and run; the function macro lives in
-[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the full suite four
-times on GCC 13/14/15/16 plus three more runs on GCC 15/16 under UBSan+ASan,
-TSan, and `-fanalyzer` — so correctness, runtime UB, data races, and
-compile-time path analysis are all covered per push. The matching official
-`gcc:N` image is used for every compiler lane, including GCC 16. A Clang 23
+[cmake/GccFeature.cmake](cmake/GccFeature.cmake). CI runs the full suite on
+GCC 13/14/15/16 on both amd64 and arm64, repeats it under UBSan+ASan and TSan
+with both GCC 15 and Clang 23, and runs the `-fanalyzer` demos on GCC 16 — so
+correctness, runtime UB, data races, and compile-time path analysis are all
+covered per push. The matching official `gcc:N` image is used for every
+compiler lane, including GCC 16. A Clang 23
 cross-check lane compiles and runs every portable example against the same
 pinned libstdc++, proving they are standard C++ rather than GCC-isms.
 
@@ -80,7 +81,7 @@ docs/
 Every example is built with this baseline:
 
 ```
-g++ -std=$STD -Wall -Wextra -Wpedantic -Werror -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/<bucket>/bin
+g++ -std=$STD -Wall -Wextra -Wpedantic -Werror -O2 -pthread -Ifeatures file.cpp $EXTRA -o build/features/<bucket>/<name>
 ```
 
 `$STD` is the `STD` argument of the example's `gcc_feature_test()` call.
@@ -189,7 +190,7 @@ between local and CI for those jobs.
 
 | Job | What it runs | Picks up |
 |-----|--------------|----------|
-| `gcc-{13,14,15,16} ({amd64,arm64})` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version × architecture, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N, minus `ARCH`-gated examples of the other architecture; GCC 16 also proves modules, contracts, reflection, and the newest library examples |
+| `gcc-{13,14,15,16} ({amd64,arm64})` | `cmake -S . -B build && ctest --test-dir build --verbose` (one row per version × architecture, in `gcc:N`) | every test whose `MIN_GCC` ≤ N and `MAX_GCC` ≥ N, minus `ARCH`-gated examples of the other architecture; GCC 15+ also proves modules, and GCC 16 contracts, reflection, and the newest library examples |
 | `clang-23 ({amd64,arm64})` | `cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-23` in `gcc:16` + clang-23 from apt.llvm.org | every test not marked `GCC_ONLY` (and within its `MIN_CLANG`/libstdc++ gates), compiled with clang against the same upstream libstdc++ 16 the GCC 16 lane uses |
 | `sanitize (gcc-15, ubsan + asan + lsan)` | `cmake -DGCC_FEATURE_SANITIZE=undefined,address` in `gcc:15` | every test **plus** `REQUIRES_SANITIZER` demos for {undefined, address, leak} |
 | `sanitize (gcc-15, tsan)` | `cmake -DGCC_FEATURE_SANITIZE=thread` in `gcc:15` (separate; can't share with ASan) | every test plus `REQUIRES_SANITIZER thread` demos |
@@ -242,8 +243,9 @@ their language counterparts. Notably, per cppreference:
 | Feature | First libstdc++ release |
 |---------|-------------------------|
 | `std::ranges::fold_*`, `find_last*`, `contains`/`contains_subrange` | 13 |
-| `std::stacktrace` (linked via `-lstdc++exp`) | 14 |
-| `std::mdspan`, `std::start_lifetime_as`, `std::ranges::starts_with` / `ends_with` | 16 |
+| `std::stacktrace` (linked via `-lstdc++exp`, still true in 16) | 14 |
+| `std::flat_map` / `std::flat_set`, `std::format` of ranges and tuples | 15 |
+| `std::mdspan`, `std::start_lifetime_as`, `std::ranges::starts_with` / `ends_with`, `std::ranges::shift_left` / `shift_right`, `allocate_at_least` | 16 |
 
 The ranges algorithms in the table are declared in `<algorithm>` (not
 `<ranges>`); forgetting that include is a common reason one appears missing.
@@ -525,6 +527,7 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   [`cpp23_size_t_literal`](features/std/cpp23/cpp23_size_t_literal.cpp),
   [`cpp23_auto_decay_copy`](features/std/cpp23/cpp23_auto_decay_copy.cpp).
 - **Ranges/views:** [`cpp23_ranges_to`](features/std/cpp23/cpp23_ranges_to.cpp),
+  [`cpp23_ranges_from_range`](features/std/cpp23/cpp23_ranges_from_range.cpp),
   [`cpp23_ranges_zip`](features/std/cpp23/cpp23_ranges_zip.cpp),
   [`cpp23_ranges_chunk_slide`](features/std/cpp23/cpp23_ranges_chunk_slide.cpp),
   [`cpp23_views_chunk_by`](features/std/cpp23/cpp23_views_chunk_by.cpp),
@@ -616,9 +619,9 @@ Full indexes: [features/gccext/attributes/README.md](features/gccext/attributes/
 ### 6. Edge — C++26 frontier + per-release smoke tests
 
 Every C++26 entry has an explicit proof mode and a version gate. Supported
-features run normally; negative examples must fail with a matched diagnostic;
-the one header-only snapshot is marked `COMPILE_ONLY` with its limitation in
-`coverage.yml`. Unsupported facilities remain visible as known gaps.
+features run normally (`<debugging>` links `-lstdc++exp`, like
+`std::stacktrace`); negative examples must fail with a matched diagnostic.
+Unsupported facilities remain visible as known gaps in `coverage.yml`.
 
 - **Language:** [`cpp26_pack_indexing`](features/std/cpp26/cpp26_pack_indexing.cpp),
   [`cpp26_delete_reason`](features/std/cpp26/cpp26_delete_reason.cpp),
@@ -626,9 +629,11 @@ the one header-only snapshot is marked `COMPILE_ONLY` with its limitation in
   [`cpp26_structured_binding_pack`](features/std/cpp26/cpp26_structured_binding_pack.cpp),
   [`cpp26_constexpr_exceptions`](features/std/cpp26/cpp26_constexpr_exceptions.cpp),
   [`cpp26_static_assert_messages`](features/std/cpp26/cpp26_static_assert_messages.cpp),
+  [`cpp26_embed`](features/std/cpp26/cpp26_embed.cpp),
   [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp).
 - **Library:** [`cpp26_saturation_arith`](features/std/cpp26/cpp26_saturation_arith.cpp),
   [`cpp26_inplace_vector`](features/std/cpp26/cpp26_inplace_vector.cpp),
+  [`cpp26_views_concat`](features/std/cpp26/cpp26_views_concat.cpp),
   [`cpp26_optional_ref`](features/std/cpp26/cpp26_optional_ref.cpp),
   [`cpp26_function_wrappers`](features/std/cpp26/cpp26_function_wrappers.cpp),
   [`cpp26_indirect_polymorphic`](features/std/cpp26/cpp26_indirect_polymorphic.cpp),
@@ -636,14 +641,15 @@ the one header-only snapshot is marked `COMPILE_ONLY` with its limitation in
   [`cpp26_submdspan`](features/std/cpp26/cpp26_submdspan.cpp),
   [`cpp26_philox_engine`](features/std/cpp26/cpp26_philox_engine.cpp),
   [`cpp26_span_at`](features/std/cpp26/cpp26_span_at.cpp),
-  [`cpp26_text_encoding`](features/std/cpp26/cpp26_text_encoding.cpp).
+  [`cpp26_text_encoding`](features/std/cpp26/cpp26_text_encoding.cpp),
+  [`cpp26_debugging`](features/std/cpp26/cpp26_debugging.cpp).
 - **Reflection:** [`cpp26_reflection_basic`](features/std/cpp26/cpp26_reflection_basic.cpp)
   (GCC 16, `-freflection`).
 
 Per-release smoke tests: [`gcc13_libstdcxx_format`](features/gcc/gcc13/gcc13_libstdcxx_format.cpp),
 [`gcc14_libstdcxx_ranges_to`](features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp)
-+ [`gcc14_libstdcxx_print_exp`](features/gcc/gcc14/gcc14_libstdcxx_print_exp.cpp),
-[`gcc15_default_print`](features/gcc/gcc15/gcc15_default_print.cpp),
++ [`gcc14_libstdcxx_print`](features/gcc/gcc14/gcc14_libstdcxx_print.cpp),
+[`gcc15_libstdcxx_print_ranges`](features/gcc/gcc15/gcc15_libstdcxx_print_ranges.cpp),
 [`gcc16_cpp26_features_default`](features/gcc/gcc16/gcc16_cpp26_features_default.cpp).
 The narrative version of "what each release shipped" is in
 [docs/gcc-changelogs.md](docs/gcc-changelogs.md).

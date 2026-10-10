@@ -10,11 +10,12 @@ gcc_feature_test(cpp26_constexpr_exceptions    STD c++26  MIN_GCC 16  TOPIC lang
                  TAGS compile-time error-handling  GCC_ONLY
                  PROPOSAL P3068R5  PREREQUISITES cpp11_exception_ptr cpp14_relaxed_constexpr)
 
+# libstdc++ 16 exports the <debugging> functions from libstdc++exp, like
+# std::stacktrace, so the example links it and runs.
 gcc_feature_test(cpp26_debugging               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
                  TOPIC stl  TAGS diagnostics tooling
                  PROPOSAL P2546R5  FEATURE_MACRO __cpp_lib_debugging
-                 COMPILE_ONLY
-                 SKIP_REASON "GCC 16 headers declare the API, but this runtime snapshot does not yet export is_debugger_present")
+                 EXTRA_LIBS stdc++exp)
 
 gcc_feature_test(cpp26_delete_reason           STD c++26  MIN_GCC 15  TOPIC language
                  TAGS diagnostics  PROPOSAL P2573R2)
@@ -23,6 +24,12 @@ gcc_feature_test(cpp26_delete_reason_diagnostic
                  TAGS diagnostics  STATUS negative
                  PROPOSAL P2573R2  PREREQUISITES cpp26_delete_reason
                  EXPECT_ERROR "use parse_config.*length is tracked")
+
+# GCC_ONLY: Clang accepts #embed in C++ only as an extension (-Wpedantic
+# rejects it); its C++26 status page does not list P1967 as implemented.
+gcc_feature_test(cpp26_embed                   STD c++26  MIN_GCC 15  TOPIC language
+                 TAGS compile-time  GCC_ONLY
+                 PROPOSAL P1967R14  FEATURE_MACRO __cpp_pp_embed)
 
 # MIN_CLANG 23: first clang with P1306 ('template for'); its support is
 # partial, but covers the enumerating form this example uses.
@@ -65,6 +72,7 @@ gcc_feature_test(cpp26_pack_indexing           STD c++26  MIN_GCC 15  TOPIC lang
 gcc_feature_test(cpp26_reflection_basic        STD c++26  MIN_GCC 16  TOPIC templates
                  TAGS reflection compile-time  PROPOSAL P2996R13
                  FEATURE_MACRO __cpp_impl_reflection  GCC_ONLY
+                 PREREQUISITES cpp26_expansion_statements
                  EXTRA_COMPILE_FLAGS -freflection)
 
 gcc_feature_test(cpp26_saturation_arith        STD c++26  MIN_GCC 14  TOPIC stl)
@@ -77,14 +85,14 @@ gcc_feature_test(cpp26_simd                    STD c++26  MIN_GCC 16  MIN_LIBSTD
                  TOPIC stl  TAGS numerics performance simd  ARCH x86  GCC_ONLY
                  PROPOSAL P1928R15  PREREQUISITES gccext_vector_extensions)
 
-gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 15  TOPIC stl)
+gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 14  TOPIC stl)
 
 gcc_feature_test(cpp26_submdspan               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
                  TOPIC stl  TAGS containers numerics views
                  PROPOSAL P2630R4  FEATURE_MACRO __cpp_lib_submdspan
                  PREREQUISITES cpp23_mdspan)
 
-gcc_feature_test(cpp26_static_assert_messages  STD c++26  MIN_GCC 15  TOPIC language)
+gcc_feature_test(cpp26_static_assert_messages  STD c++26  MIN_GCC 14  TOPIC language)
 
 gcc_feature_test(cpp26_structured_binding_pack STD c++26  MIN_GCC 16  TOPIC language
                  TAGS templates compile-time
@@ -103,6 +111,11 @@ gcc_feature_test(cpp26_philox_engine           STD c++26  MIN_GCC 16  MIN_LIBSTD
                  PROPOSAL P2075R6  FEATURE_MACRO __cpp_lib_philox_engine
                  PREREQUISITES cpp11_random)
 
-# text_encoding::environment() is still in libstdc++exp on GCC 15.
-gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 15  TOPIC stl
+# text_encoding::environment() is exported from libstdc++exp on GCC 14-16.
+gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 14  TOPIC stl
                  EXTRA_LIBS stdc++exp)
+
+gcc_feature_test(cpp26_views_concat            STD c++26  MIN_GCC 15  MIN_LIBSTDCXX 15
+                 TOPIC ranges  TAGS views
+                 PROPOSAL P2542R8  FEATURE_MACRO __cpp_lib_ranges_concat
+                 PREREQUISITES cpp20_ranges_views)

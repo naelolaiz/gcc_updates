@@ -17,4 +17,4 @@ _Folder: `features/gcc/gcc15/`. 2 topic(s). Generated from `gcc_feature_test()` 
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [gcc15_default_print.cpp](gcc15_default_print.cpp) | c++23 | GCC >= 15 (GCC only) | covered | GCC 15 promoted std::print/std::println from libstdc++exp into the main libstdc++ -- no extra link flags needed. |
+| [gcc15_libstdcxx_print_ranges.cpp](gcc15_libstdcxx_print_ranges.cpp) | c++23 | GCC >= 15 (GCC only) | covered | GCC 15's libstdc++ formats ranges and tuples (P2286R8, P2585R1), so std::println("{}", v) prints [1, 2, 3] directly -- GCC 14 rejected it because std::vector had no std::formatter. |

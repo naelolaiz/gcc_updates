@@ -26,7 +26,7 @@ _Folder: `features/gcc/gcc14/`. 4 topic(s). Generated from `gcc_feature_test()` 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [gcc14_hardened_bundle.cpp](gcc14_hardened_bundle.cpp) | c++17 | GCC >= 14 (GCC only) | covered | GCC 14 introduced -fhardened as an umbrella for production hardening flags; this test proves that stack protection and fortified libc calls are enabled. |
-| [gcc14_libstdcxx_print_exp.cpp](gcc14_libstdcxx_print_exp.cpp) | c++23 | GCC >= 14 (GCC only) | covered | GCC 14 first shipped std::print/std::println in libstdc++, still in the experimental library -- linking -lstdc++exp is required (GCC 15 later moved it into the main library; see gcc15_default_print). |
+| [gcc14_libstdcxx_print.cpp](gcc14_libstdcxx_print.cpp) | c++23 | GCC >= 14 (GCC only) | covered | GCC 14 first shipped std::print/std::println in libstdc++; on Linux and other POSIX targets they link with default flags (only Windows needs -lstdc++exp, for Unicode console output). |
 | [gcc14_libstdcxx_ranges_to.cpp](gcc14_libstdcxx_ranges_to.cpp) | c++23 | GCC >= 14 (GCC only) | covered | GCC 14 was the first release where libstdc++ shipped std::ranges::to in the main library (no extra flags). |
 
 ## hardening

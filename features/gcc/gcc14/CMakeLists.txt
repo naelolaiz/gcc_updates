@@ -1,9 +1,8 @@
 # Release smoke tests prove what the gcc:14 toolchain ships; GCC_ONLY by premise.
-# print/println are in libstdc++exp on GCC 14 (main libstdc++ from 15 on);
-# linking stdc++exp stays harmless on newer GCCs.
-gcc_feature_test(gcc14_libstdcxx_print_exp  STD c++23  MIN_GCC 14  TOPIC gcc-release
-                 GCC_ONLY
-                 EXTRA_LIBS stdc++exp)
+# print/println link without stdc++exp on POSIX targets (libstdc++exp only
+# carries the Windows console helpers), so no EXTRA_LIBS here on purpose.
+gcc_feature_test(gcc14_libstdcxx_print      STD c++23  MIN_GCC 14  TOPIC gcc-release
+                 GCC_ONLY)
 gcc_feature_test(gcc14_libstdcxx_ranges_to  STD c++23  MIN_GCC 14  TOPIC gcc-release
                  GCC_ONLY)
 gcc_feature_test(gcc14_hardened_bundle       STD c++17  MIN_GCC 14  TOPIC gcc-release

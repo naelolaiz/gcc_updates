@@ -1,4 +1,4 @@
-// description: C++23 made every range formattable by std::format -- pass any container/view through "{}", customise per-element with the nested format spec "{::}", or pick join_with for a custom separator.
+// description: C++23 made every range formattable by std::format -- pass any container/view through "{}", customise each element with the nested format spec "{::}", or drop the brackets with "{:n}".
 // reference: https://en.cppreference.com/w/cpp/utility/format/range_formatter
 
 #include "support/demo.hpp"
@@ -39,6 +39,11 @@ int main() {
     auto s6 = std::format("{}", words);
     demo::text("strings", s6);                     // ["foo", "bar"]
 
-    DEMO_ASSERT(s1.find("1, 2, 3, 4") != std::string::npos);
+    DEMO_ASSERT(s1 == "[1, 2, 3, 4]");
+    DEMO_ASSERT(s2 == "[0x1, 0x2, 0x3, 0x4]");
+    DEMO_ASSERT(s3 == "[0001, 0002, 0003, 0004]");
+    DEMO_ASSERT(s4 == "1, 2, 3, 4");
+    DEMO_ASSERT(s5 == R"({"alpha": 1, "beta": 2})");
+    DEMO_ASSERT(s6 == R"(["foo", "bar"])");
     return 0;
 }

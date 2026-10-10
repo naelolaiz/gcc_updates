@@ -31,10 +31,13 @@ to a second, full programming language that runs inside the compiler.
    language form that supersedes `std::is_constant_evaluated()` and composes
    correctly with consteval.
 6. [`cpp26_static_assert_messages`](../features/std/cpp26/cpp26_static_assert_messages.cpp)
-   + [`cpp26_pack_indexing`](../features/std/cpp26/cpp26_pack_indexing.cpp) —
-   diagnostics and pack access become compile-time computed values;
+   + [`cpp26_pack_indexing`](../features/std/cpp26/cpp26_pack_indexing.cpp) +
+   [`cpp26_constexpr_exceptions`](../features/std/cpp26/cpp26_constexpr_exceptions.cpp)
+   — diagnostics and pack access become compile-time computed values, and
+   `throw`/`catch` work during constant evaluation;
    [`cpp26_reflection_basic`](../features/std/cpp26/cpp26_reflection_basic.cpp)
-   points at where this is heading.
+   (GCC 16, `-freflection`) lets that compile-time code inspect the program
+   itself.
 
 ## Lambdas and callables
 
@@ -59,6 +62,9 @@ to a second, full programming language that runs inside the compiler.
    — the explicit object parameter removes CRTP and overload duplication,
    lambdas can recurse, and the type-erased wrapper learns about move-only
    callables.
+6. [`cpp26_function_wrappers`](../features/std/cpp26/cpp26_function_wrappers.cpp)
+   — `std::copyable_function` and `std::function_ref` split owning and
+   non-owning type erasure, so `std::function` no longer has to do both.
 
 ## From loops to ranges
 
@@ -77,11 +83,14 @@ to a second, full programming language that runs inside the compiler.
    [`cpp20_views_split`](../features/std/cpp20/cpp20_views_split.cpp) —
    algorithms take whole ranges + projections; views compose lazily.
 5. [`cpp23_ranges_to`](../features/std/cpp23/cpp23_ranges_to.cpp),
+   [`cpp23_ranges_from_range`](../features/std/cpp23/cpp23_ranges_from_range.cpp),
    [`cpp23_ranges_fold`](../features/std/cpp23/cpp23_ranges_fold.cpp),
    [`cpp23_views_chunk_by`](../features/std/cpp23/cpp23_views_chunk_by.cpp),
    [`cpp23_ranges_zip`](../features/std/cpp23/cpp23_ranges_zip.cpp), and
-   friends — the view/algorithm vocabulary roughly doubles and materialising
-   results becomes a one-liner.
+   friends — the view/algorithm vocabulary roughly doubles, and materialising
+   results (or appending them to an existing container) becomes a one-liner.
+6. [`cpp26_views_concat`](../features/std/cpp26/cpp26_views_concat.cpp) —
+   separate ranges read and write as one sequence without copying.
 
 ## Value types for errors and alternatives
 
@@ -97,8 +106,13 @@ to a second, full programming language that runs inside the compiler.
    [`cpp23_optional_monadic`](../features/std/cpp23/cpp23_optional_monadic.cpp)
    — value-or-error with monadic chaining; `and_then`/`transform`/`or_else`
    replace nested ifs.
-4. [`cpp26_contracts_basic`](../features/std/cpp26/cpp26_contracts_basic.cpp)
-   (experimental) — pre/postconditions move into the language itself.
+4. [`cpp26_optional_ref`](../features/std/cpp26/cpp26_optional_ref.cpp) +
+   [`cpp26_indirect_polymorphic`](../features/std/cpp26/cpp26_indirect_polymorphic.cpp)
+   — "maybe a reference" and heap-allocated or polymorphic objects get
+   ordinary value semantics.
+5. [`cpp26_contracts_basic`](../features/std/cpp26/cpp26_contracts_basic.cpp)
+   (GCC 16, `-fcontracts`) — pre/postconditions move into the language
+   itself.
 
 ## Concurrency
 
@@ -165,10 +179,13 @@ to a second, full programming language that runs inside the compiler.
 5. [`cpp23_deducing_this`](../features/std/cpp23/cpp23_deducing_this.cpp) —
    the library-building idioms (CRTP, quadruplicated overloads) collapse
    into one mechanism.
-6. [`cpp26_pack_indexing`](../features/std/cpp26/cpp26_pack_indexing.cpp) —
-   direct pack element access;
+6. [`cpp26_pack_indexing`](../features/std/cpp26/cpp26_pack_indexing.cpp) +
+   [`cpp26_structured_binding_pack`](../features/std/cpp26/cpp26_structured_binding_pack.cpp)
+   + [`cpp26_expansion_statements`](../features/std/cpp26/cpp26_expansion_statements.cpp)
+   — direct pack element access, packs from structured bindings, and
+   `template for` over heterogeneous sequences;
    [`cpp26_reflection_basic`](../features/std/cpp26/cpp26_reflection_basic.cpp)
-   previews the endgame.
+   pairs that last one with reflection to loop over a struct's members.
 
 ## Reading advice
 

@@ -1,4 +1,4 @@
-// description: Position-independent executables are a TOOLCHAIN default, not a language one: upstream gcc:N builds default to non-PIE while distro packages (like the Debian g++-16 CI uses) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you're in.
+// description: Position-independent executables are a TOOLCHAIN default, not a language one: the upstream builds in the official gcc:N images CI uses default to non-PIE, while distro packages (Debian's and Ubuntu's g++) enable -fPIE by default -- __PIE__/__PIC__ tell you which world you're in.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html
 
 #include "support/demo.hpp"
