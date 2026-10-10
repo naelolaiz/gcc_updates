@@ -82,7 +82,7 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | [cpp26_delete_reason_diagnostic.cpp](cpp26_delete_reason_diagnostic.cpp) | c++26 | GCC >= 15 | negative | Calling a function deleted with a reason must fail and surface the author-provided migration guidance in the compiler diagnostic. |
 | [cpp26_expansion_statements.cpp](cpp26_expansion_statements.cpp) | c++26 | GCC >= 16; Clang >= 23 | covered | Expansion statements use template for to instantiate a statement once per compile-time element, preserving each element's distinct type or value. |
 | [cpp26_pack_indexing.cpp](cpp26_pack_indexing.cpp) | c++26 | GCC >= 15 | covered | Pack indexing: pack...[I] selects the I-th element of a parameter pack directly -- no recursive helpers or tuple detours to reach a single pack element. |
-| [cpp26_static_assert_messages.cpp](cpp26_static_assert_messages.cpp) | c++26 | GCC >= 15 | covered | static_assert accepts a constexpr string-like object (anything with constexpr size()/data()) as its message -- diagnostics can be computed instead of being string literals. |
+| [cpp26_static_assert_messages.cpp](cpp26_static_assert_messages.cpp) | c++26 | GCC >= 14 | covered | static_assert accepts a constexpr string-like object (anything with constexpr size()/data()) as its message -- diagnostics can be computed instead of being string literals. |
 | [cpp26_structured_binding_pack.cpp](cpp26_structured_binding_pack.cpp) | c++26 | GCC >= 16 | covered | A structured binding can introduce a pack, turning a tuple-like object into named pack elements without std::apply or index_sequence. |
 | [cpp26_uninitialized_diagnostic.cpp](cpp26_uninitialized_diagnostic.cpp) | c++26 | GCC >= 16 | negative | C++26 classifies an ordinary uninitialized read as erroneous behavior; GCC diagnoses this example and CI requires that diagnostic. |
 
@@ -156,9 +156,9 @@ _Folder: `features/std/cpp26/`. 21 topic(s). Generated from `gcc_feature_test()`
 | [cpp26_philox_engine.cpp](cpp26_philox_engine.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::philox4x32 is a counter-based random engine with reproducible streams and inexpensive independent subsequences for parallel workloads. |
 | [cpp26_saturation_arith.cpp](cpp26_saturation_arith.cpp) | c++26 | GCC >= 14 | covered | <numeric> in C++26 adds saturation arithmetic -- and shows live draft churn: GCC 14/15 ship add_sat/saturate_cast (__cpp_lib_saturation_arithmetic 202311), GCC 16 the renamed saturating_add/saturating_cast (202603). |
 | [cpp26_simd.cpp](cpp26_simd.cpp) | c++26 | GCC >= 16 (GCC only); libstdc++ >= 16 | covered | std::simd::vec expresses element-wise arithmetic over a fixed number of lanes and lets the implementation select vector instructions. |
-| [cpp26_span_at.cpp](cpp26_span_at.cpp) | c++26 | GCC >= 15 | covered | C++26 gives std::span bounds-checked element access: span.at(i) throws std::out_of_range like vector::at -- opt-in safety for the otherwise unchecked view. |
+| [cpp26_span_at.cpp](cpp26_span_at.cpp) | c++26 | GCC >= 14 | covered | C++26 gives std::span bounds-checked element access: span.at(i) throws std::out_of_range like vector::at -- opt-in safety for the otherwise unchecked view. |
 | [cpp26_submdspan.cpp](cpp26_submdspan.cpp) | c++26 | GCC >= 16; libstdc++ >= 16 | covered | std::submdspan creates a lower-dimensional or sliced mdspan while preserving the mapping and accessor needed to view the original storage. |
-| [cpp26_text_encoding.cpp](cpp26_text_encoding.cpp) | c++26 | GCC >= 15 | covered | std::text_encoding identifies character encodings via the IANA registry: text_encoding::literal() reports the encoding of the string literals baked into this binary, environment() the locale's. |
+| [cpp26_text_encoding.cpp](cpp26_text_encoding.cpp) | c++26 | GCC >= 14 | covered | std::text_encoding identifies character encodings via the IANA registry: text_encoding::literal() reports the encoding of the string literals baked into this binary, environment() the locale's. |
 
 ## templates
 

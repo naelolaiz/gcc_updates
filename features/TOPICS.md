@@ -68,7 +68,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_ranges_shift.cpp](std/cpp23/cpp23_ranges_shift.cpp) | std/cpp23 | c++23 | >= 16 | 16 |
 
 ## allocators
@@ -93,7 +93,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 16 | — |
+| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 15 | — |
 
 ## callables
 
@@ -107,13 +107,13 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## chrono
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_chrono_calendar.cpp](std/cpp20/cpp20_chrono_calendar.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_chrono_calendar.cpp](std/cpp20/cpp20_chrono_calendar.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## compile-time
 
@@ -136,9 +136,9 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_concepts_requires_expr.cpp](std/cpp20/cpp20_concepts_requires_expr.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_concepts_requires_expr.cpp](std/cpp20/cpp20_concepts_requires_expr.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## containers
 
@@ -159,7 +159,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_coroutine_generator.cpp](std/cpp20/cpp20_coroutine_generator.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_coroutine_generator.cpp](std/cpp20/cpp20_coroutine_generator.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_generator.cpp](std/cpp23/cpp23_generator.cpp) | std/cpp23 | c++23 | >= 14 | — |
 
 ## decomposition
@@ -184,9 +184,9 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [gccext_ubsan_misaligned_access.cpp](gccext/sanitize/ubsan/gccext_ubsan_misaligned_access.cpp) | gccext/sanitize/ubsan | c++17 | >= 13 | — |
 | [cpp11_uniform_init_narrowing_error.cpp](std/cpp11/cpp11_uniform_init_narrowing_error.cpp) | std/cpp11 | c++11 | >= 13 | — |
 | [cpp17_nodiscard_diagnostic.cpp](std/cpp17/cpp17_nodiscard_diagnostic.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp26_contracts_basic.cpp](std/cpp26/cpp26_contracts_basic.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_debugging.cpp](std/cpp26/cpp26_debugging.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 | [cpp26_delete_reason.cpp](std/cpp26/cpp26_delete_reason.cpp) | std/cpp26 | c++26 | >= 15 | — |
@@ -198,7 +198,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
 | [cpp17_optional.cpp](std/cpp17/cpp17_optional.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp26_constexpr_exceptions.cpp](std/cpp26/cpp26_constexpr_exceptions.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_optional_ref.cpp](std/cpp26/cpp26_optional_ref.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 
@@ -220,14 +220,14 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_structured_bindings.cpp](std/cpp17/cpp17_structured_bindings.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_variant.cpp](std/cpp17/cpp17_variant.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 16 | — |
-| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 15 | — |
+| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_deducing_this.cpp](std/cpp23/cpp23_deducing_this.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_print.cpp](std/cpp23/cpp23_print.cpp) | std/cpp23 | c++23 | >= 14 | — |
 | [cpp23_ranges_to.cpp](std/cpp23/cpp23_ranges_to.cpp) | std/cpp23 | c++23 | >= 14 | — |
 
@@ -241,7 +241,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_print.cpp](std/cpp23/cpp23_print.cpp) | std/cpp23 | c++23 | >= 14 | — |
 
 ## gcc-analyzer
@@ -340,7 +340,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [gccext_asan_heap_use_after_free.cpp](gccext/sanitize/asan/gccext_asan_heap_use_after_free.cpp) | gccext/sanitize/asan | c++17 | >= 13 | — |
 | [gccext_asan_stack_buffer_overflow.cpp](gccext/sanitize/asan/gccext_asan_stack_buffer_overflow.cpp) | gccext/sanitize/asan | c++17 | >= 13 | — |
 | [gccext_asan_stack_use_after_scope.cpp](gccext/sanitize/asan/gccext_asan_stack_use_after_scope.cpp) | gccext/sanitize/asan | c++17 | >= 13 | — |
-| [gccext_assume_under_sanitize.cpp](gccext/sanitize/integration/gccext_assume_under_sanitize.cpp) | gccext/sanitize/integration | c++23 | >= 14 | — |
+| [gccext_assume_under_sanitize.cpp](gccext/sanitize/integration/gccext_assume_under_sanitize.cpp) | gccext/sanitize/integration | c++23 | >= 13 | — |
 | [gccext_glibcxx_debug.cpp](gccext/sanitize/integration/gccext_glibcxx_debug.cpp) | gccext/sanitize/integration | c++17 | >= 13 | — |
 | [gccext_no_sanitize_attribute.cpp](gccext/sanitize/integration/gccext_no_sanitize_attribute.cpp) | gccext/sanitize/integration | c++17 | >= 13 | — |
 | [gccext_lsan_simple_leak.cpp](gccext/sanitize/leak/gccext_lsan_simple_leak.cpp) | gccext/sanitize/leak | c++17 | >= 13 | — |
@@ -364,7 +364,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | ------- | ------ | --- | --- | --------- |
 | [cpp11_uniform_init.cpp](std/cpp11/cpp11_uniform_init.cpp) | std/cpp11 | c++11 | >= 13 | — |
 | [cpp11_uniform_init_narrowing_error.cpp](std/cpp11/cpp11_uniform_init_narrowing_error.cpp) | std/cpp11 | c++11 | >= 13 | — |
-| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## inline-assembly
 
@@ -376,14 +376,14 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_format.cpp](std/cpp20/cpp20_format.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_print.cpp](std/cpp23/cpp23_print.cpp) | std/cpp23 | c++23 | >= 14 | — |
 
 ## iterators
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## language
 
@@ -422,26 +422,26 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_nested_namespace.cpp](std/cpp17/cpp17_nested_namespace.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_nodiscard_diagnostic.cpp](std/cpp17/cpp17_nodiscard_diagnostic.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_structured_bindings.cpp](std/cpp17/cpp17_structured_bindings.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_consteval.cpp](std/cpp20/cpp20_consteval.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_consteval.cpp](std/cpp20/cpp20_consteval.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_constinit.cpp](std/cpp20/cpp20_constinit.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp20_designated_init.cpp](std/cpp20/cpp20_designated_init.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_designated_init.cpp](std/cpp20/cpp20_designated_init.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_designated_init_order_error.cpp](std/cpp20/cpp20_designated_init_order_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_is_constant_evaluated.cpp](std/cpp20/cpp20_is_constant_evaluated.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp20_lambdas.cpp](std/cpp20/cpp20_lambdas.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 16 | — |
-| [cpp20_spaceship.cpp](std/cpp20/cpp20_spaceship.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_lambdas.cpp](std/cpp20/cpp20_lambdas.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 15 | — |
+| [cpp20_spaceship.cpp](std/cpp20/cpp20_spaceship.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_using_enum.cpp](std/cpp20/cpp20_using_enum.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp23_assume.cpp](std/cpp23/cpp23_assume.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_auto_decay_copy.cpp](std/cpp23/cpp23_auto_decay_copy.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_if_consteval.cpp](std/cpp23/cpp23_if_consteval.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_size_t_literal.cpp](std/cpp23/cpp23_size_t_literal.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_assume.cpp](std/cpp23/cpp23_assume.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_auto_decay_copy.cpp](std/cpp23/cpp23_auto_decay_copy.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_if_consteval.cpp](std/cpp23/cpp23_if_consteval.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_size_t_literal.cpp](std/cpp23/cpp23_size_t_literal.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp26_constexpr_exceptions.cpp](std/cpp26/cpp26_constexpr_exceptions.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_contracts_basic.cpp](std/cpp26/cpp26_contracts_basic.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_delete_reason.cpp](std/cpp26/cpp26_delete_reason.cpp) | std/cpp26 | c++26 | >= 15 | — |
 | [cpp26_delete_reason_diagnostic.cpp](std/cpp26/cpp26_delete_reason_diagnostic.cpp) | std/cpp26 | c++26 | >= 15 | — |
 | [cpp26_expansion_statements.cpp](std/cpp26/cpp26_expansion_statements.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_pack_indexing.cpp](std/cpp26/cpp26_pack_indexing.cpp) | std/cpp26 | c++26 | >= 15 | — |
-| [cpp26_static_assert_messages.cpp](std/cpp26/cpp26_static_assert_messages.cpp) | std/cpp26 | c++26 | >= 15 | — |
+| [cpp26_static_assert_messages.cpp](std/cpp26/cpp26_static_assert_messages.cpp) | std/cpp26 | c++26 | >= 14 | — |
 | [cpp26_structured_binding_pack.cpp](std/cpp26/cpp26_structured_binding_pack.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_uninitialized_diagnostic.cpp](std/cpp26/cpp26_uninitialized_diagnostic.cpp) | std/cpp26 | c++26 | >= 16 | — |
 
@@ -451,8 +451,8 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | ------- | ------ | --- | --- | --------- |
 | [gccext_asan_stack_use_after_scope.cpp](gccext/sanitize/asan/gccext_asan_stack_use_after_scope.cpp) | gccext/sanitize/asan | c++17 | >= 13 | — |
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp26_optional_ref.cpp](std/cpp26/cpp26_optional_ref.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 
 ## memory
@@ -481,7 +481,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 16 | — |
+| [cpp20_modules_basic.cpp](std/cpp20/cpp20_modules_basic.cpp) | std/cpp20 | c++20 | >= 15 | — |
 
 ## numerics
 
@@ -524,24 +524,24 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
-| [cpp20_ranges_algorithms.cpp](std/cpp20/cpp20_ranges_algorithms.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_ranges_algorithms.cpp](std/cpp20/cpp20_ranges_algorithms.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_ranges_borrowed_range.cpp](std/cpp20/cpp20_ranges_borrowed_range.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_views_keys_values.cpp](std/cpp20/cpp20_views_keys_values.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_views_split.cpp](std/cpp20/cpp20_views_split.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp23_ranges_adjacent.cpp](std/cpp23/cpp23_ranges_adjacent.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_cartesian_product.cpp](std/cpp23/cpp23_ranges_cartesian_product.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_chunk_slide.cpp](std/cpp23/cpp23_ranges_chunk_slide.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_enumerate.cpp](std/cpp23/cpp23_ranges_enumerate.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_find_last.cpp](std/cpp23/cpp23_ranges_find_last.cpp) | std/cpp23 | c++23 | >= 14 | 13 |
-| [cpp23_ranges_fold.cpp](std/cpp23/cpp23_ranges_fold.cpp) | std/cpp23 | c++23 | >= 14 | 13 |
+| [cpp23_ranges_adjacent.cpp](std/cpp23/cpp23_ranges_adjacent.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_ranges_cartesian_product.cpp](std/cpp23/cpp23_ranges_cartesian_product.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_ranges_chunk_slide.cpp](std/cpp23/cpp23_ranges_chunk_slide.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_ranges_enumerate.cpp](std/cpp23/cpp23_ranges_enumerate.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_ranges_find_last.cpp](std/cpp23/cpp23_ranges_find_last.cpp) | std/cpp23 | c++23 | >= 13 | 13 |
+| [cpp23_ranges_fold.cpp](std/cpp23/cpp23_ranges_fold.cpp) | std/cpp23 | c++23 | >= 13 | 13 |
 | [cpp23_ranges_iota_algorithm.cpp](std/cpp23/cpp23_ranges_iota_algorithm.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_join_with.cpp](std/cpp23/cpp23_ranges_join_with.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_ranges_join_with.cpp](std/cpp23/cpp23_ranges_join_with.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_ranges_shift.cpp](std/cpp23/cpp23_ranges_shift.cpp) | std/cpp23 | c++23 | >= 16 | 16 |
 | [cpp23_ranges_starts_ends_contains.cpp](std/cpp23/cpp23_ranges_starts_ends_contains.cpp) | std/cpp23 | c++23 | >= 14 | 16 |
 | [cpp23_ranges_to.cpp](std/cpp23/cpp23_ranges_to.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_ranges_zip.cpp](std/cpp23/cpp23_ranges_zip.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_views_as_const_as_rvalue.cpp](std/cpp23/cpp23_views_as_const_as_rvalue.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_ranges_zip.cpp](std/cpp23/cpp23_ranges_zip.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_views_as_const_as_rvalue.cpp](std/cpp23/cpp23_views_as_const_as_rvalue.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_views_chunk_by.cpp](std/cpp23/cpp23_views_chunk_by.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_views_repeat.cpp](std/cpp23/cpp23_views_repeat.cpp) | std/cpp23 | c++23 | >= 14 | — |
 | [cpp23_views_stride.cpp](std/cpp23/cpp23_views_stride.cpp) | std/cpp23 | c++23 | >= 14 | — |
@@ -613,39 +613,39 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_variant.cpp](std/cpp17/cpp17_variant.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp20_bind_front.cpp](std/cpp20/cpp20_bind_front.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp20_bit_ops.cpp](std/cpp20/cpp20_bit_ops.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_bit_ops.cpp](std/cpp20/cpp20_bit_ops.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_cmp_utilities.cpp](std/cpp20/cpp20_cmp_utilities.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_endian.cpp](std/cpp20/cpp20_endian.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp20_erase_if.cpp](std/cpp20/cpp20_erase_if.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_lerp_midpoint.cpp](std/cpp20/cpp20_lerp_midpoint.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_map_contains.cpp](std/cpp20/cpp20_map_contains.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_numbers.cpp](std/cpp20/cpp20_numbers.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_source_location.cpp](std/cpp20/cpp20_source_location.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_ssize.cpp](std/cpp20/cpp20_ssize.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_string_starts_ends.cpp](std/cpp20/cpp20_string_starts_ends.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_erase_if.cpp](std/cpp20/cpp20_erase_if.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_lerp_midpoint.cpp](std/cpp20/cpp20_lerp_midpoint.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_map_contains.cpp](std/cpp20/cpp20_map_contains.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_numbers.cpp](std/cpp20/cpp20_numbers.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_source_location.cpp](std/cpp20/cpp20_source_location.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_ssize.cpp](std/cpp20/cpp20_ssize.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_string_starts_ends.cpp](std/cpp20/cpp20_string_starts_ends.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_to_address.cpp](std/cpp20/cpp20_to_address.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_allocate_at_least.cpp](std/cpp23/cpp23_allocate_at_least.cpp) | std/cpp23 | c++23 | >= 16 | 16 |
-| [cpp23_byteswap.cpp](std/cpp23/cpp23_byteswap.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_byteswap.cpp](std/cpp23/cpp23_byteswap.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_flat_map.cpp](std/cpp23/cpp23_flat_map.cpp) | std/cpp23 | c++23 | >= 15 | — |
 | [cpp23_flat_set.cpp](std/cpp23/cpp23_flat_set.cpp) | std/cpp23 | c++23 | >= 15 | — |
 | [cpp23_format_ranges.cpp](std/cpp23/cpp23_format_ranges.cpp) | std/cpp23 | c++23 | >= 14 | 15 |
 | [cpp23_forward_like.cpp](std/cpp23/cpp23_forward_like.cpp) | std/cpp23 | c++23 | >= 14 | — |
 | [cpp23_invoke_r.cpp](std/cpp23/cpp23_invoke_r.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_mdspan.cpp](std/cpp23/cpp23_mdspan.cpp) | std/cpp23 | c++23 | >= 16 | — |
-| [cpp23_move_only_function.cpp](std/cpp23/cpp23_move_only_function.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_optional_monadic.cpp](std/cpp23/cpp23_optional_monadic.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_move_only_function.cpp](std/cpp23/cpp23_move_only_function.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_optional_monadic.cpp](std/cpp23/cpp23_optional_monadic.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_out_ptr.cpp](std/cpp23/cpp23_out_ptr.cpp) | std/cpp23 | c++23 | >= 14 | — |
 | [cpp23_print.cpp](std/cpp23/cpp23_print.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_resize_and_overwrite.cpp](std/cpp23/cpp23_resize_and_overwrite.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_spanstream.cpp](std/cpp23/cpp23_spanstream.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_resize_and_overwrite.cpp](std/cpp23/cpp23_resize_and_overwrite.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_spanstream.cpp](std/cpp23/cpp23_spanstream.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_stacktrace.cpp](std/cpp23/cpp23_stacktrace.cpp) | std/cpp23 | c++23 | >= 14 | 14 |
 | [cpp23_start_lifetime_as.cpp](std/cpp23/cpp23_start_lifetime_as.cpp) | std/cpp23 | c++23 | >= 16 | 16 |
 | [cpp23_stdfloat.cpp](std/cpp23/cpp23_stdfloat.cpp) | std/cpp23 | c++23 | >= 13 | — |
-| [cpp23_string_contains.cpp](std/cpp23/cpp23_string_contains.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_to_underlying.cpp](std/cpp23/cpp23_to_underlying.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_unreachable.cpp](std/cpp23/cpp23_unreachable.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_string_contains.cpp](std/cpp23/cpp23_string_contains.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_to_underlying.cpp](std/cpp23/cpp23_to_underlying.cpp) | std/cpp23 | c++23 | >= 13 | — |
+| [cpp23_unreachable.cpp](std/cpp23/cpp23_unreachable.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp26_debugging.cpp](std/cpp26/cpp26_debugging.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 | [cpp26_function_wrappers.cpp](std/cpp26/cpp26_function_wrappers.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 | [cpp26_indirect_polymorphic.cpp](std/cpp26/cpp26_indirect_polymorphic.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
@@ -654,9 +654,9 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp26_philox_engine.cpp](std/cpp26/cpp26_philox_engine.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 | [cpp26_saturation_arith.cpp](std/cpp26/cpp26_saturation_arith.cpp) | std/cpp26 | c++26 | >= 14 | — |
 | [cpp26_simd.cpp](std/cpp26/cpp26_simd.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
-| [cpp26_span_at.cpp](std/cpp26/cpp26_span_at.cpp) | std/cpp26 | c++26 | >= 15 | — |
+| [cpp26_span_at.cpp](std/cpp26/cpp26_span_at.cpp) | std/cpp26 | c++26 | >= 14 | — |
 | [cpp26_submdspan.cpp](std/cpp26/cpp26_submdspan.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
-| [cpp26_text_encoding.cpp](std/cpp26/cpp26_text_encoding.cpp) | std/cpp26 | c++26 | >= 15 | — |
+| [cpp26_text_encoding.cpp](std/cpp26/cpp26_text_encoding.cpp) | std/cpp26 | c++26 | >= 14 | — |
 
 ## templates
 
@@ -673,17 +673,17 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp17_if_constexpr.cpp](std/cpp17/cpp17_if_constexpr.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_type_trait_helpers.cpp](std/cpp17/cpp17_type_trait_helpers.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp20_abbreviated_templates.cpp](std/cpp20/cpp20_abbreviated_templates.cpp) | std/cpp20 | c++20 | >= 13 | — |
-| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_ctad_aggregates.cpp](std/cpp20/cpp20_ctad_aggregates.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_ctad_alias.cpp](std/cpp20/cpp20_ctad_alias.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_explicit_bool.cpp](std/cpp20/cpp20_explicit_bool.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_nttp_class.cpp](std/cpp20/cpp20_nttp_class.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_concepts_constraint_error.cpp](std/cpp20/cpp20_concepts_constraint_error.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_concepts_intro.cpp](std/cpp20/cpp20_concepts_intro.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_ctad_aggregates.cpp](std/cpp20/cpp20_ctad_aggregates.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_ctad_alias.cpp](std/cpp20/cpp20_ctad_alias.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_explicit_bool.cpp](std/cpp20/cpp20_explicit_bool.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_nttp_class.cpp](std/cpp20/cpp20_nttp_class.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp20_type_identity.cpp](std/cpp20/cpp20_type_identity.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp23_deducing_this.cpp](std/cpp23/cpp23_deducing_this.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_multidim_subscript.cpp](std/cpp23/cpp23_multidim_subscript.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_multidim_subscript.cpp](std/cpp23/cpp23_multidim_subscript.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp23_recursive_lambda.cpp](std/cpp23/cpp23_recursive_lambda.cpp) | std/cpp23 | c++23 | >= 14 | — |
-| [cpp23_static_operator.cpp](std/cpp23/cpp23_static_operator.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_static_operator.cpp](std/cpp23/cpp23_static_operator.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp26_expansion_statements.cpp](std/cpp26/cpp26_expansion_statements.cpp) | std/cpp26 | c++26 | >= 16 | — |
 | [cpp26_pack_indexing.cpp](std/cpp26/cpp26_pack_indexing.cpp) | std/cpp26 | c++26 | >= 15 | — |
 | [cpp26_reflection_basic.cpp](std/cpp26/cpp26_reflection_basic.cpp) | std/cpp26 | c++26 | >= 16 | — |
@@ -702,17 +702,17 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | [cpp14_shared_timed_mutex.cpp](std/cpp14/cpp14_shared_timed_mutex.cpp) | std/cpp14 | c++14 | >= 13 | — |
 | [cpp17_scoped_lock.cpp](std/cpp17/cpp17_scoped_lock.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_shared_mutex.cpp](std/cpp17/cpp17_shared_mutex.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_atomic_flag_test.cpp](std/cpp20/cpp20_atomic_flag_test.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_atomic_ref.cpp](std/cpp20/cpp20_atomic_ref.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_atomic_shared_ptr.cpp](std/cpp20/cpp20_atomic_shared_ptr.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_atomic_wait.cpp](std/cpp20/cpp20_atomic_wait.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_barrier.cpp](std/cpp20/cpp20_barrier.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_binary_semaphore.cpp](std/cpp20/cpp20_binary_semaphore.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_counting_semaphore.cpp](std/cpp20/cpp20_counting_semaphore.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_latch.cpp](std/cpp20/cpp20_latch.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_stop_token.cpp](std/cpp20/cpp20_stop_token.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_syncstream.cpp](std/cpp20/cpp20_syncstream.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_atomic_flag_test.cpp](std/cpp20/cpp20_atomic_flag_test.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_atomic_ref.cpp](std/cpp20/cpp20_atomic_ref.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_atomic_shared_ptr.cpp](std/cpp20/cpp20_atomic_shared_ptr.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_atomic_wait.cpp](std/cpp20/cpp20_atomic_wait.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_barrier.cpp](std/cpp20/cpp20_barrier.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_binary_semaphore.cpp](std/cpp20/cpp20_binary_semaphore.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_counting_semaphore.cpp](std/cpp20/cpp20_counting_semaphore.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_jthread.cpp](std/cpp20/cpp20_jthread.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_latch.cpp](std/cpp20/cpp20_latch.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_stop_token.cpp](std/cpp20/cpp20_stop_token.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_syncstream.cpp](std/cpp20/cpp20_syncstream.cpp) | std/cpp20 | c++20 | >= 13 | — |
 
 ## tooling
 
@@ -753,7 +753,7 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | ------- | ------ | --- | --- | --------- |
 | [cpp17_optional.cpp](std/cpp17/cpp17_optional.cpp) | std/cpp17 | c++17 | >= 13 | — |
 | [cpp17_variant.cpp](std/cpp17/cpp17_variant.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 14 | — |
+| [cpp23_expected.cpp](std/cpp23/cpp23_expected.cpp) | std/cpp23 | c++23 | >= 13 | — |
 | [cpp26_indirect_polymorphic.cpp](std/cpp26/cpp26_indirect_polymorphic.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 | [cpp26_optional_ref.cpp](std/cpp26/cpp26_optional_ref.cpp) | std/cpp26 | c++26 | >= 16 | 16 |
 
@@ -762,6 +762,6 @@ _All 59 topics across every bucket, generated from `gcc_feature_test()` metadata
 | Example | Bucket | std | GCC | libstdc++ |
 | ------- | ------ | --- | --- | --------- |
 | [cpp17_string_view.cpp](std/cpp17/cpp17_string_view.cpp) | std/cpp17 | c++17 | >= 13 | — |
-| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 14 | — |
-| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 14 | — |
+| [cpp20_ranges_views.cpp](std/cpp20/cpp20_ranges_views.cpp) | std/cpp20 | c++20 | >= 13 | — |
+| [cpp20_span.cpp](std/cpp20/cpp20_span.cpp) | std/cpp20 | c++20 | >= 13 | — |
 | [cpp26_submdspan.cpp](std/cpp26/cpp26_submdspan.cpp) | std/cpp26 | c++26 | >= 16 | 16 |

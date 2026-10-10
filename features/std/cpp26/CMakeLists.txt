@@ -77,14 +77,14 @@ gcc_feature_test(cpp26_simd                    STD c++26  MIN_GCC 16  MIN_LIBSTD
                  TOPIC stl  TAGS numerics performance simd  ARCH x86  GCC_ONLY
                  PROPOSAL P1928R15  PREREQUISITES gccext_vector_extensions)
 
-gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 15  TOPIC stl)
+gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 14  TOPIC stl)
 
 gcc_feature_test(cpp26_submdspan               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
                  TOPIC stl  TAGS containers numerics views
                  PROPOSAL P2630R4  FEATURE_MACRO __cpp_lib_submdspan
                  PREREQUISITES cpp23_mdspan)
 
-gcc_feature_test(cpp26_static_assert_messages  STD c++26  MIN_GCC 15  TOPIC language)
+gcc_feature_test(cpp26_static_assert_messages  STD c++26  MIN_GCC 14  TOPIC language)
 
 gcc_feature_test(cpp26_structured_binding_pack STD c++26  MIN_GCC 16  TOPIC language
                  TAGS templates compile-time
@@ -104,5 +104,5 @@ gcc_feature_test(cpp26_philox_engine           STD c++26  MIN_GCC 16  MIN_LIBSTD
                  PREREQUISITES cpp11_random)
 
 # text_encoding::environment() is still in libstdc++exp on GCC 15.
-gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 15  TOPIC stl
+gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 14  TOPIC stl
                  EXTRA_LIBS stdc++exp)

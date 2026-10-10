@@ -1236,7 +1236,7 @@ examples:
   - name: 'gccext_assume_under_sanitize'
     source: 'features/gccext/sanitize/integration/gccext_assume_under_sanitize.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -3968,7 +3968,7 @@ examples:
   - name: 'cpp20_atomic_flag_test'
     source: 'features/std/cpp20/cpp20_atomic_flag_test.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -3993,7 +3993,7 @@ examples:
   - name: 'cpp20_atomic_ref'
     source: 'features/std/cpp20/cpp20_atomic_ref.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4018,7 +4018,7 @@ examples:
   - name: 'cpp20_atomic_shared_ptr'
     source: 'features/std/cpp20/cpp20_atomic_shared_ptr.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4043,7 +4043,7 @@ examples:
   - name: 'cpp20_atomic_wait'
     source: 'features/std/cpp20/cpp20_atomic_wait.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4068,7 +4068,7 @@ examples:
   - name: 'cpp20_barrier'
     source: 'features/std/cpp20/cpp20_barrier.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4093,7 +4093,7 @@ examples:
   - name: 'cpp20_binary_semaphore'
     source: 'features/std/cpp20/cpp20_binary_semaphore.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4143,7 +4143,7 @@ examples:
   - name: 'cpp20_bit_ops'
     source: 'features/std/cpp20/cpp20_bit_ops.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4168,7 +4168,7 @@ examples:
   - name: 'cpp20_chrono_calendar'
     source: 'features/std/cpp20/cpp20_chrono_calendar.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4218,7 +4218,7 @@ examples:
   - name: 'cpp20_concepts_constraint_error'
     source: 'features/std/cpp20/cpp20_concepts_constraint_error.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4246,7 +4246,7 @@ examples:
   - name: 'cpp20_concepts_intro'
     source: 'features/std/cpp20/cpp20_concepts_intro.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4275,7 +4275,7 @@ examples:
   - name: 'cpp20_concepts_requires_expr'
     source: 'features/std/cpp20/cpp20_concepts_requires_expr.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4300,7 +4300,7 @@ examples:
   - name: 'cpp20_consteval'
     source: 'features/std/cpp20/cpp20_consteval.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4350,7 +4350,7 @@ examples:
   - name: 'cpp20_coroutine_generator'
     source: 'features/std/cpp20/cpp20_coroutine_generator.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4375,7 +4375,7 @@ examples:
   - name: 'cpp20_counting_semaphore'
     source: 'features/std/cpp20/cpp20_counting_semaphore.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4400,7 +4400,7 @@ examples:
   - name: 'cpp20_ctad_aggregates'
     source: 'features/std/cpp20/cpp20_ctad_aggregates.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4425,7 +4425,7 @@ examples:
   - name: 'cpp20_ctad_alias'
     source: 'features/std/cpp20/cpp20_ctad_alias.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4450,7 +4450,7 @@ examples:
   - name: 'cpp20_designated_init'
     source: 'features/std/cpp20/cpp20_designated_init.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4475,7 +4475,7 @@ examples:
   - name: 'cpp20_designated_init_order_error'
     source: 'features/std/cpp20/cpp20_designated_init_order_error.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4528,7 +4528,7 @@ examples:
   - name: 'cpp20_erase_if'
     source: 'features/std/cpp20/cpp20_erase_if.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4553,7 +4553,7 @@ examples:
   - name: 'cpp20_explicit_bool'
     source: 'features/std/cpp20/cpp20_explicit_bool.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4578,7 +4578,7 @@ examples:
   - name: 'cpp20_format'
     source: 'features/std/cpp20/cpp20_format.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4630,7 +4630,7 @@ examples:
   - name: 'cpp20_jthread'
     source: 'features/std/cpp20/cpp20_jthread.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4658,7 +4658,7 @@ examples:
   - name: 'cpp20_lambdas'
     source: 'features/std/cpp20/cpp20_lambdas.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4683,7 +4683,7 @@ examples:
   - name: 'cpp20_latch'
     source: 'features/std/cpp20/cpp20_latch.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4708,7 +4708,7 @@ examples:
   - name: 'cpp20_lerp_midpoint'
     source: 'features/std/cpp20/cpp20_lerp_midpoint.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4733,7 +4733,7 @@ examples:
   - name: 'cpp20_map_contains'
     source: 'features/std/cpp20/cpp20_map_contains.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4758,7 +4758,7 @@ examples:
   - name: 'cpp20_modules_basic'
     source: 'features/std/cpp20/cpp20_modules_basic.cpp'
     standard: 'c++20'
-    min_gcc: 16
+    min_gcc: 15
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4787,7 +4787,7 @@ examples:
   - name: 'cpp20_nttp_class'
     source: 'features/std/cpp20/cpp20_nttp_class.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4812,7 +4812,7 @@ examples:
   - name: 'cpp20_numbers'
     source: 'features/std/cpp20/cpp20_numbers.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4837,7 +4837,7 @@ examples:
   - name: 'cpp20_ranges_algorithms'
     source: 'features/std/cpp20/cpp20_ranges_algorithms.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4862,7 +4862,7 @@ examples:
   - name: 'cpp20_ranges_borrowed_range'
     source: 'features/std/cpp20/cpp20_ranges_borrowed_range.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4890,7 +4890,7 @@ examples:
   - name: 'cpp20_ranges_views'
     source: 'features/std/cpp20/cpp20_ranges_views.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4918,7 +4918,7 @@ examples:
   - name: 'cpp20_source_location'
     source: 'features/std/cpp20/cpp20_source_location.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4943,7 +4943,7 @@ examples:
   - name: 'cpp20_spaceship'
     source: 'features/std/cpp20/cpp20_spaceship.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4968,7 +4968,7 @@ examples:
   - name: 'cpp20_span'
     source: 'features/std/cpp20/cpp20_span.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -4997,7 +4997,7 @@ examples:
   - name: 'cpp20_ssize'
     source: 'features/std/cpp20/cpp20_ssize.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5022,7 +5022,7 @@ examples:
   - name: 'cpp20_stop_token'
     source: 'features/std/cpp20/cpp20_stop_token.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5047,7 +5047,7 @@ examples:
   - name: 'cpp20_string_starts_ends'
     source: 'features/std/cpp20/cpp20_string_starts_ends.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5072,7 +5072,7 @@ examples:
   - name: 'cpp20_syncstream'
     source: 'features/std/cpp20/cpp20_syncstream.cpp'
     standard: 'c++20'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5249,7 +5249,7 @@ examples:
   - name: 'cpp23_assume'
     source: 'features/std/cpp23/cpp23_assume.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5274,7 +5274,7 @@ examples:
   - name: 'cpp23_auto_decay_copy'
     source: 'features/std/cpp23/cpp23_auto_decay_copy.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5299,7 +5299,7 @@ examples:
   - name: 'cpp23_byteswap'
     source: 'features/std/cpp23/cpp23_byteswap.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5353,7 +5353,7 @@ examples:
   - name: 'cpp23_expected'
     source: 'features/std/cpp23/cpp23_expected.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5507,7 +5507,7 @@ examples:
   - name: 'cpp23_if_consteval'
     source: 'features/std/cpp23/cpp23_if_consteval.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5582,7 +5582,7 @@ examples:
   - name: 'cpp23_move_only_function'
     source: 'features/std/cpp23/cpp23_move_only_function.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5607,7 +5607,7 @@ examples:
   - name: 'cpp23_multidim_subscript'
     source: 'features/std/cpp23/cpp23_multidim_subscript.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5632,7 +5632,7 @@ examples:
   - name: 'cpp23_optional_monadic'
     source: 'features/std/cpp23/cpp23_optional_monadic.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5711,7 +5711,7 @@ examples:
   - name: 'cpp23_ranges_adjacent'
     source: 'features/std/cpp23/cpp23_ranges_adjacent.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5736,7 +5736,7 @@ examples:
   - name: 'cpp23_ranges_cartesian_product'
     source: 'features/std/cpp23/cpp23_ranges_cartesian_product.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5761,7 +5761,7 @@ examples:
   - name: 'cpp23_ranges_chunk_slide'
     source: 'features/std/cpp23/cpp23_ranges_chunk_slide.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5786,7 +5786,7 @@ examples:
   - name: 'cpp23_ranges_enumerate'
     source: 'features/std/cpp23/cpp23_ranges_enumerate.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5811,7 +5811,7 @@ examples:
   - name: 'cpp23_ranges_find_last'
     source: 'features/std/cpp23/cpp23_ranges_find_last.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: 13
@@ -5836,7 +5836,7 @@ examples:
   - name: 'cpp23_ranges_fold'
     source: 'features/std/cpp23/cpp23_ranges_fold.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: 13
@@ -5886,7 +5886,7 @@ examples:
   - name: 'cpp23_ranges_join_with'
     source: 'features/std/cpp23/cpp23_ranges_join_with.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -5991,7 +5991,7 @@ examples:
   - name: 'cpp23_ranges_zip'
     source: 'features/std/cpp23/cpp23_ranges_zip.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6041,7 +6041,7 @@ examples:
   - name: 'cpp23_resize_and_overwrite'
     source: 'features/std/cpp23/cpp23_resize_and_overwrite.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6066,7 +6066,7 @@ examples:
   - name: 'cpp23_size_t_literal'
     source: 'features/std/cpp23/cpp23_size_t_literal.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6091,7 +6091,7 @@ examples:
   - name: 'cpp23_spanstream'
     source: 'features/std/cpp23/cpp23_spanstream.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6167,7 +6167,7 @@ examples:
   - name: 'cpp23_static_operator'
     source: 'features/std/cpp23/cpp23_static_operator.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6217,7 +6217,7 @@ examples:
   - name: 'cpp23_string_contains'
     source: 'features/std/cpp23/cpp23_string_contains.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6242,7 +6242,7 @@ examples:
   - name: 'cpp23_to_underlying'
     source: 'features/std/cpp23/cpp23_to_underlying.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6267,7 +6267,7 @@ examples:
   - name: 'cpp23_unreachable'
     source: 'features/std/cpp23/cpp23_unreachable.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6292,7 +6292,7 @@ examples:
   - name: 'cpp23_views_as_const_as_rvalue'
     source: 'features/std/cpp23/cpp23_views_as_const_as_rvalue.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 13
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6812,7 +6812,7 @@ examples:
   - name: 'cpp26_span_at'
     source: 'features/std/cpp26/cpp26_span_at.cpp'
     standard: 'c++26'
-    min_gcc: 15
+    min_gcc: 14
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6837,7 +6837,7 @@ examples:
   - name: 'cpp26_static_assert_messages'
     source: 'features/std/cpp26/cpp26_static_assert_messages.cpp'
     standard: 'c++26'
-    min_gcc: 15
+    min_gcc: 14
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
@@ -6920,7 +6920,7 @@ examples:
   - name: 'cpp26_text_encoding'
     source: 'features/std/cpp26/cpp26_text_encoding.cpp'
     standard: 'c++26'
-    min_gcc: 15
+    min_gcc: 14
     max_gcc: null
     min_clang: null
     min_libstdcxx: null
