@@ -3,7 +3,6 @@
 
 #include "support/demo.hpp"
 #include <atomic>
-#include <cassert>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -22,6 +21,7 @@ int main() {
     constexpr int kWrites = 200;
 
     std::atomic<bool> stop{false};
+    std::atomic<bool> invariant_ok{true};
     std::atomic<int> reader_observations{0};
 
     std::vector<std::jthread> readers;
@@ -30,7 +30,9 @@ int main() {
             while (!stop.load(std::memory_order_acquire)) {
                 auto snap = current.load(std::memory_order_acquire);
                 // Each reader can deref freely -- it owns its own shared_ptr.
-                assert(snap->payload == 100 + snap->generation);
+                if (snap->payload != 100 + snap->generation) {
+                    invariant_ok.store(false, std::memory_order_relaxed);
+                }
                 reader_observations.fetch_add(1, std::memory_order_relaxed);
             }
         });
@@ -52,6 +54,7 @@ int main() {
     readers.clear();
 
     auto final_snap = current.load();
+    DEMO_ASSERT(invariant_ok.load());
     DEMO_ASSERT(final_snap->generation == kWrites);
     DEMO_ASSERT(reader_observations.load() > 0);
     return 0;

@@ -4,8 +4,13 @@
 // before: A header declaration plus a separately compiled implementation file.
 // pitfall: GCC module support (this fixture passes from GCC 15) remains experimental and requires -fmodules.
 
+#include "support/demo.hpp"
+
 import cpp20_modules_math;
 
 int main() {
-    return square(6) == 36 ? 0 : 1;
+    demo::title("C++20 modules basic");
+    static_assert(square(6) == 36);
+    DEMO_ASSERT(square(6) == 36);
+    return 0;
 }

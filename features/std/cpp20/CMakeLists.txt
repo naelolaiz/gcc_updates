@@ -9,14 +9,14 @@ gcc_feature_test(cpp20_bind_front             STD c++20  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp20_bit_ops                STD c++20  MIN_GCC 13  TOPIC stl)
 gcc_feature_test(cpp20_chrono_calendar        STD c++20  MIN_GCC 13  TOPIC chrono)
 gcc_feature_test(cpp20_cmp_utilities          STD c++20  MIN_GCC 13  TOPIC stl)
-gcc_feature_test(cpp20_concepts_intro         STD c++20  MIN_GCC 13  TOPIC concepts
-                 TAGS essential templates diagnostics
-                 PREREQUISITES cpp17_if_constexpr)
 gcc_feature_test(cpp20_concepts_constraint_error
                  STD c++20  MIN_GCC 13  TOPIC concepts
                  TAGS diagnostics templates  STATUS negative
                  PREREQUISITES cpp20_concepts_intro
                  EXPECT_ERROR "constraints not satisfied")
+gcc_feature_test(cpp20_concepts_intro         STD c++20  MIN_GCC 13  TOPIC concepts
+                 TAGS essential templates diagnostics
+                 PREREQUISITES cpp17_if_constexpr)
 gcc_feature_test(cpp20_concepts_requires_expr STD c++20  MIN_GCC 13  TOPIC concepts)
 gcc_feature_test(cpp20_consteval              STD c++20  MIN_GCC 13  TOPIC language)
 gcc_feature_test(cpp20_constinit              STD c++20  MIN_GCC 13  TOPIC language)

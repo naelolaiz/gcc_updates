@@ -1,4 +1,4 @@
-// description: Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability.
+// description: Basic GCC extended inline asm. Demonstrates the input/output operand syntax on x86.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
 
 #include "support/demo.hpp"

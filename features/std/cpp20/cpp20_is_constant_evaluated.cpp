@@ -1,5 +1,8 @@
 // description: std::is_constant_evaluated() lets one constexpr function take a compile-time-safe path during constant evaluation and a faster/library path at runtime (C++23's 'if consteval' supersedes the pattern).
 // reference: https://en.cppreference.com/w/cpp/types/is_constant_evaluated
+// why: A single constexpr function can use a portable constexpr algorithm at compile time and an intrinsics/libm fast path at runtime.
+// before: Functions either restricted themselves to constexpr-legal operations everywhere or split into separate compile-time and runtime APIs.
+// pitfall: Writing 'if constexpr (std::is_constant_evaluated())' makes the condition manifestly constant-evaluated and therefore always true; use a plain 'if' or C++23 'if consteval'.
 
 #include "support/demo.hpp"
 #include <cmath>

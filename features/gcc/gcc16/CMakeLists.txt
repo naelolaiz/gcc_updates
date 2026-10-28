@@ -7,6 +7,7 @@ gcc_feature_test(gcc16_int128_type_traits       STD c++17  MIN_GCC 16  TOPIC gcc
 
 # New-in-GCC-16 diagnostic: compile-only, must fail with the expected text.
 gcc_feature_test(gcc16_warn_cpp26_compat       STD c++23  MIN_GCC 16  TOPIC gcc-diagnostics
+                 TAGS diagnostics
                  GCC_ONLY
                  EXTRA_COMPILE_FLAGS -Werror=c++26-compat
                  EXPECT_ERROR "is a keyword in C\\+\\+26")

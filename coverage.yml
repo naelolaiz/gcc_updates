@@ -149,6 +149,7 @@ examples:
     architecture: 'portable'
     tags:
       - 'gcc-diagnostics'
+      - 'diagnostics'
     feature_macro: null
     proposal: null
     skip_reason: null
@@ -253,6 +254,7 @@ examples:
     architecture: 'portable'
     tags:
       - 'gcc-diagnostics'
+      - 'diagnostics'
     feature_macro: null
     proposal: null
     skip_reason: null
@@ -304,6 +306,7 @@ examples:
     architecture: 'portable'
     tags:
       - 'gcc-diagnostics'
+      - 'diagnostics'
     feature_macro: null
     proposal: null
     skip_reason: null
@@ -382,6 +385,7 @@ examples:
     architecture: 'portable'
     tags:
       - 'gcc-diagnostics'
+      - 'diagnostics'
     feature_macro: null
     proposal: null
     skip_reason: null
@@ -1015,7 +1019,7 @@ examples:
     requires_sanitizer: []
     skip_sanitizer: []
     reference: 'https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html'
-    description: 'Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability.'
+    description: 'Basic GCC extended inline asm. Demonstrates the input/output operand syntax on x86.'
   - name: 'gccext_openmp_parallel_for'
     source: 'features/gccext/openmp/gccext_openmp_parallel_for.cpp'
     standard: 'c++17'
@@ -1467,7 +1471,8 @@ examples:
     module_interface: null
     prerequisites: []
     extra_libs: []
-    extra_compile_flags: []
+    extra_compile_flags:
+      - '-fno-sanitize-recover=undefined'
     gcc_extra_compile_flags: []
     requires_sanitizer:
       - 'undefined'
@@ -1493,7 +1498,8 @@ examples:
     module_interface: null
     prerequisites: []
     extra_libs: []
-    extra_compile_flags: []
+    extra_compile_flags:
+      - '-fno-sanitize-recover=undefined'
     gcc_extra_compile_flags: []
     requires_sanitizer:
       - 'undefined'
@@ -5384,7 +5390,7 @@ examples:
     min_gcc: 15
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 15
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5409,7 +5415,7 @@ examples:
     min_gcc: 15
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 15
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5431,7 +5437,7 @@ examples:
   - name: 'cpp23_format_ranges'
     source: 'features/std/cpp23/cpp23_format_ranges.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 15
     max_gcc: null
     min_clang: null
     min_libstdcxx: 15
@@ -5459,7 +5465,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5484,7 +5490,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5559,7 +5565,7 @@ examples:
     min_gcc: 16
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 16
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5659,7 +5665,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5684,7 +5690,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5889,7 +5895,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -5963,7 +5969,7 @@ examples:
   - name: 'cpp23_ranges_starts_ends_contains'
     source: 'features/std/cpp23/cpp23_ranges_starts_ends_contains.cpp'
     standard: 'c++23'
-    min_gcc: 14
+    min_gcc: 16
     max_gcc: null
     min_clang: null
     min_libstdcxx: 16
@@ -5991,7 +5997,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -6370,7 +6376,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -6395,7 +6401,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -6814,7 +6820,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -6868,7 +6874,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'
@@ -6976,7 +6982,7 @@ examples:
     min_gcc: 14
     max_gcc: null
     min_clang: null
-    min_libstdcxx: null
+    min_libstdcxx: 14
     max_libstdcxx: null
     gcc_only: false
     status: 'covered'

@@ -1,5 +1,8 @@
 // description: C++26 gives std::span bounds-checked element access: span.at(i) throws std::out_of_range like vector::at -- opt-in safety for the otherwise unchecked view.
 // reference: https://en.cppreference.com/w/cpp/container/span/at
+// why: Non-owning contiguous views can opt into standard std::out_of_range bounds checking just like std::vector and std::array.
+// before: Callers wrote manual 'if (i >= s.size()) throw std::out_of_range(...);' checks before indexing std::span.
+// pitfall: operator[] remains unchecked unless the standard library's hardened/debug mode is enabled; use .at() when throwing on out-of-bounds is required.
 
 #include "support/demo.hpp"
 #include <span>

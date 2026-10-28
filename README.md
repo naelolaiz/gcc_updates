@@ -156,12 +156,15 @@ across runs. Podman is the default engine; pass `engine=docker` (or set
 # CTest filters (everything after `--` is forwarded as-is to ctest):
 ./scripts/container-dev.sh 15 -- -R cpp23_         # only tests matching cpp23_
 ./scripts/container-dev.sh 15 -- -L threading      # only the 'threading' topic
-./scripts/container-dev.sh 15 -- -j                # parallel CTest when speed matters
+./scripts/container-dev.sh 15 -- -j4               # run CTest with 4 parallel jobs
 ./scripts/container-dev.sh 15 -- -N                # list tests, don't run
 
-# Engine / architecture selection:
+# Engine, architecture, and resource limits:
 ./scripts/container-dev.sh 15 engine=docker        # docker instead of podman
 ./scripts/container-dev.sh 15 arch=arm64           # emulate linux/arm64
+./scripts/container-dev.sh 15 jobs=4               # build parallelism (default: JOBS=2)
+./scripts/container-dev.sh 15 cpus=2 memory=4g     # cap container CPU/RAM
+./scripts/container-dev.sh 15 clean                # remove cached build volume
 
 # Sanitizer / analyzer modes:
 ./scripts/container-dev.sh 15 sanitize=address,undefined
@@ -343,7 +346,9 @@ that came after assumes you have these in muscle memory.
   [`cpp11_range_for`](features/std/cpp11/cpp11_range_for.cpp),
   [`cpp11_nullptr`](features/std/cpp11/cpp11_nullptr.cpp),
   [`cpp11_scoped_enum`](features/std/cpp11/cpp11_scoped_enum.cpp),
-  [`cpp11_uniform_init`](features/std/cpp11/cpp11_uniform_init.cpp),
+  [`cpp11_uniform_init`](features/std/cpp11/cpp11_uniform_init.cpp)
+  (and compile-fail narrowing check
+  [`cpp11_uniform_init_narrowing_error`](features/std/cpp11/cpp11_uniform_init_narrowing_error.cpp)),
   [`cpp11_lambda`](features/std/cpp11/cpp11_lambda.cpp),
   [`cpp11_constexpr`](features/std/cpp11/cpp11_constexpr.cpp),
   [`cpp11_noexcept`](features/std/cpp11/cpp11_noexcept.cpp),
@@ -446,7 +451,9 @@ Full index: [features/std/cpp14/README.md](features/std/cpp14/README.md).
   [`cpp17_inline_variables`](features/std/cpp17/cpp17_inline_variables.cpp),
   [`cpp17_nested_namespace`](features/std/cpp17/cpp17_nested_namespace.cpp),
   [`cpp17_constexpr_lambda`](features/std/cpp17/cpp17_constexpr_lambda.cpp),
-  [`cpp17_attributes`](features/std/cpp17/cpp17_attributes.cpp).
+  [`cpp17_attributes`](features/std/cpp17/cpp17_attributes.cpp)
+  (and compile-fail `[[nodiscard]]` check
+  [`cpp17_nodiscard_diagnostic`](features/std/cpp17/cpp17_nodiscard_diagnostic.cpp)).
 - **Concurrency:** [`cpp17_shared_mutex`](features/std/cpp17/cpp17_shared_mutex.cpp),
   [`cpp17_scoped_lock`](features/std/cpp17/cpp17_scoped_lock.cpp).
 
@@ -457,7 +464,9 @@ Full index: [features/std/cpp17/README.md](features/std/cpp17/README.md).
 This is where the language genuinely changed shape.
 
 - **Concepts & templates / metaprogramming:**
-  [`cpp20_concepts_intro`](features/std/cpp20/cpp20_concepts_intro.cpp),
+  [`cpp20_concepts_intro`](features/std/cpp20/cpp20_concepts_intro.cpp)
+  (and compile-fail constraint diagnostic
+  [`cpp20_concepts_constraint_error`](features/std/cpp20/cpp20_concepts_constraint_error.cpp)),
   [`cpp20_concepts_requires_expr`](features/std/cpp20/cpp20_concepts_requires_expr.cpp),
   [`cpp20_abbreviated_templates`](features/std/cpp20/cpp20_abbreviated_templates.cpp),
   [`cpp20_ctad_alias`](features/std/cpp20/cpp20_ctad_alias.cpp),
@@ -466,6 +475,7 @@ This is where the language genuinely changed shape.
   [`cpp20_explicit_bool`](features/std/cpp20/cpp20_explicit_bool.cpp),
   [`cpp20_type_identity`](features/std/cpp20/cpp20_type_identity.cpp).
 - **Ranges & views:** [`cpp20_ranges_algorithms`](features/std/cpp20/cpp20_ranges_algorithms.cpp),
+  [`cpp20_ranges_borrowed_range`](features/std/cpp20/cpp20_ranges_borrowed_range.cpp),
   [`cpp20_ranges_views`](features/std/cpp20/cpp20_ranges_views.cpp),
   [`cpp20_views_keys_values`](features/std/cpp20/cpp20_views_keys_values.cpp),
   [`cpp20_views_split`](features/std/cpp20/cpp20_views_split.cpp).
@@ -500,10 +510,13 @@ This is where the language genuinely changed shape.
 - **Language:** [`cpp20_consteval`](features/std/cpp20/cpp20_consteval.cpp),
   [`cpp20_constinit`](features/std/cpp20/cpp20_constinit.cpp),
   [`cpp20_spaceship`](features/std/cpp20/cpp20_spaceship.cpp),
-  [`cpp20_designated_init`](features/std/cpp20/cpp20_designated_init.cpp),
+  [`cpp20_designated_init`](features/std/cpp20/cpp20_designated_init.cpp)
+  (and compile-fail order check
+  [`cpp20_designated_init_order_error`](features/std/cpp20/cpp20_designated_init_order_error.cpp)),
   [`cpp20_lambdas`](features/std/cpp20/cpp20_lambdas.cpp),
   [`cpp20_using_enum`](features/std/cpp20/cpp20_using_enum.cpp),
-  [`cpp20_is_constant_evaluated`](features/std/cpp20/cpp20_is_constant_evaluated.cpp).
+  [`cpp20_is_constant_evaluated`](features/std/cpp20/cpp20_is_constant_evaluated.cpp),
+  [`cpp20_modules_basic`](features/std/cpp20/cpp20_modules_basic.cpp).
 
 Full index: [features/std/cpp20/README.md](features/std/cpp20/README.md).
 
@@ -539,6 +552,7 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   [`cpp23_ranges_starts_ends_contains`](features/std/cpp23/cpp23_ranges_starts_ends_contains.cpp),
   [`cpp23_ranges_find_last`](features/std/cpp23/cpp23_ranges_find_last.cpp),
   [`cpp23_ranges_iota_algorithm`](features/std/cpp23/cpp23_ranges_iota_algorithm.cpp),
+  [`cpp23_ranges_shift`](features/std/cpp23/cpp23_ranges_shift.cpp),
   [`cpp23_views_repeat`](features/std/cpp23/cpp23_views_repeat.cpp),
   [`cpp23_views_stride`](features/std/cpp23/cpp23_views_stride.cpp),
   [`cpp23_views_as_const_as_rvalue`](features/std/cpp23/cpp23_views_as_const_as_rvalue.cpp).
@@ -548,6 +562,7 @@ Mostly about smoothing C++20's rough edges plus a few headline items.
   [`cpp23_unreachable`](features/std/cpp23/cpp23_unreachable.cpp),
   [`cpp23_move_only_function`](features/std/cpp23/cpp23_move_only_function.cpp),
   [`cpp23_out_ptr`](features/std/cpp23/cpp23_out_ptr.cpp),
+  [`cpp23_allocate_at_least`](features/std/cpp23/cpp23_allocate_at_least.cpp),
   [`cpp23_string_contains`](features/std/cpp23/cpp23_string_contains.cpp),
   [`cpp23_resize_and_overwrite`](features/std/cpp23/cpp23_resize_and_overwrite.cpp),
   [`cpp23_spanstream`](features/std/cpp23/cpp23_spanstream.cpp),
@@ -624,13 +639,15 @@ features run normally (`<debugging>` links `-lstdc++exp`, like
 Unsupported facilities remain visible as known gaps in `coverage.yml`.
 
 - **Language:** [`cpp26_pack_indexing`](features/std/cpp26/cpp26_pack_indexing.cpp),
-  [`cpp26_delete_reason`](features/std/cpp26/cpp26_delete_reason.cpp),
+  [`cpp26_delete_reason`](features/std/cpp26/cpp26_delete_reason.cpp)
+  (and compile-fail diagnostic [`cpp26_delete_reason_diagnostic`](features/std/cpp26/cpp26_delete_reason_diagnostic.cpp)),
   [`cpp26_expansion_statements`](features/std/cpp26/cpp26_expansion_statements.cpp),
   [`cpp26_structured_binding_pack`](features/std/cpp26/cpp26_structured_binding_pack.cpp),
   [`cpp26_constexpr_exceptions`](features/std/cpp26/cpp26_constexpr_exceptions.cpp),
   [`cpp26_static_assert_messages`](features/std/cpp26/cpp26_static_assert_messages.cpp),
   [`cpp26_embed`](features/std/cpp26/cpp26_embed.cpp),
-  [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp).
+  [`cpp26_contracts_basic`](features/std/cpp26/cpp26_contracts_basic.cpp),
+  [`cpp26_uninitialized_diagnostic`](features/std/cpp26/cpp26_uninitialized_diagnostic.cpp).
 - **Library:** [`cpp26_saturation_arith`](features/std/cpp26/cpp26_saturation_arith.cpp),
   [`cpp26_inplace_vector`](features/std/cpp26/cpp26_inplace_vector.cpp),
   [`cpp26_views_concat`](features/std/cpp26/cpp26_views_concat.cpp),
@@ -647,10 +664,12 @@ Unsupported facilities remain visible as known gaps in `coverage.yml`.
   (GCC 16, `-freflection`).
 
 Per-release smoke tests: [`gcc13_libstdcxx_format`](features/gcc/gcc13/gcc13_libstdcxx_format.cpp),
-[`gcc14_libstdcxx_ranges_to`](features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp)
+[`gcc14_hardened_bundle`](features/gcc/gcc14/gcc14_hardened_bundle.cpp)
++ [`gcc14_libstdcxx_ranges_to`](features/gcc/gcc14/gcc14_libstdcxx_ranges_to.cpp)
 + [`gcc14_libstdcxx_print`](features/gcc/gcc14/gcc14_libstdcxx_print.cpp),
 [`gcc15_libstdcxx_print_ranges`](features/gcc/gcc15/gcc15_libstdcxx_print_ranges.cpp),
-[`gcc16_cpp26_features_default`](features/gcc/gcc16/gcc16_cpp26_features_default.cpp).
+[`gcc16_cpp26_features_default`](features/gcc/gcc16/gcc16_cpp26_features_default.cpp)
++ [`gcc16_int128_type_traits`](features/gcc/gcc16/gcc16_int128_type_traits.cpp).
 The narrative version of "what each release shipped" is in
 [docs/gcc-changelogs.md](docs/gcc-changelogs.md).
 

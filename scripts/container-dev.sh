@@ -16,13 +16,15 @@
 #   # ctest filters / extra args (everything after a `--` is forwarded to ctest):
 #   ./scripts/container-dev.sh 15 -- -R cpp23_       # run tests matching cpp23_
 #   ./scripts/container-dev.sh 15 -- -L ranges       # run all 'ranges' topic tests
-#   ./scripts/container-dev.sh 15 -- -j              # run in parallel when speed matters
+#   ./scripts/container-dev.sh 15 -- -j4             # run CTest with 4 parallel jobs
 #   ./scripts/container-dev.sh 15 -- -N              # list tests, don't run
 #
-#   # Engine and architecture selection:
+#   # Engine, architecture, and resource limits:
 #   ./scripts/container-dev.sh 15 engine=docker      # docker instead of podman
 #   ./scripts/container-dev.sh 15 arch=arm64         # emulate linux/arm64
-#   ./scripts/container-dev.sh 15 arch=amd64 engine=docker
+#   ./scripts/container-dev.sh 15 jobs=4             # build parallelism (default:JOBS=2)
+#   ./scripts/container-dev.sh 15 cpus=2 memory=4g   # cap container CPU/RAM
+#   ./scripts/container-dev.sh 15 clean              # remove cached build volume
 #
 #   A non-native arch needs an engine able to emulate it (qemu binfmt;
 #   Docker Desktop and podman machine ship it, bare-Linux hosts need
@@ -70,6 +72,10 @@ esac
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ENGINE="${CONTAINER_ENGINE:-podman}"
 ARCH=""
+JOBS="${JOBS:-2}"
+CPUS="${CONTAINER_CPUS:-}"
+MEMORY="${CONTAINER_MEMORY:-}"
+SANITIZE_SPEC=""
 
 # Parse args. Anything before `--` is an option (engine=… / arch=… /
 # sanitize=… / analyzer / …); anything after `--` is forwarded as-is to ctest.
@@ -90,9 +96,16 @@ while [ "$#" -gt 0 ]; do
         --)              seen_dashdash=1 ;;
         engine=*)        ENGINE="${arg#engine=}" ;;
         arch=*)          ARCH="${arg#arch=}" ;;
-        sanitize=*)      CMAKE_ARGS+=("-DGCC_FEATURE_SANITIZE=${arg#sanitize=}") ;;
+        jobs=*)          JOBS="${arg#jobs=}" ;;
+        cpus=*)          CPUS="${arg#cpus=}" ;;
+        memory=*)        MEMORY="${arg#memory=}" ;;
+        sanitize=*)
+            SANITIZE_SPEC="${arg#sanitize=}"
+            CMAKE_ARGS+=("-DGCC_FEATURE_SANITIZE=${SANITIZE_SPEC}")
+            ;;
         analyzer)        CMAKE_ARGS+=("-DGCC_FEATURE_ANALYZER=ON") ;;
         readme)          README_MODE=1 ;;
+        clean)           ACTION=clean ;;
         list)            ACTION=list ;;
         run|show)
             if [ "$#" -eq 0 ]; then
@@ -104,11 +117,18 @@ while [ "$#" -gt 0 ]; do
             shift
             ;;
         *)
-            echo "error: unknown argument '$arg' (expected engine=podman|docker / arch=… / sanitize=… / analyzer / readme / list / run NAME / show NAME / -- <ctest-args>)" >&2
+            echo "error: unknown argument '$arg' (expected engine=podman|docker / arch=… / jobs=N / cpus=N / memory=… / sanitize=… / analyzer / readme / clean / list / run NAME / show NAME / -- <ctest-args>)" >&2
             exit 2
             ;;
     esac
 done
+
+case "${JOBS}" in
+    ''|0|*[!0-9]*)
+        echo "error: invalid jobs='${JOBS}' (expected a positive integer)" >&2
+        exit 2
+        ;;
+esac
 
 case "${ENGINE}" in
     podman|docker) ;;
@@ -147,6 +167,30 @@ fi
 
 TAG="localhost/gcc-updates:${LANE}${ARCH_SUFFIX}"
 BUILD_VOL="gcc-updates-build-${LANE}${ARCH_SUFFIX}"
+
+RESOURCE_ARGS=()
+if [ -n "${CPUS}" ]; then
+    RESOURCE_ARGS+=(--cpus "${CPUS}")
+fi
+if [ -n "${MEMORY}" ]; then
+    RESOURCE_ARGS+=(--memory "${MEMORY}")
+fi
+
+SANITIZE_ENV_ARGS=()
+if [ -n "${SANITIZE_SPEC}" ]; then
+    SANITIZE_ENV_ARGS=(
+        -e "ASAN_OPTIONS=${ASAN_OPTIONS:-halt_on_error=1:abort_on_error=0:detect_leaks=1:strict_string_checks=1}"
+        -e "UBSAN_OPTIONS=${UBSAN_OPTIONS:-halt_on_error=1:print_stacktrace=1}"
+        -e "LSAN_OPTIONS=${LSAN_OPTIONS:-exitcode=1}"
+        -e "TSAN_OPTIONS=${TSAN_OPTIONS:-halt_on_error=1:exitcode=66}"
+    )
+fi
+
+if [ "${ACTION}" = clean ]; then
+    echo "==> removing build volume ${BUILD_VOL}"
+    "${ENGINE}" volume rm -f "${BUILD_VOL}" >/dev/null
+    exit 0
+fi
 
 # The clang lane picks its compiler explicitly; gcc lanes use the image default.
 CMAKE_COMPILER_ARGS=()
@@ -227,11 +271,27 @@ fi
 run() {
     "${ENGINE}" run --rm \
         ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
+        ${RESOURCE_ARGS[@]:+"${RESOURCE_ARGS[@]}"} \
+        ${SANITIZE_ENV_ARGS[@]:+"${SANITIZE_ENV_ARGS[@]}"} \
+        -e "CMAKE_BUILD_PARALLEL_LEVEL=${JOBS}" \
         -v "${REPO_ROOT}:/work:${RO_OPTS}" \
         -v "${BUILD_VOL}:/build${VOL_OPTS}" \
         -w /work \
         "${TAG}" "$@"
 }
+
+# If the persistent build volume holds a CMakeCache.txt whose compiler path no
+# longer exists inside the container (e.g. after a base-image upgrade), clear
+# the cache before configuring.
+run bash -c '
+    if [ -f /build/CMakeCache.txt ]; then
+        cached_cxx="$(sed -n "s/^CMAKE_CXX_COMPILER:FILEPATH=//p" /build/CMakeCache.txt | head -n 1)"
+        if [ -n "${cached_cxx}" ] && [ ! -x "${cached_cxx}" ]; then
+            echo "==> clearing stale CMake cache (missing ${cached_cxx})"
+            rm -rf /build/CMakeCache.txt /build/CMakeFiles
+        fi
+    fi
+'
 
 echo "==> configuring (cmake -S /work -B /build ${CMAKE_ARGS[*]:-})"
 # Reset every mode before applying this invocation's arguments. Build volumes
@@ -249,6 +309,7 @@ run cmake -S /work -B /build \
 if [ "${ACTION}" = list ]; then
     exec "${ENGINE}" run --rm \
         ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
+        ${RESOURCE_ARGS[@]:+"${RESOURCE_ARGS[@]}"} \
         -v "${REPO_ROOT}:/work:${RO_OPTS}" \
         -v "${BUILD_VOL}:/build${VOL_OPTS}" \
         -w /build \
@@ -268,19 +329,21 @@ if [ "${ACTION}" = run ]; then
         fi
     done <<< "${target_help}"
     if [ "${has_target}" -eq 1 ]; then
-        echo "==> building ${TARGET_NAME}"
-        run cmake --build /build --target "${TARGET_NAME}" --parallel
+        echo "==> building ${TARGET_NAME} (jobs=${JOBS})"
+        run cmake --build /build --target "${TARGET_NAME}" --parallel "${JOBS}"
     else
         echo "==> ${TARGET_NAME} compiles inside CTest (no executable target)"
     fi
 else
-    echo "==> building"
-    run cmake --build /build --parallel
+    echo "==> building (jobs=${JOBS})"
+    run cmake --build /build --parallel "${JOBS}"
 fi
 
 echo "==> running ctest ${CTEST_ARGS[*]}"
 exec "${ENGINE}" run --rm \
     ${PLATFORM_ARGS[@]:+"${PLATFORM_ARGS[@]}"} \
+    ${RESOURCE_ARGS[@]:+"${RESOURCE_ARGS[@]}"} \
+    ${SANITIZE_ENV_ARGS[@]:+"${SANITIZE_ENV_ARGS[@]}"} \
     -v "${REPO_ROOT}:/work:${RO_OPTS}" \
     -v "${BUILD_VOL}:/build${VOL_OPTS}" \
     -w /build \

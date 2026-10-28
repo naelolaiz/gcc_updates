@@ -53,4 +53,7 @@ if(NOT _run_exit STREQUAL "0")
     )
 endif()
 
+if(_run_stdout)
+    message("${_run_stdout}")
+endif()
 message("module interface, importer, link, and runtime checks passed")

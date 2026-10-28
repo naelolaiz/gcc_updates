@@ -1,13 +1,20 @@
 # GCC 16 release-notes examples
 
-_Folder: `features/gcc/gcc16/`. 4 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
+_Folder: `features/gcc/gcc16/`. 5 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
 
 ## Topics
 
+- [diagnostics](#diagnostics)
 - [extensions](#extensions)
 - [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-release](#gcc-release)
 - [type-traits](#type-traits)
+
+## diagnostics
+
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gcc16_warn_cpp26_compat.cpp](gcc16_warn_cpp26_compat.cpp) | c++23 | GCC >= 16 (GCC only) | negative | GCC 16 introduced -Wc++26-compat: identifiers that become keywords in C++26 (like contract_assert) are flagged when compiling as an older standard. Built as C++23 with -Werror=c++26-compat; CTest asserts the diagnostic fires. |
 
 ## extensions
 
