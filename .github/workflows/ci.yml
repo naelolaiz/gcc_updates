@@ -13,6 +13,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 # `gcc:N` is Debian-based and ships dash as /bin/sh, which doesn't grok
 # `set -o pipefail`. Force every step through bash, which gcc:N does ship.
 defaults:
@@ -64,7 +71,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test
@@ -103,7 +110,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test
@@ -137,7 +144,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test
@@ -168,7 +175,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test
@@ -199,7 +206,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test
@@ -227,7 +234,7 @@ jobs:
       - name: Build
         run: |
           echo "::group::Compile commands (verbose)"
-          cmake --build build --parallel --verbose
+          cmake --build build --parallel "$(nproc)" --verbose
           echo "::endgroup::"
 
       - name: Test

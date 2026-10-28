@@ -1,6 +1,6 @@
 // description: [[gnu::target_clones("default,avx2,avx512f")]] generates multiple versions; an IFUNC dispatches to the best at startup.
 // reference: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
-// note: experimental: only some target/CPU combinations are supported; binary still runs because of the 'default' fallback.
+// note: gated ARCH x86 (see gccext_target_clones_aarch64 for the AArch64 twin); the binary always runs because of the 'default' fallback.
 
 #include "support/demo.hpp"
 #include <cassert>

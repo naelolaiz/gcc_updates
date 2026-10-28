@@ -62,9 +62,10 @@ Read these as before/after pairs:
 ## GCC diagnostics and safety
 
 1. Start with [`gccext_diagnostic_pragma`](../features/gccext/pragmas/gccext_diagnostic_pragma.cpp).
-2. Run the compile-fail examples with
-   `./scripts/container-dev.sh 16 -- -L diagnostics` and read the matched
-   diagnostic, not only the pass/fail result.
+2. Run the diagnostic and compile-fail examples with
+   `./scripts/container-dev.sh 16 -- -L diagnostics` (or just the per-release
+   warning demos with `./scripts/container-dev.sh 16 -- -L gcc-diagnostics`)
+   and read the matched diagnostic, not only the pass/fail result.
 3. Compare ASan, UBSan, TSan, and `-fanalyzer` using
    [the sanitizer guide](sanitizers.md).
 4. Finish with [`gccext_autovectorize`](../features/gccext/codegen/gccext_autovectorize.cpp):

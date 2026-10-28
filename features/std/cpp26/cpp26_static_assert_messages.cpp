@@ -1,5 +1,8 @@
 // description: static_assert accepts a constexpr string-like object (anything with constexpr size()/data()) as its message -- diagnostics can be computed instead of being string literals.
 // reference: https://en.cppreference.com/w/cpp/language/static_assert
+// why: Compile-time assertions can include computed sizes, offsets, or type names directly in the failure diagnostic.
+// before: static_assert only accepted a raw string literal, forcing developers to inspect template instantiation backtraces for the failing values.
+// pitfall: The message expression must provide constexpr size() and data() convertible to const char* (null termination is not required).
 
 #include "support/demo.hpp"
 #include <array>

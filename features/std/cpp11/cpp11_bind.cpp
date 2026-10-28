@@ -1,5 +1,8 @@
 // description: std::bind partially applies arguments; placeholders _1, _2, ... thread remaining args. std::ref/cref pass references through copies.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/bind
+// why: Callbacks often need a callable with fewer or reordered parameters than the target function.
+// before: C++98 used std::bind1st/bind2nd or custom functor structs for partial application.
+// pitfall: std::bind copies bound arguments by default unless wrapped in std::ref/std::cref, and silently ignores extra call-site arguments; prefer lambdas or C++20 std::bind_front.
 
 #include "support/demo.hpp"
 #include <cassert>

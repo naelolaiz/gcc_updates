@@ -1,5 +1,8 @@
 // description: std::bind_front(f, args...) binds the FIRST arguments of a callable -- the modern replacement for std::bind's placeholder dance, ideal for member-function callbacks.
 // reference: https://en.cppreference.com/w/cpp/utility/functional/bind_front
+// why: Leading-argument partial application (especially binding a member function to an object) needs no numbered placeholders.
+// before: std::bind required std::placeholders::_1, _2, ... and silently ignored unused trailing arguments.
+// pitfall: Bound arguments are decayed and stored inside the wrapper, so pass std::ref/std::cref when reference semantics are required.
 
 #include "support/demo.hpp"
 #include <algorithm>

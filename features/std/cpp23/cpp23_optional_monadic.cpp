@@ -1,5 +1,8 @@
 // description: std::optional gained monadic ops (and_then / transform / or_else) -- chain fallible computations cleanly.
 // reference: https://en.cppreference.com/w/cpp/utility/optional
+// why: Fallible steps can compose into a single expression pipeline without repetitive 'if (opt)' unwrap boilerplate.
+// before: Every step checked 'if (!opt) return std::nullopt;' before computing the next optional value.
+// pitfall: 'transform' wraps its callable's return value in std::optional, whereas 'and_then' requires the callable itself to return a std::optional.
 
 #include "support/demo.hpp"
 #include <cassert>

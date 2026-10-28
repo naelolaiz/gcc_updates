@@ -14,20 +14,20 @@ _Folder: `features/gccext/codegen/`. 5 topic(s). Generated from `gcc_feature_tes
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability. |
+| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax on x86. |
 
 ## gcc-codegen
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [gccext_autovectorize.cpp](gccext_autovectorize.cpp) | c++17 | GCC >= 13 (GCC only) | covered | A SAXPY loop is checked twice: runtime assertions prove its result, and GCC's optimization report proves that -O3 vectorized it. |
-| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability. |
+| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax on x86. |
 
 ## inline-assembly
 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
-| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax. x86_64-only; tagged experimental for portability. |
+| [gccext_inline_asm.cpp](gccext_inline_asm.cpp) | c++17 | GCC >= 13 | covered | Basic GCC extended inline asm. Demonstrates the input/output operand syntax on x86. |
 
 ## performance
 

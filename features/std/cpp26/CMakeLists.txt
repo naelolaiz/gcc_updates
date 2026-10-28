@@ -1,14 +1,14 @@
+# GCC_ONLY: Clang 23 does not implement P3068 (throw in constant evaluation).
+gcc_feature_test(cpp26_constexpr_exceptions    STD c++26  MIN_GCC 16  TOPIC language
+                 TAGS compile-time error-handling  GCC_ONLY
+                 PROPOSAL P3068R5  PREREQUISITES cpp11_exception_ptr cpp14_relaxed_constexpr)
+
 # GCC_ONLY: Clang 23 has no -fcontracts (P2900 not implemented yet).
 gcc_feature_test(cpp26_contracts_basic         STD c++26  MIN_GCC 16  TOPIC language
                  TAGS contracts diagnostics
                  PROPOSAL P2900R14  FEATURE_MACRO __cpp_contracts
                  EXTRA_COMPILE_FLAGS -fcontracts  GCC_ONLY
                  PREREQUISITES cpp11_static_assert)
-
-# GCC_ONLY: Clang 23 does not implement P3068 (throw in constant evaluation).
-gcc_feature_test(cpp26_constexpr_exceptions    STD c++26  MIN_GCC 16  TOPIC language
-                 TAGS compile-time error-handling  GCC_ONLY
-                 PROPOSAL P3068R5  PREREQUISITES cpp11_exception_ptr cpp14_relaxed_constexpr)
 
 # libstdc++ 16 exports the <debugging> functions from libstdc++exp, like
 # std::stacktrace, so the example links it and runs.
@@ -67,6 +67,11 @@ gcc_feature_test(cpp26_pack_indexing           STD c++26  MIN_GCC 15  TOPIC lang
                  TAGS templates compile-time  PROPOSAL P2662R3
                  FEATURE_MACRO __cpp_pack_indexing  PREREQUISITES cpp11_variadic_templates)
 
+gcc_feature_test(cpp26_philox_engine           STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
+                 TOPIC stl  TAGS numerics random
+                 PROPOSAL P2075R6  FEATURE_MACRO __cpp_lib_philox_engine
+                 PREREQUISITES cpp11_random)
+
 # GCC_ONLY: mainline Clang 23 has no P2996 reflection (only Bloomberg's
 # experimental clang-p2996 fork does) and no -freflection flag.
 gcc_feature_test(cpp26_reflection_basic        STD c++26  MIN_GCC 16  TOPIC templates
@@ -75,7 +80,8 @@ gcc_feature_test(cpp26_reflection_basic        STD c++26  MIN_GCC 16  TOPIC temp
                  PREREQUISITES cpp26_expansion_statements
                  EXTRA_COMPILE_FLAGS -freflection)
 
-gcc_feature_test(cpp26_saturation_arith        STD c++26  MIN_GCC 14  TOPIC stl)
+gcc_feature_test(cpp26_saturation_arith        STD c++26  MIN_GCC 14  MIN_LIBSTDCXX 14
+                 TOPIC stl)
 
 # ARCH x86: libstdc++ 16 does not implement <simd> for aarch64 yet ('simd'
 # in namespace 'std' does not name a type); see coverage/gaps.yml.
@@ -85,12 +91,8 @@ gcc_feature_test(cpp26_simd                    STD c++26  MIN_GCC 16  MIN_LIBSTD
                  TOPIC stl  TAGS numerics performance simd  ARCH x86  GCC_ONLY
                  PROPOSAL P1928R15  PREREQUISITES gccext_vector_extensions)
 
-gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 14  TOPIC stl)
-
-gcc_feature_test(cpp26_submdspan               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
-                 TOPIC stl  TAGS containers numerics views
-                 PROPOSAL P2630R4  FEATURE_MACRO __cpp_lib_submdspan
-                 PREREQUISITES cpp23_mdspan)
+gcc_feature_test(cpp26_span_at                 STD c++26  MIN_GCC 14  MIN_LIBSTDCXX 14
+                 TOPIC stl)
 
 gcc_feature_test(cpp26_static_assert_messages  STD c++26  MIN_GCC 14  TOPIC language)
 
@@ -99,21 +101,21 @@ gcc_feature_test(cpp26_structured_binding_pack STD c++26  MIN_GCC 16  TOPIC lang
                  PROPOSAL P1061R10  FEATURE_MACRO __cpp_structured_bindings
                  PREREQUISITES cpp17_structured_bindings cpp11_variadic_templates)
 
+gcc_feature_test(cpp26_submdspan               STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
+                 TOPIC stl  TAGS containers numerics views
+                 PROPOSAL P2630R4  FEATURE_MACRO __cpp_lib_submdspan
+                 PREREQUISITES cpp23_mdspan)
+
+# text_encoding::environment() is exported from libstdc++exp on GCC 14-16.
+gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 14  MIN_LIBSTDCXX 14
+                 TOPIC stl  EXTRA_LIBS stdc++exp)
+
 gcc_feature_test(cpp26_uninitialized_diagnostic STD c++26  MIN_GCC 16  TOPIC language
                  TAGS diagnostics safety  STATUS negative
                  PROPOSAL P2795R5
                  EXTRA_COMPILE_FLAGS -Werror=uninitialized
                  EXPECT_ERROR_GCC "used uninitialized"
                  EXPECT_ERROR_CLANG "uninitialized when used")
-
-gcc_feature_test(cpp26_philox_engine           STD c++26  MIN_GCC 16  MIN_LIBSTDCXX 16
-                 TOPIC stl  TAGS numerics random
-                 PROPOSAL P2075R6  FEATURE_MACRO __cpp_lib_philox_engine
-                 PREREQUISITES cpp11_random)
-
-# text_encoding::environment() is exported from libstdc++exp on GCC 14-16.
-gcc_feature_test(cpp26_text_encoding           STD c++26  MIN_GCC 14  TOPIC stl
-                 EXTRA_LIBS stdc++exp)
 
 gcc_feature_test(cpp26_views_concat            STD c++26  MIN_GCC 15  MIN_LIBSTDCXX 15
                  TOPIC ranges  TAGS views

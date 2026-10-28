@@ -115,9 +115,9 @@ toolchain), `MIN_LIBSTDCXX` gates are not enforced.
 ```bash
 # Build everything (or one target) inside the container. Working tree is
 # read-only; the build directory lives in a named container volume.
-./scripts/container-dev.sh 15                            # verbose CTest by default
+./scripts/container-dev.sh 15                            # verbose CTest by default (build jobs=2)
 ./scripts/container-dev.sh 15 -- -R cpp23_stacktrace     # one test, still verbose
-./scripts/container-dev.sh 15 -- -j                      # parallel CTest when speed matters
+./scripts/container-dev.sh 15 jobs=4 -- -j4              # 4 parallel build + CTest jobs
 ./scripts/container-dev.sh clang23                       # clang-23 cross-check lane
 ```
 

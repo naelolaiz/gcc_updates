@@ -1,5 +1,8 @@
 // description: <numeric> in C++26 adds saturation arithmetic -- and shows live draft churn: GCC 14/15 ship add_sat/saturate_cast (__cpp_lib_saturation_arithmetic 202311), GCC 16 the renamed saturating_add/saturating_cast (202603).
 // reference: https://en.cppreference.com/w/cpp/numeric
+// why: Fixed-width integer arithmetic can clamp at the type's minimum/maximum bounds without signed-overflow UB or unsigned wraparound.
+// before: Callers widened to a larger integer type and clamped with std::clamp or used compiler intrinsics.
+// pitfall: WG21 renamed *_sat/saturate_cast to saturating_* in 2026-03; check __cpp_lib_saturation_arithmetic when spanning GCC 14-16.
 
 #include "support/demo.hpp"
 #include <cassert>

@@ -1,5 +1,8 @@
 // description: std::text_encoding identifies character encodings via the IANA registry: text_encoding::literal() reports the encoding of the string literals baked into this binary, environment() the locale's.
 // reference: https://en.cppreference.com/w/cpp/text/text_encoding
+// why: Programs can inspect the compile-time literal encoding and runtime environment encoding through a standard IANA-registered type.
+// before: Code guessed UTF-8 or called platform-specific APIs such as nl_langinfo(CODESET) or GetACP().
+// pitfall: text_encoding::environment() is exported from libstdc++exp on GCC 14-16 (-lstdc++exp) and depends on the active POSIX locale at runtime.
 
 #include "support/demo.hpp"
 #include <text_encoding>

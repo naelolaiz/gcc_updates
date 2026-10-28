@@ -1,10 +1,11 @@
 # GCC 14 release-notes examples
 
-_Folder: `features/gcc/gcc14/`. 4 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
+_Folder: `features/gcc/gcc14/`. 5 topic(s). Generated from `gcc_feature_test()` metadata and each file's `// description:` line; regenerate with `./scripts/container-dev.sh <ver> readme`._
 
 ## Topics
 
 - [compiler-flags](#compiler-flags)
+- [diagnostics](#diagnostics)
 - [gcc-diagnostics](#gcc-diagnostics)
 - [gcc-release](#gcc-release)
 - [hardening](#hardening)
@@ -14,6 +15,12 @@ _Folder: `features/gcc/gcc14/`. 4 topic(s). Generated from `gcc_feature_test()` 
 | File | std | availability | status | Description |
 | ---- | --- | ------------ | ------ | ----------- |
 | [gcc14_hardened_bundle.cpp](gcc14_hardened_bundle.cpp) | c++17 | GCC >= 14 (GCC only) | covered | GCC 14 introduced -fhardened as an umbrella for production hardening flags; this test proves that stack protection and fortified libc calls are enabled. |
+
+## diagnostics
+
+| File | std | availability | status | Description |
+| ---- | --- | ------------ | ------ | ----------- |
+| [gcc14_warn_calloc_transposed.cpp](gcc14_warn_calloc_transposed.cpp) | c++17 | GCC >= 14 (GCC only) | negative | GCC 14 introduced -Wcalloc-transposed-args: calloc(sizeof(T), n) has the arguments backwards (element count first, element size second). Built with -Werror=calloc-transposed-args; CTest asserts the diagnostic fires. |
 
 ## gcc-diagnostics
 
